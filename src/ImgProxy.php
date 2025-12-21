@@ -5,6 +5,7 @@ namespace Imsus\ImgProxy;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
+use InvalidArgumentException;
 
 class ImgProxy
 {
