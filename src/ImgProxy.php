@@ -275,10 +275,6 @@ class ImgProxy
         $scheme = parse_url($this->source_url, PHP_URL_SCHEME);
 
         if ($scheme === 's3') {
-            if (! preg_match('~^s3://[^/]+/.+~', $this->source_url)) {
-                throw new InvalidArgumentException('Invalid S3 source URL format. Expected s3://bucket/key.');
-            }
-
             return;
         }
 
