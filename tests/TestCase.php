@@ -8,9 +8,18 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    /**
+     * Fix for "Access to undeclared static property" in Pest + Testbench 9
+     * This property is required by Laravel 11's MakesHttpRequests trait.
+     */
+    protected static $latestResponse;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Ensure it's cleared between tests
+        static::$latestResponse = null;
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Imsus\\ImgProxy\\Database\\Factories\\'.class_basename($modelName).'Factory'
