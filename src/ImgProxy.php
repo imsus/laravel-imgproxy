@@ -5,6 +5,7 @@ namespace Imsus\ImgProxy;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
+use InvalidArgumentException;
 
 class ImgProxy
 {
@@ -268,8 +269,12 @@ class ImgProxy
 
     private function validateSourceUrl(): void
     {
-        if (empty($this->source_url) || ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
-            throw new \InvalidArgumentException('Invalid source URL');
+        if (empty($this->source_url)) {
+            throw new InvalidArgumentException('Invalid source URL');
+        }
+
+        if (! str_starts_with($this->source_url, 's3://') && ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException('Invalid source URL');
         }
     }
 
