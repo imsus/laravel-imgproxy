@@ -205,3 +205,29 @@ it('can use quality and effects in url building', function () {
     expect($url)->toContain('quality:85');
     expect($url)->toContain('blur:1.5');
 });
+
+// S3 URL tests
+it('accepts s3:// source urls', function () {
+    $s3Url = 's3://files.yoomarket/path/to/image.webp';
+    $url = imgproxy($s3Url)
+        ->setWidth(432)
+        ->build();
+
+    expect($url)->not->toBe($s3Url);
+    expect($url)->toContain(base64_encode($s3Url));
+    expect($url)->toContain('width:432');
+});
+
+it('can build s3 url with processing options', function () {
+    $s3Url = 's3://bucket/path/image.jpg';
+    $url = imgproxy($s3Url)
+        ->setWidth(100)
+        ->setHeight(100)
+        ->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FIT)
+        ->build();
+
+    expect($url)->toContain('width:100');
+    expect($url)->toContain('height:100');
+    expect($url)->toContain('resizing_type:fit');
+    expect($url)->toContain(rtrim(strtr(base64_encode($s3Url), '+/', '-_'), '='));
+});
