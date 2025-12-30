@@ -273,9 +273,7 @@ class ImgProxy
             throw new InvalidArgumentException('Invalid source URL');
         }
 
-        $scheme = parse_url($this->source_url, PHP_URL_SCHEME);
-
-        if ($scheme !== 's3' && ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
+        if (! str_starts_with($this->source_url, 's3://') && ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('Invalid source URL');
         }
     }

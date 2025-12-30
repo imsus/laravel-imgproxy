@@ -214,7 +214,7 @@ it('accepts s3:// source urls', function () {
         ->build();
 
     expect($url)->not->toBe($s3Url);
-    expect($url)->toContain(base64_encode($s3Url));
+    expect($url)->toContain(rtrim(strtr(base64_encode($s3Url), '+/', '-_'), '='));
     expect($url)->toContain('width:432');
 });
 
