@@ -12,7 +12,7 @@ class TestCase extends Orchestra
      * Fix for "Access to undeclared static property" in Pest + Testbench 9
      * This property is required by Laravel 11's MakesHttpRequests trait.
      */
-    protected static $latestResponse;
+    public static $latestResponse;
 
     protected function setUp(): void
     {
