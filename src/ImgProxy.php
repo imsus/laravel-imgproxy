@@ -2,6 +2,7 @@
 
 namespace Imsus\ImgProxy;
 
+use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
@@ -83,6 +84,35 @@ class ImgProxy
     public function setResizeType(ResizeType $mode): self
     {
         $this->options['resizing_type'] = $mode->value;
+
+        return $this;
+    }
+
+    /**
+     * Set the gravity for image positioning (crop, fill, etc.).
+     *
+     * @param  Gravity  $gravity  The gravity position
+     *
+     * @see \Imsus\ImgProxy\Enums\Gravity
+     */
+    public function setGravity(Gravity $gravity): self
+    {
+        $this->options['gravity'] = $gravity->value;
+
+        return $this;
+    }
+
+    /**
+     * Set the crop dimensions.
+     *
+     * @param  int  $width  Crop width
+     * @param  int  $height  Crop height
+     * @param  Gravity|null  $gravity  Optional gravity position (defaults to center)
+     */
+    public function crop(int $width, int $height, ?Gravity $gravity = null): self
+    {
+        $gravity = $gravity ?? Gravity::CENTER;
+        $this->options['crop'] = "{$width}:{$height}:{$gravity->value}";
 
         return $this;
     }
