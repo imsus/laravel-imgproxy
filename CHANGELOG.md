@@ -2,6 +2,144 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.9.1 - 2025-12-31
+
+### Overview
+
+DX improvements including laravel-package-tools refactoring and two new Blade components inspired by Next.js Image.
+
+#### Refactored
+
+Service Provider - `laravel-package-tools` Conventions
+
+`ImgProxyServiceProvider` now follows spatie/laravel-package-tools best practices:
+
+```php
+// Before - Manual loading
+$this->loadViewsFrom(__DIR__.'/../resources/views', 'imgproxy');
+$this->loadViewComponentsAs('imgproxy', [Components\ImgProxyComponent::class]);
+
+```
+```php
+// After - Using package tools
+$package
+    ->hasConfigFile()
+    ->hasViewComponents('imgproxy', Components\Img::class)
+    ->hasViewComponents('imgproxy', Components\Picture::class);
+
+```
+Benefit: Consistent with Laravel package ecosystem, easier maintenance, automatic publishing tags.
+
+#### New Features
+
+##### 1. Img Component `<x-imgproxy-img>`
+
+Single image component inspired by Next.js Image.
+
+```blade
+<x-imgproxy-img
+    src="https://example.com/image.jpg"
+    alt="Product photo"
+    :width="300"
+    :height="200"
+    resize-type="fill"
+    format="webp"
+    :quality="75"
+    :dpr="2"
+    gravity="ce"
+    lazy
+    sizes="(max-width: 768px) 100vw, 50vw"
+/>
+
+```
+Props:
+
+| Prop       | Type             | Default  | Description                           |
+|------------|------------------|----------|---------------------------------------|
+| src        | string           | Required | Source image URL                      |
+| alt        | string?          | null     | Alt text for accessibility            |
+| width      | int?             | null     | Target width in pixels                |
+| height     | int?             | null     | Target height in pixels               |
+| resizeType | ResizeType?      | null     | Resize mode (fit, fill, force, etc.)  |
+| format     | OutputExtension? | null     | Output format (jpeg, png, webp, avif) |
+| quality    | int              | 75       | Compression quality (0-100)           |
+| dpr        | int?             | null     | Device pixel ratio                    |
+| gravity    | Gravity?         | null     | Gravity position for crop/fill        |
+| lazy       | bool             | true     | Enable lazy loading                   |
+| sizes      | string?          | null     | HTML sizes attribute                  |
+
+
+---
+
+##### 2. Picture Component <x-imgproxy-picture>
+
+Responsive image with multiple format support (WebP, AVIF, JPEG).
+
+```blade
+<x-imgproxy-picture
+    src="https://example.com/image.jpg"
+    alt="Product photo"
+    :width="800"
+    :height="600"
+    :formats="['webp', 'avif', 'jpeg']"
+    resize-type="fill"
+    :quality="75"
+    lazy
+    sizes="(max-width: 768px) 100vw, 50vw"
+/>
+
+```
+Renders:
+
+```html
+<picture>
+    <source srcset="..." type="image/webp">
+    <source srcset="..." type="image/avif">
+    <img src="..." alt="Product photo" loading="lazy" sizes="...">
+</picture>
+
+```
+Props:
+
+| Prop       | Type        | Default                  | Description                      |
+|------------|-------------|--------------------------|----------------------------------|
+| src        | string      | Required                 | Source image URL                 |
+| alt        | string?     | null                     | Alt text for accessibility       |
+| width      | int?        | null                     | Target width in pixels           |
+| height     | int?        | null                     | Target height in pixels          |
+| formats    | array       | ['webp', 'avif', 'jpeg'] | Output formats in priority order |
+| resizeType | ResizeType? | null                     | Resize mode                      |
+| quality    | int         | 75                       | Compression quality (0-100)      |
+| dpr        | int?        | null                     | Device pixel ratio               |
+| gravity    | Gravity?    | null                     | Gravity position                 |
+| lazy       | bool        | true                     | Enable lazy loading              |
+| sizes      | string?     | null                     | HTML sizes attribute             |
+
+#### Publishing
+
+Components can be published for customization:
+
+##### Publish config
+
+```sh
+php artisan vendor:publish --tag="laravel-imgproxy-config"
+
+```
+##### Publish components
+
+```sh
+php artisan vendor:publish --tag="laravel-imgproxy-components"
+
+```
+#### Stats
+
+- Tests: 156 total (was 140)
+- Assertions: 376 total (was 336)
+- New files: 6
+- Modified files: 3
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.9.0...v0.9.1
+
 ## v0.9.0 - 2025-12-31
 
 ### Overview
@@ -21,6 +159,7 @@ Use Case: Quick image rendering in Blade templates without manually calling the 
 {{-- Basic usage --}}
 <x-imgproxy src="{{ $product->image }}" width="200" />
 
+
 ```
 ```blade
 {{-- With multiple options --}}
@@ -34,6 +173,7 @@ Use Case: Quick image rendering in Blade templates without manually calling the 
     lazy
     alt="{{ $product->name }}"
 />
+
 
 ```
 Benefit: Cleaner syntax, fewer method calls, auto lazy-loading, passes through additional HTML attributes.
@@ -56,6 +196,7 @@ $retina = $base->copy()->setWidth(800)->setDpr(2)->build();
 
 // Original remains unchanged
 $original = $base->build();
+
 
 ```
 Benefit:
@@ -87,6 +228,7 @@ return response()->json([
 return ImgProxyResponse::make($url)->redirect(302, [
     'X-Custom' => 'value'
 ]);
+
 
 ```
 Benefit:
