@@ -6,6 +6,7 @@ enum OutputExtension: string
 {
     case PNG = 'png';
     case JPEG = 'jpg';
+    case JPEG_XL = 'jxl';
     case WEBP = 'webp';
     case AVIF = 'avif';
     case GIF = 'gif';

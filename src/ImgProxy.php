@@ -501,7 +501,17 @@ class ImgProxy
             throw new InvalidArgumentException('Invalid source URL');
         }
 
-        if (! str_starts_with($this->source_url, 's3://') && ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
+        $validSchemes = ['s3://', 'local://', 'gs://', 'abs://', 'swift://'];
+        $hasValidScheme = false;
+
+        foreach ($validSchemes as $scheme) {
+            if (str_starts_with($this->source_url, $scheme)) {
+                $hasValidScheme = true;
+                break;
+            }
+        }
+
+        if (! $hasValidScheme && ! filter_var($this->source_url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('Invalid source URL');
         }
     }

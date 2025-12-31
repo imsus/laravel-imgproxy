@@ -35,7 +35,7 @@ describe('Watermarking', function () {
                 ->watermark(0.5, Gravity::SOUTH_EAST)
                 ->build();
 
-            expect($url)->toContain('wm:0.5:se:0:0:0');
+            expect($url)->toContain('wm:0.5:soea:0:0:0');
         });
 
         it('sets watermark with all options', function () {
@@ -43,7 +43,7 @@ describe('Watermarking', function () {
                 ->watermark(0.7, Gravity::NORTH_WEST, 10, 20, 0.3)
                 ->build();
 
-            expect($url)->toContain('wm:0.7:nw:10:20:0.3');
+            expect($url)->toContain('wm:0.7:nowe:10:20:0.3');
         });
 
         it('validates opacity bounds - negative', function () {
@@ -83,14 +83,14 @@ describe('Watermarking', function () {
         it('accepts all gravity positions', function () {
             $positions = [
                 [Gravity::CENTER, 'ce'],
-                [Gravity::NORTH, 'n'],
-                [Gravity::SOUTH, 's'],
-                [Gravity::EAST, 'e'],
-                [Gravity::WEST, 'w'],
-                [Gravity::NORTH_EAST, 'ne'],
-                [Gravity::NORTH_WEST, 'nw'],
-                [Gravity::SOUTH_EAST, 'se'],
-                [Gravity::SOUTH_WEST, 'sw'],
+                [Gravity::NORTH, 'no'],
+                [Gravity::SOUTH, 'so'],
+                [Gravity::EAST, 'ea'],
+                [Gravity::WEST, 'we'],
+                [Gravity::NORTH_EAST, 'noea'],
+                [Gravity::NORTH_WEST, 'nowe'],
+                [Gravity::SOUTH_EAST, 'soea'],
+                [Gravity::SOUTH_WEST, 'sowe'],
             ];
 
             foreach ($positions as [$gravity, $code]) {
@@ -110,7 +110,7 @@ describe('Watermarking', function () {
                 ->setQuality(85)
                 ->build();
 
-            expect($url)->toContain('wm:0.7:se:0:0:0.25')
+            expect($url)->toContain('wm:0.7:soea:0:0:0.25')
                 ->and($url)->toContain('width:500')
                 ->and($url)->toContain('quality:85');
         });
@@ -157,7 +157,7 @@ describe('Watermarking', function () {
                 ->watermarkUrl('https://example.com/watermark.png')
                 ->build();
 
-            expect($url)->toContain('wm:0.5:se:0:0:0.25')
+            expect($url)->toContain('wm:0.5:soea:0:0:0.25')
                 ->and($url)->toContain('wmu:');
         });
     });

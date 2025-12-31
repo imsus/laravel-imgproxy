@@ -5,14 +5,14 @@ namespace Imsus\ImgProxy\Enums;
 enum Gravity: string
 {
     case CENTER = 'ce';
-    case NORTH = 'n';
-    case SOUTH = 's';
-    case EAST = 'e';
-    case WEST = 'w';
-    case NORTH_EAST = 'ne';
-    case SOUTH_EAST = 'se';
-    case SOUTH_WEST = 'sw';
-    case NORTH_WEST = 'nw';
+    case NORTH = 'no';
+    case SOUTH = 'so';
+    case EAST = 'ea';
+    case WEST = 'we';
+    case NORTH_EAST = 'noea';
+    case SOUTH_EAST = 'soea';
+    case SOUTH_WEST = 'sowe';
+    case NORTH_WEST = 'nowe';
 
     public static function getDefault(): self
     {

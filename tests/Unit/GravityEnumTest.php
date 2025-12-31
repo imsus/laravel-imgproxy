@@ -10,35 +10,35 @@ describe('Gravity Enum', function () {
     });
 
     it('has correct north value', function () {
-        expect(Gravity::NORTH->value)->toBe('n');
+        expect(Gravity::NORTH->value)->toBe('no');
     });
 
     it('has correct south value', function () {
-        expect(Gravity::SOUTH->value)->toBe('s');
+        expect(Gravity::SOUTH->value)->toBe('so');
     });
 
     it('has correct east value', function () {
-        expect(Gravity::EAST->value)->toBe('e');
+        expect(Gravity::EAST->value)->toBe('ea');
     });
 
     it('has correct west value', function () {
-        expect(Gravity::WEST->value)->toBe('w');
+        expect(Gravity::WEST->value)->toBe('we');
     });
 
     it('has correct north east value', function () {
-        expect(Gravity::NORTH_EAST->value)->toBe('ne');
+        expect(Gravity::NORTH_EAST->value)->toBe('noea');
     });
 
     it('has correct south east value', function () {
-        expect(Gravity::SOUTH_EAST->value)->toBe('se');
+        expect(Gravity::SOUTH_EAST->value)->toBe('soea');
     });
 
     it('has correct south west value', function () {
-        expect(Gravity::SOUTH_WEST->value)->toBe('sw');
+        expect(Gravity::SOUTH_WEST->value)->toBe('sowe');
     });
 
     it('has correct north west value', function () {
-        expect(Gravity::NORTH_WEST->value)->toBe('nw');
+        expect(Gravity::NORTH_WEST->value)->toBe('nowe');
     });
 
     it('has center as default', function () {

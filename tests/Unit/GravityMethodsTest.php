@@ -23,7 +23,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::NORTH_EAST)
             ->build();
 
-        expect($url)->toContain('gravity:ne');
+        expect($url)->toContain('gravity:noea');
     });
 
     it('can set gravity with south west', function () {
@@ -31,7 +31,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::SOUTH_WEST)
             ->build();
 
-        expect($url)->toContain('gravity:sw');
+        expect($url)->toContain('gravity:sowe');
     });
 
     it('can set gravity with north', function () {
@@ -39,7 +39,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::NORTH)
             ->build();
 
-        expect($url)->toContain('gravity:n');
+        expect($url)->toContain('gravity:no');
     });
 
     it('can set gravity with east', function () {
@@ -47,7 +47,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::EAST)
             ->build();
 
-        expect($url)->toContain('gravity:e');
+        expect($url)->toContain('gravity:ea');
     });
 
     it('can set gravity with west', function () {
@@ -55,7 +55,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::WEST)
             ->build();
 
-        expect($url)->toContain('gravity:w');
+        expect($url)->toContain('gravity:we');
     });
 
     it('can set gravity with south', function () {
@@ -63,7 +63,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::SOUTH)
             ->build();
 
-        expect($url)->toContain('gravity:s');
+        expect($url)->toContain('gravity:so');
     });
 
     it('returns self for method chaining', function () {
@@ -86,7 +86,7 @@ describe('Gravity Methods', function () {
             ->crop(300, 200, Gravity::NORTH_EAST)
             ->build();
 
-        expect($url)->toContain('crop:300:200:ne');
+        expect($url)->toContain('crop:300:200:noea');
     });
 
     it('can crop with south west gravity', function () {
@@ -94,7 +94,7 @@ describe('Gravity Methods', function () {
             ->crop(100, 100, Gravity::SOUTH_WEST)
             ->build();
 
-        expect($url)->toContain('crop:100:100:sw');
+        expect($url)->toContain('crop:100:100:sowe');
     });
 
     it('can crop with north west gravity', function () {
@@ -102,7 +102,7 @@ describe('Gravity Methods', function () {
             ->crop(150, 150, Gravity::NORTH_WEST)
             ->build();
 
-        expect($url)->toContain('crop:150:150:nw');
+        expect($url)->toContain('crop:150:150:nowe');
     });
 
     it('can crop with east gravity', function () {
@@ -110,7 +110,7 @@ describe('Gravity Methods', function () {
             ->crop(200, 300, Gravity::EAST)
             ->build();
 
-        expect($url)->toContain('crop:200:300:e');
+        expect($url)->toContain('crop:200:300:ea');
     });
 
     it('can crop with west gravity', function () {
@@ -118,7 +118,7 @@ describe('Gravity Methods', function () {
             ->crop(200, 300, Gravity::WEST)
             ->build();
 
-        expect($url)->toContain('crop:200:300:w');
+        expect($url)->toContain('crop:200:300:we');
     });
 
     it('returns self for crop method chaining', function () {
@@ -136,7 +136,7 @@ describe('Gravity Methods', function () {
             ->setGravity(Gravity::NORTH_EAST)
             ->build();
 
-        expect($url)->toContain('gravity:ne');
+        expect($url)->toContain('gravity:noea');
     });
 
     it('can use gravity with other options', function () {
@@ -150,7 +150,7 @@ describe('Gravity Methods', function () {
         expect($url)->toContain('width:300');
         expect($url)->toContain('height:200');
         expect($url)->toContain('quality:85');
-        expect($url)->toContain('gravity:se');
+        expect($url)->toContain('gravity:soea');
     });
 
     it('can use crop with width and height', function () {

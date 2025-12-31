@@ -264,6 +264,6 @@ it('can make HTTP request to workbench watermark test endpoint', function () {
     $data = $response->json();
     expect($data['processed'])->toContain('width:500')
         ->and($data['processed'])->toContain('height:400')
-        ->and($data['processed'])->toContain('wm:0.7:se:0:0:0.25')
+        ->and($data['processed'])->toContain('wm:0.7:soea:0:0:0.25')
         ->and($data['processed'])->toContain('wmu:');
 });
