@@ -2,18 +2,53 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.7.0 - 2025-12-31
+
+### Added
+
+7 new core processing methods:
+
+| Method                       | Parameter | ImgProxy Key | Description               |
+| ---------------------------- | --------- | ------------ | ------------------------- |
+| padding(int $padding)        | int       | pd:          | Add padding to images     |
+| background(string $hex)      | string    | bg:#hex      | Set background color      |
+| autoRotate(bool $autoRotate) | bool      | ar:          | Auto-orient based on EXIF |
+| rotate(int $degrees)         | int       | rot:         | Rotate image by degrees   |
+| stripMetadata(bool $strip)   | bool      | sm:          | Remove EXIF/metadata      |
+| trim(int $threshold)         | int       | trim:        | Trim image borders        |
+| pixelate(int $size)          | int       | pix:         | Pixelate image            |
+
+### Testing
+
+- 35 new unit tests in `tests/Unit/CoreProcessingTest.php`
+- Workbench API endpoint: `/imgproxy-test/core-processing`
+- Visual tests in `/imgproxy-visual-test`
+- Parallel test execution enabled
+
+### Stats
+
+- Tests: 107 total (was 71)
+- Assertions: 295 total (was 195)
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.6.0...v0.7.0
+
 ## v0.6.0 - 2025-12-31
 
 ### Added
 
 - Gravity System - New Gravity enum with 9 positions:
+  
   - ce (center), n (north), s (south), e (east), w (west)
   - ne, se, sw, nw (corners)
   
 - `setGravity(Gravity $g)` - Set gravity for fill/crop positioning `(g:)`
+  
 - `crop(int $w, int $h, ?Gravity $g)` - Crop with gravity `(c:w:h:g)`
+  
 - `default_gravity` config - Via `IMGPROXY_DEFAULT_GRAVITY` env
+  
 - Visual workbench tests - Live demos for gravity/crop
+  
 
 ### Changed
 
