@@ -184,7 +184,7 @@ it('can access workbench test index endpoint', function () {
         ]);
 
     $data = $response->json();
-    expect($data['available_tests'])->toHaveCount(9)
+    expect($data['available_tests'])->toHaveCount(10)
         ->and($data['message'])->toContain('ImgProxy Laravel Package Test Suite');
 });
 
@@ -244,4 +244,26 @@ it('can make HTTP request to workbench core processing test endpoint', function 
         ->and($data['processed'])->toContain('sm:1')
         ->and($data['processed'])->toContain('trim:15')
         ->and($data['processed'])->toContain('pix:10');
+});
+
+it('can make HTTP request to workbench watermark test endpoint', function () {
+    $response = $this->get('/imgproxy-test/watermark');
+
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'original',
+            'watermark',
+            'processed',
+            'watermark_applied',
+            'test',
+        ])
+        ->assertJson([
+            'test' => 'watermark',
+        ]);
+
+    $data = $response->json();
+    expect($data['processed'])->toContain('width:500')
+        ->and($data['processed'])->toContain('height:400')
+        ->and($data['processed'])->toContain('wm:0.7:se:0:0:0.25')
+        ->and($data['processed'])->toContain('wmu:');
 });

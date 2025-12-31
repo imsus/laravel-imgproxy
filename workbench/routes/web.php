@@ -225,6 +225,31 @@ Route::prefix('imgproxy-test')->group(function () {
         ]);
     });
 
+    // Watermark test
+    Route::get('/watermark', function () {
+        $imageUrl = 'https://picsum.photos/800/600';
+        $watermarkUrl = 'https://picsum.photos/100x50/png';
+
+        $processedUrl = imgproxy($imageUrl)
+            ->setWidth(500)
+            ->setHeight(400)
+            ->watermark(0.7, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST, 0, 0, 0.25)
+            ->watermarkUrl($watermarkUrl)
+            ->build();
+
+        return response()->json([
+            'original' => $imageUrl,
+            'watermark' => $watermarkUrl,
+            'processed' => $processedUrl,
+            'watermark_applied' => [
+                'opacity' => 0.7,
+                'position' => 'south_east',
+                'scale' => 0.25,
+            ],
+            'test' => 'watermark',
+        ]);
+    });
+
     // Test index with all available tests
     Route::get('/', function () {
         return response()->json([
@@ -239,6 +264,7 @@ Route::prefix('imgproxy-test')->group(function () {
                 '/imgproxy-test/error-handling' => 'Error handling testing',
                 '/imgproxy-test/performance' => 'Performance testing',
                 '/imgproxy-test/core-processing' => 'Core processing options',
+                '/imgproxy-test/watermark' => 'Watermarking options',
             ],
             'usage' => 'Visit any of the test endpoints to see ImgProxy in action',
             'visual_tests' => 'Visit /imgproxy-visual-test for browser-based visual testing',

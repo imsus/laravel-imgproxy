@@ -256,6 +256,43 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Watermarking -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium mb-3 text-gray-700">Watermarking</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <h4 class="font-medium mb-2">Default Watermark</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark()->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="Default Watermark" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Watermark (0.5 Opacity)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="0.5 Opacity" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Watermark Position (SE)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="South East" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Watermark Scale (0.5)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, null, 0, 0, 0.5)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="Scale 0.5" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Full Watermark Options</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.7, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST, 0, 0, 0.3)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="Full Options" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Top-Right Watermark</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.8, \Imsus\ImgProxy\Enums\Gravity::NORTH_EAST)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                                 alt="North East" class="border rounded shadow-sm w-full">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- API Test Links -->
@@ -291,6 +328,9 @@
                     </a>
                     <a href="/imgproxy-test/core-processing" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded block text-center transition">
                         Core Processing
+                    </a>
+                    <a href="/imgproxy-test/watermark" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded block text-center transition">
+                        Watermarking
                     </a>
                 </div>
             </div>

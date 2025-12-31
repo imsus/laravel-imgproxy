@@ -362,6 +362,53 @@ class ImgProxy
     }
 
     /**
+     * Add a watermark image.
+     *
+     * Format: wm:opacity:position:x_offset:y_offset:scale
+     *
+     * @param  float  $opacity  Watermark opacity (0.0 to 1.0), defaults to 0.5
+     * @param  Gravity|null  $position  Watermark position, defaults to center
+     * @param  int  $xOffset  X offset in pixels
+     * @param  int  $yOffset  Y offset in pixels
+     * @param  float  $scale  Scale factor relative to result image, defaults to 0 (no scaling)
+     */
+    public function watermark(
+        float $opacity = 0.5,
+        ?Gravity $position = null,
+        int $xOffset = 0,
+        int $yOffset = 0,
+        float $scale = 0
+    ): self {
+        if ($opacity < 0 || $opacity > 1) {
+            throw new \InvalidArgumentException('Watermark opacity must be between 0.0 and 1.0');
+        }
+
+        if ($scale < 0) {
+            throw new \InvalidArgumentException('Watermark scale must be 0 or greater');
+        }
+
+        $position = $position ?? Gravity::CENTER;
+        $this->options['wm'] = "{$opacity}:{$position->value}:{$xOffset}:{$yOffset}:{$scale}";
+
+        return $this;
+    }
+
+    /**
+     * Use a custom watermark from URL.
+     *
+     * The URL should be base64 encoded.
+     *
+     * @param  string  $url  URL of the custom watermark image
+     */
+    public function watermarkUrl(string $url): self
+    {
+        $encodedUrl = rtrim(strtr(base64_encode($url), '+/', '-_'), '=');
+        $this->options['wmu'] = $encodedUrl;
+
+        return $this;
+    }
+
+    /**
      * Set the processing string.
      *
      * @param  string  $processing_options  The processing string to be used
