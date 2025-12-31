@@ -448,6 +448,27 @@ class ImgProxy
         return "{$this->endpoint}/{$signature}/{$path}";
     }
 
+    /**
+     * Create a copy of the current builder with all options preserved.
+     *
+     * @return self A new ImgProxy instance with the same options
+     */
+    public function copy(): self
+    {
+        $copy = new self;
+        $copy->endpoint = $this->endpoint;
+        $copy->key = $this->key;
+        $copy->salt = $this->salt;
+        $copy->source_url = $this->source_url;
+        $copy->source_url_mode = $this->source_url_mode;
+        $copy->default_output_extension = $this->default_output_extension;
+        $copy->overridden_extension = $this->overridden_extension;
+        $copy->options = $this->options;
+        $copy->processing_options = $this->processing_options;
+
+        return $copy;
+    }
+
     private function validateSourceUrl(): void
     {
         if (empty($this->source_url)) {
