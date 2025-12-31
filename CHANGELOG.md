@@ -2,6 +2,38 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.6.0 - 2025-12-31
+
+### Added
+
+- Gravity System - New Gravity enum with 9 positions:
+  - ce (center), n (north), s (south), e (east), w (west)
+  - ne, se, sw, nw (corners)
+  
+- `setGravity(Gravity $g)` - Set gravity for fill/crop positioning `(g:)`
+- `crop(int $w, int $h, ?Gravity $g)` - Crop with gravity `(c:w:h:g)`
+- `default_gravity` config - Via `IMGPROXY_DEFAULT_GRAVITY` env
+- Visual workbench tests - Live demos for gravity/crop
+
+### Changed
+
+- Test reorganization - Split `ImgProxyTest.php` into focused files:
+  - `UrlGenerationTest`, `ValidationTest`, `S3UrlTest`, `ExceptionTest`, `EffectsTest`
+  
+
+### Fixed
+
+- CI workflow - Removed explicit nesbot/carbon to avoid security advisory conflicts
+- PHPStan config - Include Larastan extension
+
+### Stats
+
+- 71 tests (was 39)
+- 195 assertions (was 145)
+- All tests passing
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.5.0...v0.6.0
+
 ## v0.5.0 - 2025-12-31
 
 ### What's Changed
