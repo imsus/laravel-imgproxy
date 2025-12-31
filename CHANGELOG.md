@@ -2,6 +2,22 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.5.0 - 2025-12-31
+
+### What's Changed
+
+* chore(deps): bump stefanzweifel/git-auto-commit-action from 5 to 6 by @dependabot[bot] in https://github.com/imsus/laravel-imgproxy/pull/5
+* chore(deps): bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/imsus/laravel-imgproxy/pull/6
+* Support s3:// source URLs by @yoomarket in https://github.com/imsus/laravel-imgproxy/pull/12 continued on #13
+* chore(deps): bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/imsus/laravel-imgproxy/pull/10
+* chore(deps): bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/imsus/laravel-imgproxy/pull/9
+
+### New Contributors
+
+* @yoomarket made their first contribution in https://github.com/imsus/laravel-imgproxy/pull/12
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.4.0...v0.5.0
+
 ## v0.4.0 - 2025-07-18
 
 ### 🚀 Major Features
