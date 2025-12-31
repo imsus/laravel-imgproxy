@@ -15,10 +15,10 @@ v0.4.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 → v0.9.0 → v1.0.0
 - Clean up empty directories
 
 ### Tasks
-- [ ] `SECURITY.md` - Security policy
-- [ ] `CONTRIBUTING.md` - Contribution guidelines
-- [ ] `CODE_OF_CONDUCT.md` - Community standards
-- [ ] Remove or populate empty `resources/views/` and `database/factories/`
+- [x] `SECURITY.md` - Security policy
+- [x] `CONTRIBUTING.md` - Contribution guidelines
+- [x] `CODE_OF_CONDUCT.md` - Community standards
+- [x] Remove or populate empty `resources/views/` and `database/factories/`
 
 ---
 
@@ -28,16 +28,16 @@ v0.4.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 → v0.9.0 → v1.0.0
 - Add gravity system for crop/fill positioning
 
 ### New Files
-- `src/Enums/Gravity.php`
+- [x] `src/Enums/Gravity.php`
 
 ### New Methods
 | Method | ImgProxy | Description |
 |--------|----------|-------------|
-| `gravity(Gravity $g)` | `g:` | Set gravity |
-| `crop(int $w, int $h, ?Gravity $g = null)` | `c:w:h:g` | Crop to size |
+| [x] `setGravity(Gravity $g)` | `g:` | Set gravity |
+| [x] `crop(int $w, int $h, ?Gravity $g = null)` | `c:w:h:g` | Crop to size |
 
 ### Config Changes
-- Add `'default_gravity' => 'ce'`
+- [x] Add `'default_gravity' => 'ce'`
 
 ---
 

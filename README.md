@@ -16,7 +16,7 @@ A comprehensive Laravel package for [ImgProxy](https://imgproxy.net/) integratio
 -   📐 **Flexible Resizing** - Multiple resize modes with DPR support
 -   🔧 **Laravel Integration** - Service provider, facade, and helper function
 -   ✅ **Type Safe** - PHP 8.2+ enums and comprehensive validation
--   🧪 **Well Tested** - 39+ tests with workbench integration & visual testing
+-   🧪 **Well Tested** - 71+ tests with workbench integration & visual testing
 
 ## Installation
 
@@ -589,10 +589,13 @@ class ImageProcessor
 composer test
 
 # Run only unit tests
-composer test --filter=ImgProxyTest
+composer test --filter=Unit
 
-# Run only integration tests  
+# Run only integration tests
 composer test --filter=WorkbenchIntegrationTest
+
+# Run specific test file
+composer test --filter=UrlGenerationTest
 
 # Run with coverage
 composer test-coverage
@@ -640,9 +643,16 @@ The visual test page includes:
 
 ### Test Coverage
 
-The package includes **39 comprehensive tests** with **145 assertions** covering:
+The package includes **71 comprehensive tests** with **195 assertions** covering:
 
-- ✅ **Unit Tests** (26 tests) - Core functionality, validation, edge cases
+- ✅ **Unit Tests** (50 tests) - Organized by functionality:
+  - `UrlGenerationTest` - Signed URLs, helper, fluent methods
+  - `ValidationTest` - DPR, quality, blur, sharpen, brightness, contrast, saturation
+  - `S3UrlTest` - S3 URL handling
+  - `ExceptionTest` - Invalid hex key/salt exceptions
+  - `EffectsTest` - Quality and effects in URL building
+  - `GravityEnumTest` - Gravity enum cases and defaults
+  - `GravityMethodsTest` - gravity() and crop() methods
 - ✅ **Integration Tests** (13 tests) - Laravel environment, HTTP endpoints, service provider registration
 - ✅ **Architecture Tests** (7 tests) - Code structure, security, conventions
 - ✅ **Visual Tests** - Browser-based real image processing validation

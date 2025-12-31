@@ -113,6 +113,55 @@
                     </div>
                 </div>
 
+                <!-- Gravity Options -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium mb-3 text-gray-700">Gravity Options (300x300 Fill)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <h4 class="font-medium mb-2">Center (ce)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(300)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setGravity(\Imsus\ImgProxy\Enums\Gravity::CENTER)->build() }}"
+                                 alt="Center" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">North East (ne)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(300)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setGravity(\Imsus\ImgProxy\Enums\Gravity::NORTH_EAST)->build() }}"
+                                 alt="North East" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">South West (sw)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(300)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setGravity(\Imsus\ImgProxy\Enums\Gravity::SOUTH_WEST)->build() }}"
+                                 alt="South West" class="border rounded shadow-sm w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop with Gravity -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium mb-3 text-gray-700">Crop with Gravity (200x200)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <h4 class="font-medium mb-2">Center</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->crop(200, 200, \Imsus\ImgProxy\Enums\Gravity::CENTER)->build() }}"
+                                 alt="Crop Center" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">North</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->crop(200, 200, \Imsus\ImgProxy\Enums\Gravity::NORTH)->build() }}"
+                                 alt="Crop North" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">South East</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->crop(200, 200, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST)->build() }}"
+                                 alt="Crop South East" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">North West</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->crop(200, 200, \Imsus\ImgProxy\Enums\Gravity::NORTH_WEST)->build() }}"
+                                 alt="Crop North West" class="border rounded shadow-sm w-full">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Visual Effects -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium mb-3 text-gray-700">Visual Effects</h3>
