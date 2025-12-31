@@ -2,7 +2,6 @@
 
 namespace Imsus\ImgProxy;
 
-use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -12,36 +11,21 @@ class ImgProxyServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('laravel-imgproxy')
-            ->hasConfigFile();
+            ->hasConfigFile()
+            ->hasViewComponents('imgproxy', Components\Img::class)
+            ->hasViewComponents('imgproxy', Components\Picture::class);
     }
 
     public function register()
     {
         parent::register();
 
-        $this->app->singleton(ImgProxy::class, function ($app) {
-            return new ImgProxy;
-        });
-
-        $this->loadHelpers();
-        $this->loadViews();
-        $this->loadComponents();
+        $this->app->singleton(ImgProxy::class, fn () => new ImgProxy);
+        $this->registerHelpers();
     }
 
-    protected function loadHelpers(): void
+    protected function registerHelpers(): void
     {
         require_once __DIR__.'/helpers.php';
-    }
-
-    protected function loadViews(): void
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'imgproxy');
-    }
-
-    protected function loadComponents(): void
-    {
-        $this->loadViewComponentsAs('imgproxy', [
-            Components\ImgProxyComponent::class,
-        ]);
     }
 }

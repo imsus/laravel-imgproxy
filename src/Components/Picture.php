@@ -1,0 +1,84 @@
+<?php
+
+namespace Imsus\ImgProxy\Components;
+
+use Illuminate\View\Component;
+use Imsus\ImgProxy\Enums\Gravity;
+use Imsus\ImgProxy\Enums\OutputExtension;
+use Imsus\ImgProxy\Enums\ResizeType;
+
+class Picture extends Component
+{
+    /**
+     * Create a new component instance.
+     */
+    public function __construct(
+        public string $src,
+        public ?string $alt = null,
+        public ?int $width = null,
+        public ?int $height = null,
+        public ?ResizeType $resizeType = null,
+        public array $formats = [OutputExtension::WEBP, OutputExtension::AVIF, OutputExtension::JPEG],
+        public int $quality = 75,
+        public ?int $dpr = null,
+        public ?Gravity $gravity = null,
+        public bool $lazy = true,
+        public ?string $sizes = null,
+    ) {}
+
+    /**
+     * Build the ImgProxy URLs for each format.
+     */
+    public function buildUrls(): array
+    {
+        $urls = [];
+
+        foreach ($this->formats as $format) {
+            $url = imgproxy($this->src);
+
+            if ($this->width !== null) {
+                $url->setWidth($this->width);
+            }
+
+            if ($this->height !== null) {
+                $url->setHeight($this->height);
+            }
+
+            if ($this->resizeType !== null) {
+                $url->setResizeType($this->resizeType);
+            }
+
+            $url->setExtension($format);
+            $url->setQuality($this->quality);
+
+            if ($this->dpr !== null) {
+                $url->setDpr($this->dpr);
+            }
+
+            if ($this->gravity !== null) {
+                $url->setGravity($this->gravity);
+            }
+
+            $urls[$format->value] = $url->build();
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Get the fallback image URL (last format).
+     */
+    public function fallbackUrl(): string
+    {
+        $urls = $this->buildUrls();
+        return end($urls);
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): \Illuminate\View\View
+    {
+        return view('imgproxy::picture');
+    }
+}

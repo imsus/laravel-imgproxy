@@ -7,37 +7,27 @@ use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 
-class ImgProxyComponent extends Component
+class Img extends Component
 {
     /**
      * Create a new component instance.
-     *
-     * @param  string  $src  Source image URL
-     * @param  int|null  $width  Target width in pixels
-     * @param  int|null  $height  Target height in pixels
-     * @param  ResizeType|null  $resizeType  Resize mode
-     * @param  OutputExtension|null  $format  Output format
-     * @param  int  $quality  Compression quality (0-100)
-     * @param  int|null  $dpr  Device pixel ratio
-     * @param  Gravity|null  $gravity  Gravity position for crop/fill
-     * @param  bool  $lazy  Enable lazy loading
      */
     public function __construct(
         public string $src,
+        public ?string $alt = null,
         public ?int $width = null,
         public ?int $height = null,
         public ?ResizeType $resizeType = null,
         public ?OutputExtension $format = null,
-        public int $quality = 85,
+        public int $quality = 75,
         public ?int $dpr = null,
         public ?Gravity $gravity = null,
         public bool $lazy = true,
+        public ?string $sizes = null,
     ) {}
 
     /**
      * Build the ImgProxy URL from the component attributes.
-     *
-     * @return string
      */
     public function buildUrl(): string
     {
@@ -76,11 +66,9 @@ class ImgProxyComponent extends Component
 
     /**
      * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View
      */
     public function render(): \Illuminate\View\View
     {
-        return view('imgproxy::imgproxy');
+        return view('imgproxy::img');
     }
 }

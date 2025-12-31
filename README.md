@@ -29,7 +29,13 @@ composer require imsus/laravel-imgproxy
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="imgproxy-config"
+php artisan vendor:publish --tag="laravel-imgproxy-config"
+```
+
+You can publish the blade component with:
+
+```bash
+php artisan vendor:publish --tag="laravel-imgproxy-components"
 ```
 
 This is the contents of the published config file:
@@ -93,6 +99,74 @@ $url = imgproxy('https://example.com/image.jpg')
     ->setHeight(200)
     ->build();
 ```
+
+### Blade Components
+
+The package includes two Blade components inspired by Next.js Image.
+
+#### Img Component
+
+```blade
+<x-imgproxy-img
+    src="https://example.com/image.jpg"
+    alt="Description"
+    :width="300"
+    :height="200"
+    resize-type="fill"
+    format="webp"
+    :quality="75"
+    :dpr="2"
+    gravity="ce"
+    lazy
+    sizes="(max-width: 768px) 100vw, 50vw"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | Required | Source image URL |
+| `alt` | `string` | Required | Alt text for accessibility |
+| `width` | `int?` | `null` | Target width in pixels |
+| `height` | `int?` | `null` | Target height in pixels |
+| `resizeType` | `ResizeType?` | `null` | Resize mode (fit, fill, force, etc.) |
+| `format` | `OutputExtension?` | `null` | Output format (jpeg, png, webp, avif) |
+| `quality` | `int` | `75` | Compression quality (0-100) |
+| `dpr` | `int?` | `null` | Device pixel ratio |
+| `gravity` | `Gravity?` | `null` | Gravity position for crop/fill |
+| `lazy` | `bool` | `true` | Enable lazy loading |
+| `sizes` | `string?` | `null` | HTML sizes attribute |
+
+#### Picture Component
+
+For responsive images with multiple formats:
+
+```blade
+<x-imgproxy-picture
+    src="https://example.com/image.jpg"
+    alt="Description"
+    :width="800"
+    :height="600"
+    :formats="['webp', 'avif', 'jpeg']"
+    resize-type="fill"
+    :quality="75"
+    lazy
+    sizes="(max-width: 768px) 100vw, 50vw"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | Required | Source image URL |
+| `alt` | `string` | Required | Alt text for accessibility |
+| `width` | `int?` | `null` | Target width in pixels |
+| `height` | `int?` | `null` | Target height in pixels |
+| `formats` | `array` | `['webp', 'avif', 'jpeg']` | Output formats in priority order |
+| `resizeType` | `ResizeType?` | `null` | Resize mode (fit, fill, force, etc.) |
+| `quality` | `int` | `75` | Compression quality (0-100) |
+| `dpr` | `int?` | `null` | Device pixel ratio |
+| `gravity` | `Gravity?` | `null` | Gravity position for crop/fill |
+| `lazy` | `bool` | `true` | Enable lazy loading |
+| `sizes` | `string?` | `null` | HTML sizes attribute |
 
 ### Resizing & Formatting
 
