@@ -36,8 +36,6 @@ class ImgProxyComponent extends Component
 
     /**
      * Build the ImgProxy URL from the component attributes.
-     *
-     * @return string
      */
     public function buildUrl(): string
     {
@@ -76,8 +74,6 @@ class ImgProxyComponent extends Component
 
     /**
      * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View
      */
     public function render(): \Illuminate\View\View
     {

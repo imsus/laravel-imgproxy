@@ -2,8 +2,6 @@
 
 namespace Imsus\ImgProxy\Tests\Unit;
 
-use Imsus\ImgProxy\ImgProxy;
-
 describe('Clone Method', function () {
     beforeEach(function () {
         $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
