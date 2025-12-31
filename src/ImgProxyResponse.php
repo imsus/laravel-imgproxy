@@ -27,7 +27,6 @@ class ImgProxyResponse
      * Create an ImgProxyResponse from a URL.
      *
      * @param  string  $url  The ImgProxy URL
-     * @return self
      */
     public static function make(string $url): self
     {
@@ -39,7 +38,6 @@ class ImgProxyResponse
      *
      * @param  int  $status  HTTP status code (default 302)
      * @param  array  $additionalHeaders  Additional headers to include
-     * @return RedirectResponse
      */
     public function redirect(int $status = 302, array $additionalHeaders = []): RedirectResponse
     {
@@ -52,8 +50,6 @@ class ImgProxyResponse
 
     /**
      * Create a response that streams the URL as text.
-     *
-     * @return Response
      */
     public function stream(): Response
     {
@@ -64,8 +60,6 @@ class ImgProxyResponse
 
     /**
      * Get the URL.
-     *
-     * @return string
      */
     public function getUrl(): string
     {
@@ -74,8 +68,6 @@ class ImgProxyResponse
 
     /**
      * Get the HTTP status code.
-     *
-     * @return int
      */
     public function getStatus(): int
     {
@@ -84,8 +76,6 @@ class ImgProxyResponse
 
     /**
      * Get the headers.
-     *
-     * @return array
      */
     public function getHeaders(): array
     {
