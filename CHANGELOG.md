@@ -2,6 +2,43 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.8.0 - 2025-12-31
+
+### Added
+
+2 new watermark methods:
+
+| Method                                                     | Format                        | Description                                  |
+|------------------------------------------------------------|-------------------------------|----------------------------------------------|
+| watermark($opacity, $position, $xOffset, $yOffset, $scale) | wm:opacity:position:x:y:scale | Built-in watermark with configurable options |
+| watermarkUrl($url)                                         | wmu:<base64-encoded-url>      | Custom watermark from URL                    |
+
+watermark() Parameters:
+
+- $opacity (float, default 0.5) - Watermark opacity (0.0-1.0)
+- $position (Gravity, default CENTER) - Position using existing Gravity enum
+- $xOffset (int, default 0) - X axis offset in pixels
+- $yOffset (int, default 0) - Y axis offset in pixels
+- $scale (float, default 0) - Scale factor relative to result image
+
+Gravity Positions Supported:
+
+- ce (center), n (north), s (south), e (east), w (west)
+- ne (north-east), nw (north-west), se (south-east), sw (south-west)
+
+### Testing
+
+- 25 new unit tests in `tests/Unit/WatermarkTest.php`
+- Workbench API endpoint: `/imgproxy-test/watermark`
+- Visual tests in `/imgproxy-visual-test`
+
+### Stats
+
+- Tests: 123 total (was 107)
+- Assertions: 307 total (was 265)
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.7.0...v0.8.0
+
 ## v0.7.0 - 2025-12-31
 
 ### Added
