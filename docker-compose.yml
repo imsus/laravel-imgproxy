@@ -1,0 +1,11 @@
+services:
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - IMGPROXY_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - IMGPROXY_SALT=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      - IMGPROXY_GZIP_PROGRESSIVE=true
+      - IMGPROXY_MAX_SRC_REQUESTS=10
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+# Laravel workbench environment
+.env
+.phpunit*
+.php-cs-fixer.cache
+vendor/
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
