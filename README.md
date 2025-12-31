@@ -679,7 +679,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Please review [SECURITY](SECURITY.md) for details on how to report security vulnerabilities.
 
 ## Credits
 
