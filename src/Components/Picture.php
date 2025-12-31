@@ -71,6 +71,7 @@ class Picture extends Component
     public function fallbackUrl(): string
     {
         $urls = $this->buildUrls();
+
         return end($urls);
     }
 
