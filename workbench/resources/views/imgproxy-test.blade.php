@@ -12,14 +12,14 @@
             <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">
                 ImgProxy Laravel Package Test Suite
             </h1>
-            
+
             <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
                 <h2 class="text-2xl font-semibold mb-4 text-gray-700">Visual Image Processing Tests</h2>
                 <p class="text-gray-600 mb-6">
                     Below are real-time examples of ImgProxy processing using the Laravel package.
                     All images are processed through your configured ImgProxy server.
                 </p>
-                
+
                 <!-- Original Image -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium mb-3 text-gray-700">Original Image</h3>
@@ -30,7 +30,7 @@
                 <!-- Basic Resizing -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium mb-3 text-gray-700">Basic Resizing (400x300)</h3>
-                    <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->setHeight(300)->build() }}" 
+                    <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->setHeight(300)->build() }}"
                          alt="Resized" class="border rounded shadow-sm">
                     <p class="text-sm text-gray-500 mt-2">
                         Code: <code class="bg-gray-100 px-1 rounded">imgproxy($url)->setWidth(400)->setHeight(300)->build()</code>
@@ -43,17 +43,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Low Quality (30%)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(30)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(30)->build() }}"
                                  alt="Low Quality" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Medium Quality (70%)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(70)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(70)->build() }}"
                                  alt="Medium Quality" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">High Quality (95%)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(95)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setQuality(95)->build() }}"
                                  alt="High Quality" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
@@ -65,22 +65,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">JPEG</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::JPEG)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::JPEG)->build() }}"
                                  alt="JPEG" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">PNG</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::PNG)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::PNG)->build() }}"
                                  alt="PNG" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">WebP</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::WEBP)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::WEBP)->build() }}"
                                  alt="WebP" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">AVIF</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::AVIF)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(250)->setExtension(\Imsus\ImgProxy\Enums\OutputExtension::AVIF)->build() }}"
                                  alt="AVIF" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
@@ -92,22 +92,22 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Fit</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FIT)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FIT)->build() }}"
                                  alt="Fit" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Fill</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->build() }}"
                                  alt="Fill" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Force</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FORCE)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FORCE)->build() }}"
                                  alt="Force" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Auto</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::AUTO)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::AUTO)->build() }}"
                                  alt="Auto" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
@@ -119,17 +119,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Blur Effect</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setBlur(2.0)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setBlur(2.0)->build() }}"
                                  alt="Blur" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Sharpen Effect</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setSharpen(2.0)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setSharpen(2.0)->build() }}"
                                  alt="Sharpen" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">High Saturation</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setSaturation(2.0)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setSaturation(2.0)->build() }}"
                                  alt="Saturated" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
@@ -141,13 +141,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Portrait Enhancement</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setBrightness(10)->setContrast(1.1)->setSaturation(1.05)->setSharpen(0.8)->setQuality(92)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setBrightness(10)->setContrast(1.1)->setSaturation(1.05)->setSharpen(0.8)->setQuality(92)->build() }}"
                                  alt="Enhanced Portrait" class="border rounded shadow-sm w-full">
                             <p class="text-xs text-gray-500 mt-1">Enhanced brightness, contrast, saturation, and sharpening</p>
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Vintage Effect</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setSaturation(0.7)->setContrast(0.9)->setBrightness(-10)->setQuality(85)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setSaturation(0.7)->setContrast(0.9)->setBrightness(-10)->setQuality(85)->build() }}"
                                  alt="Vintage Effect" class="border rounded shadow-sm w-full">
                             <p class="text-xs text-gray-500 mt-1">Reduced saturation, lower contrast, and decreased brightness</p>
                         </div>
@@ -160,12 +160,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Standard DPI (1x)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(200)->setHeight(150)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(200)->setHeight(150)->build() }}"
                                  alt="Standard DPI" class="border rounded shadow-sm">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">High DPI (2x)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(200)->setHeight(150)->setDpr(2)->build() }}" 
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(200)->setHeight(150)->setDpr(2)->build() }}"
                                  alt="High DPI" class="border rounded shadow-sm" style="max-width: 200px;">
                         </div>
                     </div>
