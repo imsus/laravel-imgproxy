@@ -16,7 +16,7 @@ A comprehensive Laravel package for [ImgProxy](https://imgproxy.net/) integratio
 -   📐 **Flexible Resizing** - Multiple resize modes with DPR support
 -   🔧 **Laravel Integration** - Service provider, facade, and helper function
 -   ✅ **Type Safe** - PHP 8.2+ enums and comprehensive validation
--   🧪 **Well Tested** - 71+ tests with workbench integration & visual testing
+-   🧪 **Well Tested** - 156 tests with workbench integration & visual testing
 
 ## Installation
 
@@ -717,9 +717,9 @@ The visual test page includes:
 
 ### Test Coverage
 
-The package includes **71 comprehensive tests** with **195 assertions** covering:
+The package includes **156 comprehensive tests** with **376 assertions** covering:
 
-- ✅ **Unit Tests** (50 tests) - Organized by functionality:
+- ✅ **Unit Tests** (130 tests) - Organized by functionality:
   - `UrlGenerationTest` - Signed URLs, helper, fluent methods
   - `ValidationTest` - DPR, quality, blur, sharpen, brightness, contrast, saturation
   - `S3UrlTest` - S3 URL handling
@@ -727,10 +727,12 @@ The package includes **71 comprehensive tests** with **195 assertions** covering
   - `EffectsTest` - Quality and effects in URL building
   - `GravityEnumTest` - Gravity enum cases and defaults
   - `GravityMethodsTest` - gravity() and crop() methods
-- ✅ **Integration Tests** (13 tests) - Laravel environment, HTTP endpoints, service provider registration
+  - `ImgTest` - Img blade component
+  - `PictureTest` - Picture blade component
+- ✅ **Integration Tests** (15 tests) - Laravel environment, HTTP endpoints, service provider registration
 - ✅ **Architecture Tests** (7 tests) - Code structure, security, conventions
 - ✅ **Visual Tests** - Browser-based real image processing validation
-- ✅ **Performance Tests** - URL generation speed benchmarks (>1000 URLs/second)
+- ✅ **Performance Tests** - URL generation speed benchmarks (>100 URLs/second)
 
 ### Sample Test Responses
 

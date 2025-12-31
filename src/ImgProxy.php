@@ -121,6 +121,8 @@ class ImgProxy
      * Set the device pixel ratio (DPR) for the image.
      *
      * @param  int  $dpr  The device pixel ratio (1-8)
+     *
+     * @throws \InvalidArgumentException If DPR is not between 1 and 8
      */
     public function setDpr(int $dpr): self
     {
@@ -165,6 +167,8 @@ class ImgProxy
      * Set the image quality (0-100).
      *
      * @param  int  $quality  The quality level (0-100)
+     *
+     * @throws \InvalidArgumentException If quality is not between 0 and 100
      */
     public function setQuality(int $quality): self
     {
@@ -181,6 +185,8 @@ class ImgProxy
      * Set the blur effect strength.
      *
      * @param  float  $sigma  Blur sigma (0.0 and above)
+     *
+     * @throws \InvalidArgumentException If sigma is negative
      */
     public function setBlur(float $sigma): self
     {
@@ -197,6 +203,8 @@ class ImgProxy
      * Set the sharpen effect strength.
      *
      * @param  float  $sigma  Sharpen sigma (0.0 and above)
+     *
+     * @throws \InvalidArgumentException If sigma is negative
      */
     public function setSharpen(float $sigma): self
     {
@@ -213,6 +221,8 @@ class ImgProxy
      * Set the brightness adjustment (-255 to 255).
      *
      * @param  int  $brightness  Brightness adjustment (-255 to 255)
+     *
+     * @throws \InvalidArgumentException If brightness is not between -255 and 255
      */
     public function setBrightness(int $brightness): self
     {
@@ -229,6 +239,8 @@ class ImgProxy
      * Set the contrast adjustment (0.0 and above).
      *
      * @param  float  $contrast  Contrast multiplier (0.0 and above)
+     *
+     * @throws \InvalidArgumentException If contrast is negative
      */
     public function setContrast(float $contrast): self
     {
@@ -245,6 +257,8 @@ class ImgProxy
      * Set the saturation adjustment (0.0 and above).
      *
      * @param  float  $saturation  Saturation multiplier (0.0 and above)
+     *
+     * @throws \InvalidArgumentException If saturation is negative
      */
     public function setSaturation(float $saturation): self
     {
@@ -261,6 +275,8 @@ class ImgProxy
      * Add padding to the image.
      *
      * @param  int  $padding  Padding size in pixels (0 or greater)
+     *
+     * @throws \InvalidArgumentException If padding is negative
      */
     public function padding(int $padding): self
     {
@@ -277,6 +293,8 @@ class ImgProxy
      * Set the background color.
      *
      * @param  string  $hex  Hex color without the hash (e.g., 'FF5733')
+     *
+     * @throws \InvalidArgumentException If hex is not valid 6 digits
      */
     public function background(string $hex): self
     {
@@ -305,6 +323,8 @@ class ImgProxy
      * Rotate the image by the specified degrees.
      *
      * @param  int  $degrees  Rotation angle in degrees (0-360)
+     *
+     * @throws \InvalidArgumentException If degrees is not between 0 and 360
      */
     public function rotate(int $degrees): self
     {
@@ -333,6 +353,8 @@ class ImgProxy
      * Trim borders from the image.
      *
      * @param  int  $threshold  Trim threshold (0 or greater)
+     *
+     * @throws \InvalidArgumentException If threshold is negative
      */
     public function trim(int $threshold = 10): self
     {
@@ -349,6 +371,8 @@ class ImgProxy
      * Pixelate the image.
      *
      * @param  int  $size  Pixel size (0 or greater)
+     *
+     * @throws \InvalidArgumentException If size is negative
      */
     public function pixelate(int $size): self
     {
@@ -371,6 +395,8 @@ class ImgProxy
      * @param  int  $xOffset  X offset in pixels
      * @param  int  $yOffset  Y offset in pixels
      * @param  float  $scale  Scale factor relative to result image, defaults to 0 (no scaling)
+     *
+     * @throws \InvalidArgumentException If opacity or scale is out of range
      */
     public function watermark(
         float $opacity = 0.5,
