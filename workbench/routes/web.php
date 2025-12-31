@@ -193,6 +193,38 @@ Route::prefix('imgproxy-test')->group(function () {
         ]);
     });
 
+    // Core processing test
+    Route::get('/core-processing', function () {
+        $imageUrl = 'https://picsum.photos/800/600';
+
+        $processedUrl = imgproxy($imageUrl)
+            ->setWidth(500)
+            ->setHeight(400)
+            ->padding(20)
+            ->background('FF5733')
+            ->autoRotate(true)
+            ->rotate(90)
+            ->stripMetadata(true)
+            ->trim(15)
+            ->pixelate(10)
+            ->build();
+
+        return response()->json([
+            'original' => $imageUrl,
+            'processed' => $processedUrl,
+            'processing_applied' => [
+                'padding' => 20,
+                'background' => '#FF5733',
+                'auto_rotate' => true,
+                'rotate' => 90,
+                'strip_metadata' => true,
+                'trim' => 15,
+                'pixelate' => 10,
+            ],
+            'test' => 'core_processing',
+        ]);
+    });
+
     // Test index with all available tests
     Route::get('/', function () {
         return response()->json([
@@ -206,6 +238,7 @@ Route::prefix('imgproxy-test')->group(function () {
                 '/imgproxy-test/config' => 'Configuration testing',
                 '/imgproxy-test/error-handling' => 'Error handling testing',
                 '/imgproxy-test/performance' => 'Performance testing',
+                '/imgproxy-test/core-processing' => 'Core processing options',
             ],
             'usage' => 'Visit any of the test endpoints to see ImgProxy in action',
             'visual_tests' => 'Visit /imgproxy-visual-test for browser-based visual testing',

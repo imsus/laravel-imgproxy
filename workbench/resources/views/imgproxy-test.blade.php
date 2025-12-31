@@ -219,6 +219,43 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Core Processing Options -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium mb-3 text-gray-700">Core Processing Options</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <h4 class="font-medium mb-2">Padding (20px)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->padding(20)->build() }}"
+                                 alt="Padding" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Background Color</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(200)->background('FF5733')->build() }}"
+                                 alt="Background" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Rotate (90deg)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->rotate(90)->build() }}"
+                                 alt="Rotate" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Pixelate (10px)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->pixelate(10)->build() }}"
+                                 alt="Pixelate" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Pixelate (20px)</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->pixelate(20)->build() }}"
+                                 alt="Pixelate 20" class="border rounded shadow-sm w-full">
+                        </div>
+                        <div>
+                            <h4 class="font-medium mb-2">Combined Processing</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->padding(15)->rotate(45)->pixelate(8)->build() }}"
+                                 alt="Combined" class="border rounded shadow-sm w-full">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- API Test Links -->
@@ -251,6 +288,9 @@
                     </a>
                     <a href="/imgproxy-test/performance" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded block text-center transition">
                         Performance Test
+                    </a>
+                    <a href="/imgproxy-test/core-processing" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded block text-center transition">
+                        Core Processing
                     </a>
                 </div>
             </div>

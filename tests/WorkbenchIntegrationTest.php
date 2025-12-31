@@ -184,7 +184,7 @@ it('can access workbench test index endpoint', function () {
         ]);
 
     $data = $response->json();
-    expect($data['available_tests'])->toHaveCount(8)
+    expect($data['available_tests'])->toHaveCount(9)
         ->and($data['message'])->toContain('ImgProxy Laravel Package Test Suite');
 });
 
@@ -218,4 +218,30 @@ it('can access imgproxy config in workbench', function () {
     expect(config('imgproxy.endpoint'))->toBe('http://localhost:8080')
         ->and(config('imgproxy.default_source_url_mode'))->toBe('encoded')
         ->and(config('imgproxy.default_output_extension'))->toBe('jpeg');
+});
+
+it('can make HTTP request to workbench core processing test endpoint', function () {
+    $response = $this->get('/imgproxy-test/core-processing');
+
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'original',
+            'processed',
+            'processing_applied',
+            'test',
+        ])
+        ->assertJson([
+            'test' => 'core_processing',
+        ]);
+
+    $data = $response->json();
+    expect($data['processed'])->toContain('width:500')
+        ->and($data['processed'])->toContain('height:400')
+        ->and($data['processed'])->toContain('pd:20')
+        ->and($data['processed'])->toContain('bg:#FF5733')
+        ->and($data['processed'])->toContain('ar:1')
+        ->and($data['processed'])->toContain('rot:90')
+        ->and($data['processed'])->toContain('sm:1')
+        ->and($data['processed'])->toContain('trim:15')
+        ->and($data['processed'])->toContain('pix:10');
 });

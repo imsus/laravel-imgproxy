@@ -258,6 +258,110 @@ class ImgProxy
     }
 
     /**
+     * Add padding to the image.
+     *
+     * @param  int  $padding  Padding size in pixels (0 or greater)
+     */
+    public function padding(int $padding): self
+    {
+        if ($padding < 0) {
+            throw new \InvalidArgumentException('Padding must be 0 or greater');
+        }
+
+        $this->options['pd'] = $padding;
+
+        return $this;
+    }
+
+    /**
+     * Set the background color.
+     *
+     * @param  string  $hex  Hex color without the hash (e.g., 'FF5733')
+     */
+    public function background(string $hex): self
+    {
+        if (! preg_match('/^[0-9a-fA-F]{6}$/', $hex)) {
+            throw new \InvalidArgumentException('Background must be a valid 6-digit hex color');
+        }
+
+        $this->options['bg'] = "#{$hex}";
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable auto-rotation based on EXIF data.
+     *
+     * @param  bool  $autoRotate  Whether to auto-rotate the image
+     */
+    public function autoRotate(bool $autoRotate = true): self
+    {
+        $this->options['ar'] = $autoRotate ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Rotate the image by the specified degrees.
+     *
+     * @param  int  $degrees  Rotation angle in degrees (0-360)
+     */
+    public function rotate(int $degrees): self
+    {
+        if ($degrees < 0 || $degrees > 360) {
+            throw new \InvalidArgumentException('Rotation must be between 0 and 360 degrees');
+        }
+
+        $this->options['rot'] = $degrees;
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable stripping metadata from the image.
+     *
+     * @param  bool  $strip  Whether to strip metadata
+     */
+    public function stripMetadata(bool $strip = true): self
+    {
+        $this->options['sm'] = $strip ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Trim borders from the image.
+     *
+     * @param  int  $threshold  Trim threshold (0 or greater)
+     */
+    public function trim(int $threshold = 10): self
+    {
+        if ($threshold < 0) {
+            throw new \InvalidArgumentException('Trim threshold must be 0 or greater');
+        }
+
+        $this->options['trim'] = $threshold;
+
+        return $this;
+    }
+
+    /**
+     * Pixelate the image.
+     *
+     * @param  int  $size  Pixel size (0 or greater)
+     */
+    public function pixelate(int $size): self
+    {
+        if ($size < 0) {
+            throw new \InvalidArgumentException('Pixel size must be 0 or greater');
+        }
+
+        $this->options['pix'] = $size;
+
+        return $this;
+    }
+
+    /**
      * Set the processing string.
      *
      * @param  string  $processing_options  The processing string to be used
