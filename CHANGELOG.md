@@ -2,6 +2,114 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v0.9.0 - 2025-12-31
+
+### Overview
+
+Developer Experience improvements including a Blade component, builder cloning, and response factory for better DX.
+
+
+---
+
+#### New Features
+
+##### 1. Blade Component `<x-imgproxy>`
+
+Use Case: Quick image rendering in Blade templates without manually calling the helper.
+
+```blade
+{{-- Basic usage --}}
+<x-imgproxy src="{{ $product->image }}" width="200" />
+
+```
+```blade
+{{-- With multiple options --}}
+<x-imgproxy
+    src="{{ $product->image }}"
+    width="300"
+    height="200"
+    format="webp"
+    quality="90"
+    :resize-type="\Imsus\ImgProxy\Enums\ResizeType::FILL"
+    lazy
+    alt="{{ $product->name }}"
+/>
+
+```
+Benefit: Cleaner syntax, fewer method calls, auto lazy-loading, passes through additional HTML attributes.
+
+
+---
+
+##### 2. Builder Clone `->copy()`
+
+Use Case: Generate multiple URLs from the same base configuration without mutation.
+
+```php
+// Generate responsive image srcset
+$base = imgproxy($productImage)->setQuality(90);
+
+$thumbnail = $base->copy()->setWidth(150)->setHeight(150)->build();
+$medium = $base->copy()->setWidth(400)->build();
+$large = $base->copy()->setWidth(800)->build();
+$retina = $base->copy()->setWidth(800)->setDpr(2)->build();
+
+// Original remains unchanged
+$original = $base->build();
+
+```
+Benefit:
+
+- Avoids repeating configuration
+- Prevents accidental mutation
+- Cleaner code for multiple variants
+
+
+---
+
+##### 3. Response Factory `ImgProxyResponse`
+
+Use Case: Return ImgProxy URLs as HTTP responses for redirects or API endpoints.
+
+```php
+// Redirect to optimized image
+return ImgProxyResponse::make($url)->redirect();
+
+// Permanent redirect
+return ImgProxyResponse::make($url)->redirect(301);
+
+// API response with URL
+return response()->json([
+    'optimized_url' => ImgProxyResponse::make($url)->stream()->getContent()
+]);
+
+// With custom headers
+return ImgProxyResponse::make($url)->redirect(302, [
+    'X-Custom' => 'value'
+]);
+
+```
+Benefit:
+
+- Type-safe response handling
+- Useful for image CDN redirects
+- Clean separation of URL generation and response creation
+
+
+---
+
+#### Stats
+
+- Tests: 140 total (was 123)
+- Assertions: 336 total (was 307)
+- New files: 5
+- Modified files: 2
+
+
+---
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.8.0...v0.9.0
+
 ## v0.8.0 - 2025-12-31
 
 ### Added
