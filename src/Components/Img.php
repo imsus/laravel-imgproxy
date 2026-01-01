@@ -67,7 +67,7 @@ class Img extends Component
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): \Illuminate\View\View
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('imgproxy::img');
     }

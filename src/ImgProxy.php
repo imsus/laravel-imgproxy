@@ -25,7 +25,7 @@ class ImgProxy
 
     private ?OutputExtension $overridden_extension = null;
 
-    /** @var array<string, string | int> */
+    /** @var array<string, float|int|string> */
     private array $options = [];
 
     private ?string $processing_options = null;
@@ -606,7 +606,7 @@ class ImgProxy
      * Format: wm:opacity:position:x_offset:y_offset:scale
      *
      * @param  float  $opacity  Watermark opacity (0.0 to 1.0), defaults to 0.5
-     * @param  Gravity|string|null  $position  Watermark position (Gravity, 're' for repeat, 'ch' for chessboard), defaults to center
+     * @param  Gravity|string  $position  Watermark position (Gravity, 're' for repeat, 'ch' for chessboard), defaults to center
      * @param  float  $xOffset  X offset (absolute >=1 or relative <1)
      * @param  float  $yOffset  Y offset (absolute >=1 or relative <1)
      * @param  float  $scale  Scale factor relative to result image, defaults to 0 (no scaling)
