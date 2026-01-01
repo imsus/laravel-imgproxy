@@ -2,7 +2,6 @@
 
 namespace Imsus\ImgProxy\Tests\Unit;
 
-use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\ImgProxy;
 
 beforeEach(function () {
