@@ -2,6 +2,37 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v1.0.0 - 2026-01-01
+
+### New Features
+
+- ImgProxy Workbench: Added initial configuration files and routes for ImgProxy Workbench
+- Unit Tests: Added comprehensive unit tests for Img, Picture, and padding functionalities, including validation checks
+- Community Files: Added issue templates, security policy, and code of conduct documents
+- Documentation Infrastructure: Initialized package.json with Vue and VitePress dependencies for documentation site
+
+### Improvements
+
+- Laravel Version Support: Updated CI workflow to support Laravel 12.* and 11.*
+- Type Safety: Updated return type hints for render methods and corrected property type annotations
+- PHPStan: Refactored PHPStan configuration and dependencies; removed obsolete files
+- Documentation: Added image banner to README and standardized capitalization of "imgproxy" across documentation
+
+### Bug Fixes
+
+- Fixed image tag in README for responsive display
+
+### Maintenance
+
+- Added gh-pages branch for deploying documentation
+- Updated composer.json with support and funding information
+
+### Breaking Changes
+
+None.
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v0.10.0...v1.0.0
+
 ## v0.10.0 - 2026-01-01
 
 ### Breaking Changes
@@ -28,6 +59,7 @@ The `rotate()` method now accepts a `Rotation` enum instead of an integer:
 // After
 ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)
 
+
 ```
 Available values:
 
@@ -43,6 +75,7 @@ The `background()` method no longer includes the `#` prefix in the URL:
 ```php
 // Before - generated bg:#FF5733
 // After - generates bg:FF5733
+
 
 ```
 ### Bug Fixes
@@ -91,6 +124,7 @@ $this->loadViewsFrom(__DIR__.'/../resources/views', 'imgproxy');
 $this->loadViewComponentsAs('imgproxy', [Components\ImgProxyComponent::class]);
 
 
+
 ```
 ```php
 // After - Using package tools
@@ -98,6 +132,7 @@ $package
     ->hasConfigFile()
     ->hasViewComponents('imgproxy', Components\Img::class)
     ->hasViewComponents('imgproxy', Components\Picture::class);
+
 
 
 ```
@@ -123,6 +158,7 @@ Single image component inspired by Next.js Image.
     lazy
     sizes="(max-width: 768px) 100vw, 50vw"
 />
+
 
 
 ```
@@ -163,6 +199,7 @@ Responsive image with multiple format support (WebP, AVIF, JPEG).
 />
 
 
+
 ```
 Renders:
 
@@ -172,6 +209,7 @@ Renders:
     <source srcset="..." type="image/avif">
     <img src="..." alt="Product photo" loading="lazy" sizes="...">
 </picture>
+
 
 
 ```
@@ -201,11 +239,13 @@ Components can be published for customization:
 php artisan vendor:publish --tag="laravel-imgproxy-config"
 
 
+
 ```
 ##### Publish components
 
 ```sh
 php artisan vendor:publish --tag="laravel-imgproxy-components"
+
 
 
 ```
@@ -239,6 +279,7 @@ Use Case: Quick image rendering in Blade templates without manually calling the 
 
 
 
+
 ```
 ```blade
 {{-- With multiple options --}}
@@ -252,6 +293,7 @@ Use Case: Quick image rendering in Blade templates without manually calling the 
     lazy
     alt="{{ $product->name }}"
 />
+
 
 
 
@@ -276,6 +318,7 @@ $retina = $base->copy()->setWidth(800)->setDpr(2)->build();
 
 // Original remains unchanged
 $original = $base->build();
+
 
 
 
@@ -309,6 +352,7 @@ return response()->json([
 return ImgProxyResponse::make($url)->redirect(302, [
     'X-Custom' => 'value'
 ]);
+
 
 
 
