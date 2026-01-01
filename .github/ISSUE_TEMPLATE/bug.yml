@@ -1,0 +1,101 @@
+name: Bug Report
+description: Report a bug or issue with the package
+title: "[Bug]: "
+labels: ["bug"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for reporting a bug! Please fill out the form below to help us understand and fix the issue.
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Briefly describe the bug
+          placeholder: A clear and concise description of what the bug is
+      validations:
+          required: true
+    - type: textarea
+      id: expected-behavior
+      attributes:
+          label: Expected Behavior
+          description: What did you expect to happen?
+          placeholder: Describe what you expected to occur
+      validations:
+          required: true
+    - type: textarea
+      id: actual-behavior
+      attributes:
+          label: Actual Behavior
+          description: What actually happened? Include any error messages
+          placeholder: Describe what actually happened, including error messages
+      validations:
+          required: true
+    - type: textarea
+      id: steps-to-reproduce
+      attributes:
+          label: Steps to Reproduce
+          description: |
+              Provide a minimal, reproducible example. Use code blocks for code snippets.
+          placeholder: |
+              1. First step
+              2. Second step
+              3. ...
+          render: markdown
+      validations:
+          required: true
+    - type: dropdown
+      id: package-version
+      attributes:
+          label: Package Version
+          description: Which version of the package are you using?
+          options:
+            - 1.x
+            - 0.x
+            - Other (please specify)
+      validations:
+          required: true
+    - type: dropdown
+      id: php-version
+      attributes:
+          label: PHP Version
+          description: Which PHP version are you using?
+          options:
+            - 8.4
+            - 8.3
+            - 8.2
+            - Other
+      validations:
+          required: true
+    - type: dropdown
+      id: laravel-version
+      attributes:
+          label: Laravel Version
+          description: Which Laravel version are you using?
+          options:
+            - 12.x
+            - 11.x
+            - 10.x
+            - Other
+      validations:
+          required: true
+    - type: checkboxes
+      id: operating-systems
+      attributes:
+          label: Operating System
+          description: Which operating systems have you tested on?
+          options:
+            - label: macOS
+              required: false
+            - label: Windows
+              required: false
+            - label: Linux
+              required: false
+    - type: textarea
+      id: additional-info
+      attributes:
+          label: Additional Information
+          description: Any other context, screenshots, or relevant details
+          placeholder: Add screenshots, logs, or other relevant information here
+      validations:
+          required: false

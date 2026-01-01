@@ -1,0 +1,63 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for suggesting a feature! Please fill out the form below to help us understand your request.
+    - type: textarea
+      id: problem-description
+      attributes:
+          label: Problem or Limitation
+          description: |
+              Describe the problem or limitation that this feature would address.
+              What are you trying to do that the current package doesn't support?
+          placeholder: I need to be able to do X, but currently there's no way to...
+      validations:
+          required: true
+    - type: textarea
+      id: proposed-solution
+      attributes:
+          label: Proposed Solution
+          description: |
+              Describe your proposed solution or enhancement.
+              How should this feature work? Include any API ideas if applicable.
+          placeholder: |
+              The feature could add a new method like `->crop()` that...
+      validations:
+          required: true
+    - type: textarea
+      id: alternatives-considered
+      attributes:
+          label: Alternatives Considered
+          description: |
+              Have you considered any alternative approaches? Why prefer this solution?
+          placeholder: Describe any alternatives you explored
+      validations:
+          required: false
+    - type: checkboxes
+      id: use-case
+      attributes:
+          label: Use Case
+          description: Where would this feature be useful?
+          options:
+            - label: Image Resizing
+              required: false
+            - label: Image Manipulation
+              required: false
+            - label: URL Generation
+              required: false
+            - label: Configuration
+              required: false
+            - label: Other
+              required: false
+    - type: textarea
+      id: additional-context
+      attributes:
+          label: Additional Context
+          description: Any other context, examples, or references
+          placeholder: Add examples, references, or other relevant information
+      validations:
+          required: false
