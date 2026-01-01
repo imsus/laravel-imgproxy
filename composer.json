@@ -2,9 +2,14 @@
     "name": "imsus/laravel-imgproxy",
     "description": "Laravel integration for ImgProxy",
     "keywords": [
-        "Imam Susanto",
         "laravel",
-        "laravel-imgproxy"
+        "imgproxy",
+        "image",
+        "image-processing",
+        "image-resize",
+        "thumbnail",
+        "crop",
+        "watermark"
     ],
     "homepage": "https://github.com/imsus/laravel-imgproxy",
     "license": "MIT",
@@ -13,6 +18,16 @@
             "name": "Imam Susanto",
             "email": "abc.imams@gmail.com",
             "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/imsus/laravel-imgproxy/issues",
+        "source": "https://github.com/imsus/laravel-imgproxy"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/imsus"
         }
     ],
     "require": {
