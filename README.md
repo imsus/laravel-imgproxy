@@ -1,3 +1,5 @@
+<img width="1280" height="640" alt="Laravel imgproxy banner" src="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2" />
+
 # Laravel imgproxy
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imsus/laravel-imgproxy.svg?style=flat-square)](https://packagist.org/packages/imsus/laravel-imgproxy)
