@@ -76,7 +76,9 @@ ImgProxy::url('https://example.com/image.jpg')
     :quality="85"
 />
 
-{{-- Output: <img src="http://imgproxy.local/signature/width:300/height:200/resizing_type:fill/..." alt="Product name" loading="lazy"> --}}
+{{-- Output:
+    <img src="http://imgproxy.local/signature/width:300/height:200/resizing_type:fill/..." alt="Product name" loading="lazy">
+--}}
 
 {{-- Responsive with multiple formats --}}
 <x-imgproxy-picture
@@ -89,7 +91,13 @@ ImgProxy::url('https://example.com/image.jpg')
     :quality="85"
 />
 
-{{-- Output: <picture><source srcset="..." type="image/avif"><source srcset="..." type="image/webp"><img ...></picture> --}}
+{{-- Output:
+    <picture>
+        <source srcset="..." type="image/avif">
+        <source srcset="..." type="image/webp">
+        <img ...>
+    </picture>
+--}}
 ```
 
 ## Quick Start
