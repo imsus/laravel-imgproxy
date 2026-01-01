@@ -92,11 +92,11 @@ ImgProxy::url('https://example.com/image.jpg')
 />
 
 {{-- Output:
-<picture>
-    <source srcset="..." type="image/avif">
-    <source srcset="..." type="image/webp">
-    <img ...>
-</picture>
+    <picture>
+        <source srcset="..." type="image/avif">
+        <source srcset="..." type="image/webp">
+        <img ...>
+    </picture>
 --}}
 ```
 
