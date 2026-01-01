@@ -36,13 +36,12 @@
         "spatie/laravel-package-tools": "^1.19"
     },
     "require-dev": {
-        "laravel/pint": "^v1.21",
-        "nunomaduro/collision": "^8.1.1||^7.10.0",
-        "larastan/larastan": "^2.9",
-        "orchestra/testbench": "^9.0.0||^8.22.0",
-        "pestphp/pest": "^2.34",
-        "pestphp/pest-plugin-arch": "^2.8",
-        "pestphp/pest-plugin-laravel": "^2.3",
+        "nunomaduro/collision": "^8.1.1",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-arch": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
         "phpunit/php-code-coverage": "^11.0"
     },
     "autoload": {
