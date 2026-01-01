@@ -1,4 +1,4 @@
-<img width="1280" height="640" alt="Laravel imgproxy banner" src="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2" />
+<img width="1280" alt="Laravel imgproxy banner" src="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2" style="width: 100%; aspect-ratio:1280/640" />
 
 # Laravel imgproxy
 
