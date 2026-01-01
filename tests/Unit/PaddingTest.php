@@ -68,5 +68,29 @@ describe('Padding', function () {
 
             expect($url)->toContain('pd:0');
         });
+
+        it('validates top padding is non-negative', function () {
+            expect(function () {
+                $this->imgProxy->paddingAll(-1);
+            })->toThrow(\InvalidArgumentException::class, 'Padding must be 0 or greater');
+        });
+
+        it('validates right padding is non-negative', function () {
+            expect(function () {
+                $this->imgProxy->paddingAll(10, -1);
+            })->toThrow(\InvalidArgumentException::class, 'Padding must be 0 or greater');
+        });
+
+        it('validates bottom padding is non-negative', function () {
+            expect(function () {
+                $this->imgProxy->paddingAll(10, 20, -1);
+            })->toThrow(\InvalidArgumentException::class, 'Padding must be 0 or greater');
+        });
+
+        it('validates left padding is non-negative', function () {
+            expect(function () {
+                $this->imgProxy->paddingAll(10, 20, 30, -1);
+            })->toThrow(\InvalidArgumentException::class, 'Padding must be 0 or greater');
+        });
     });
 });

@@ -42,6 +42,14 @@ describe('Quality Options', function () {
 
             expect($result)->toBe($this->imgProxy);
         });
+
+        it('accepts raw format quality string', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setFormatQuality('raw:jpg:90')
+                ->build();
+
+            expect($url)->toContain('fq:raw:jpg:90');
+        });
     });
 
     describe('setMaxBytes', function () {

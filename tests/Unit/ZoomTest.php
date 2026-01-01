@@ -42,6 +42,12 @@ describe('Zoom', function () {
         })->toThrow(\InvalidArgumentException::class, 'Zoom must be greater than 0');
     });
 
+    it('validates zoomY is greater than 0 when provided', function () {
+        expect(function () {
+            $this->imgProxy->zoom(2, 0);
+        })->toThrow(\InvalidArgumentException::class, 'Zoom must be greater than 0');
+    });
+
     it('works with other options', function () {
         $url = imgproxy($this->sample_image_url)
             ->setWidth(300)

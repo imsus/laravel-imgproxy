@@ -117,3 +117,63 @@ it('builds url with all options combined', function () {
         ->and($url)->toContain('dpr:2')
         ->and($url)->toContain('gravity:ce');
 });
+
+it('does not include quality when set to 0', function () {
+    $component = new Img(
+        src: 'https://example.com/image.jpg',
+        alt: 'Test image',
+        width: 300,
+        height: 200,
+        quality: 0,
+    );
+
+    $url = $component->buildUrl();
+
+    expect($url)->toContain('width:300')
+        ->and($url)->toContain('height:200')
+        ->and($url)->not->toContain('quality:');
+});
+
+it('does not include quality when default is used', function () {
+    $component = new Img(
+        src: 'https://example.com/image.jpg',
+        alt: 'Test image',
+        width: 300,
+        height: 200,
+    );
+
+    $url = $component->buildUrl();
+
+    // Default quality is 75, so it should be included
+    expect($url)->toContain('quality:75');
+});
+
+it('works with lazy loading disabled', function () {
+    $component = new Img(
+        src: 'https://example.com/image.jpg',
+        alt: 'Test image',
+        width: 300,
+        height: 200,
+        lazy: false,
+    );
+
+    $url = $component->buildUrl();
+
+    expect($url)->toContain('width:300')
+        ->and($url)->toContain('height:200');
+});
+
+it('works with sizes attribute', function () {
+    $component = new Img(
+        src: 'https://example.com/image.jpg',
+        alt: 'Test image',
+        width: 300,
+        height: 200,
+        sizes: '(max-width: 768px) 100vw, 50vw',
+    );
+
+    $url = $component->buildUrl();
+
+    expect($url)->toContain('width:300')
+        ->and($url)->toContain('height:200');
+});

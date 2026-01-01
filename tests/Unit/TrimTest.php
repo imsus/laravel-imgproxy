@@ -48,5 +48,25 @@ describe('Trim', function () {
 
             expect($result)->toBe($this->imgProxy);
         });
+
+        it('validates threshold is non-negative', function () {
+            expect(function () {
+                $this->imgProxy->trimWithColor(-1, 'FF5733');
+            })->toThrow(\InvalidArgumentException::class, 'Trim threshold must be 0 or greater');
+        });
+
+        it('validates color is valid 6-digit hex', function () {
+            expect(function () {
+                $this->imgProxy->trimWithColor(10, 'INVALID');
+            })->toThrow(\InvalidArgumentException::class, 'Trim color must be a valid 6-digit hex color');
+        });
+
+        it('accepts null color', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->trimWithColor(10)
+                ->build();
+
+            expect($url)->toContain('trim:10');
+        });
     });
 });

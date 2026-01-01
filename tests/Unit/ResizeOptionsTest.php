@@ -100,6 +100,28 @@ describe('Resize Options', function () {
         });
     });
 
+    describe('setExtendAspectRatio', function () {
+        it('enables extend aspect ratio', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setWidth(300)
+                ->setHeight(200)
+                ->setExtendAspectRatio(true)
+                ->build();
+
+            expect($url)->toContain('exar:1:ce:0:0');
+        });
+
+        it('disables extend aspect ratio', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setWidth(300)
+                ->setHeight(200)
+                ->setExtendAspectRatio(false)
+                ->build();
+
+            expect($url)->toContain('exar:0');
+        });
+    });
+
     describe('minWidth', function () {
         it('sets minimum width', function () {
             $url = imgproxy($this->sample_image_url)
