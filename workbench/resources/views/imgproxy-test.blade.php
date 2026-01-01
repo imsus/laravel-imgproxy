@@ -177,28 +177,9 @@
                                  alt="Sharpen" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
-                            <h4 class="font-medium mb-2">High Saturation</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setSaturation(2.0)->build() }}"
-                                 alt="Saturated" class="border rounded shadow-sm w-full">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Complex Processing -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-medium mb-3 text-gray-700">Complex Processing Pipeline</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h4 class="font-medium mb-2">Portrait Enhancement</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->setBrightness(10)->setContrast(1.1)->setSaturation(1.05)->setSharpen(0.8)->setQuality(92)->build() }}"
-                                 alt="Enhanced Portrait" class="border rounded shadow-sm w-full">
-                            <p class="text-xs text-gray-500 mt-1">Enhanced brightness, contrast, saturation, and sharpening</p>
-                        </div>
-                        <div>
-                            <h4 class="font-medium mb-2">Vintage Effect</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->setHeight(400)->setSaturation(0.7)->setContrast(0.9)->setBrightness(-10)->setQuality(85)->build() }}"
-                                 alt="Vintage Effect" class="border rounded shadow-sm w-full">
-                            <p class="text-xs text-gray-500 mt-1">Reduced saturation, lower contrast, and decreased brightness</p>
+                            <h4 class="font-medium mb-2">Pixelate Effect</h4>
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->pixelate(10)->build() }}"
+                                 alt="Pixelate" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
                 </div>
@@ -236,7 +217,7 @@
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Rotate (90deg)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->rotate(90)->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)->build() }}"
                                  alt="Rotate" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
@@ -251,7 +232,7 @@
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Combined Processing</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->padding(15)->rotate(45)->pixelate(8)->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(300)->padding(15)->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)->pixelate(8)->build() }}"
                                  alt="Combined" class="border rounded shadow-sm w-full">
                         </div>
                     </div>
@@ -260,35 +241,36 @@
                 <!-- Watermarking -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium mb-3 text-gray-700">Watermarking</h3>
+                    <p class="text-gray-500 text-sm mb-4">Using watermark configured in imgproxy (wm:)</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <h4 class="font-medium mb-2">Default Watermark</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark()->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark()->build() }}"
                                  alt="Default Watermark" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Watermark (0.5 Opacity)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5)->build() }}"
                                  alt="0.5 Opacity" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Watermark Position (SE)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST)->build() }}"
                                  alt="South East" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Watermark Scale (0.5)</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, null, 0, 0, 0.5)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.5, \Imsus\ImgProxy\Enums\Gravity::CENTER, 0, 0, 0.5)->build() }}"
                                  alt="Scale 0.5" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Full Watermark Options</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.7, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST, 0, 0, 0.3)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.7, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST, 0, 0, 0.3)->build() }}"
                                  alt="Full Options" class="border rounded shadow-sm w-full">
                         </div>
                         <div>
                             <h4 class="font-medium mb-2">Top-Right Watermark</h4>
-                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.8, \Imsus\ImgProxy\Enums\Gravity::NORTH_EAST)->watermarkUrl('https://picsum.photos/100x50/png')->build() }}"
+                            <img src="{{ imgproxy('https://picsum.photos/800/600')->setWidth(400)->watermark(0.8, \Imsus\ImgProxy\Enums\Gravity::NORTH_EAST)->build() }}"
                                  alt="North East" class="border rounded shadow-sm w-full">
                         </div>
                     </div>

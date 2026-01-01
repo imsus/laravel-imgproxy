@@ -41,9 +41,6 @@ Route::prefix('imgproxy-test')->group(function () {
             ->setQuality(85)
             ->setBlur(1.0)
             ->setSharpen(0.5)
-            ->setBrightness(10)
-            ->setContrast(1.1)
-            ->setSaturation(1.05)
             ->build();
 
         return response()->json([
@@ -53,9 +50,6 @@ Route::prefix('imgproxy-test')->group(function () {
                 'quality' => 85,
                 'blur' => 1.0,
                 'sharpen' => 0.5,
-                'brightness' => 10,
-                'contrast' => 1.1,
-                'saturation' => 1.05,
             ],
             'test' => 'effects_and_quality',
         ]);
@@ -203,7 +197,7 @@ Route::prefix('imgproxy-test')->group(function () {
             ->padding(20)
             ->background('FF5733')
             ->autoRotate(true)
-            ->rotate(90)
+            ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)
             ->stripMetadata(true)
             ->trim(15)
             ->pixelate(10)
@@ -214,7 +208,7 @@ Route::prefix('imgproxy-test')->group(function () {
             'processed' => $processedUrl,
             'processing_applied' => [
                 'padding' => 20,
-                'background' => '#FF5733',
+                'background' => 'FF5733',
                 'auto_rotate' => true,
                 'rotate' => 90,
                 'strip_metadata' => true,
@@ -228,18 +222,15 @@ Route::prefix('imgproxy-test')->group(function () {
     // Watermark test
     Route::get('/watermark', function () {
         $imageUrl = 'https://picsum.photos/800/600';
-        $watermarkUrl = 'https://picsum.photos/100x50/png';
 
         $processedUrl = imgproxy($imageUrl)
             ->setWidth(500)
             ->setHeight(400)
             ->watermark(0.7, \Imsus\ImgProxy\Enums\Gravity::SOUTH_EAST, 0, 0, 0.25)
-            ->watermarkUrl($watermarkUrl)
             ->build();
 
         return response()->json([
             'original' => $imageUrl,
-            'watermark' => $watermarkUrl,
             'processed' => $processedUrl,
             'watermark_applied' => [
                 'opacity' => 0.7,
@@ -247,6 +238,7 @@ Route::prefix('imgproxy-test')->group(function () {
                 'scale' => 0.25,
             ],
             'test' => 'watermark',
+            'note' => 'Custom watermark URL requires ImgProxy Pro',
         ]);
     });
 

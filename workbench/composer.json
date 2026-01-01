@@ -1,0 +1,25 @@
+{
+    "name": "workbench/app",
+    "type": "project",
+    "description": "Workbench application for imsus/laravel-imgproxy",
+    "keywords": ["workbench", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

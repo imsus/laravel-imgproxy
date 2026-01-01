@@ -3,9 +3,13 @@ services:
     image: darthsim/imgproxy:latest
     ports:
       - "8080:8080"
+    volumes:
+      - ./resources/dist/watermark-confidential.svg:/tmp/watermark.svg:ro
     environment:
       - IMGPROXY_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
       - IMGPROXY_SALT=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
       - IMGPROXY_GZIP_PROGRESSIVE=true
       - IMGPROXY_MAX_SRC_REQUESTS=10
+      - IMGPROXY_WATERMARK_PATH=/tmp/watermark.svg
+      - IMGPROXY_WATERMARK_OPACITY=1.0 # Since you set opacity in Figma, keep this 1.0
     restart: unless-stopped
