@@ -7,7 +7,7 @@
 # Laravel imgproxy
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/imsus/laravel-imgproxy.svg?style=flat-square)](https://packagist.org/packages/imsus/laravel-imgproxy)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/imsus/laravel-imgproxy/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/imsus/laravel-imgproxy/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/imsus/laravel-imgproxy/ci.yml?branch=main&label=tests&style=flat-square)](https://github.com/imsus/laravel-imgproxy/actions?query=workflow%3Aci+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/imsus/laravel-imgproxy.svg?style=flat-square)](https://packagist.org/packages/imsus/laravel-imgproxy)
 
 A Laravel package for [imgproxy](https://imgproxy.net/) integration. Generate optimized, signed image URLs with a fluent API.
@@ -21,6 +21,14 @@ This package solves both problems. Images are resized and compressed on-the-flyâ
 ## Why This Package?
 
 You can call imgproxy's raw API directly, but you'd repeat boilerplate code across every project: URL signing logic, configuration loading, enum types, validation, and error handling. This package wraps all that in a clean Laravel package. You get type-safe enums for resize modes and formats, fluent chainable methods that read like sentences, and Laravel-specific conveniences like facades, helpers, and Blade components. The 99.4% test coverage means you can trust it in production. If you're already using Laravel, this feels nativeâ€”no learning curve, just `imgproxy()->build()` and you're done.
+
+## Features
+
+- **Fluent API** - Chainable methods for building image URLs
+- **HMAC Signing** - Secure URL signing with configurable key/salt
+- **Blade Components** - Ready-to-use Img and Picture components
+- **Type Safe** - PHP 8.2+ enums for all options
+- **Well Tested** - 99.4% test coverage
 
 ## Quick Glance
 
@@ -37,6 +45,7 @@ imgproxy('https://example.com/image.jpg')
     ->setSharpen(1.0)
     ->setDpr(2)
     ->build();
+
 // Output: http://imgproxy.local/signature/width:800/height:600/.../image.webp
 ```
 
@@ -49,6 +58,7 @@ ImgProxy::url('https://example.com/image.jpg')
     ->setWidth(800)
     ->setHeight(600)
     ->build();
+
 // Output: http://imgproxy.local/signature/width:800/height:600/plain/https://example.com/image.jpg@jpeg
 ```
 
@@ -84,6 +94,17 @@ ImgProxy::url('https://example.com/image.jpg')
 
 ## Quick Start
 
+### Prerequisites
+
+Before using this package, you need to have [imgproxy](https://imgproxy.net/) set up and running. You can either:
+- Use a hosted imgproxy service
+- Run imgproxy locally using Docker
+- Deploy imgproxy to your preferred cloud platform
+
+Make sure you have your imgproxy URL and signing credentials ready.
+
+### Installation
+
 ```bash
 composer require imsus/laravel-imgproxy
 php artisan vendor:publish --tag="laravel-imgproxy-config"
@@ -104,26 +125,70 @@ $url = imgproxy('https://example.com/image.jpg')
 
 ## Documentation
 
-- **[Getting Started](docs/guide/getting-started.md)** - Introduction and requirements
-- **[Installation](docs/guide/installation.md)** - Setup and configuration
-- **[Usage Guide](docs/guide/usage.md)** - Basic usage patterns
-- **[Resizing](docs/guide/resizing.md)** - Resize modes, gravity, DPR
-- **[Quality & Format](docs/guide/quality.md)** - Output settings
-- **[Visual Effects](docs/guide/effects.md)** - Blur and sharpen
-- **[Blade Components](docs/guide/blade-components.md)** - Img and Picture components
-- **[Advanced Usage](docs/guide/advanced-usage.md)** - Laravel integration patterns
-- **[API Reference](docs/reference/api.md)** - Complete method reference
-- **[Enums Reference](docs/reference/enums.md)** - Type-safe enums
-- **[Security](docs/guide/security.md)** - Best practices
-- **[Testing](docs/contribute/testing.md)** - Running tests
+Full documentation available at **[imsus.github.io/laravel-imgproxy](https://imsus.github.io/laravel-imgproxy/)**:
 
-## Features
+- **[Getting Started](https://imsus.github.io/laravel-imgproxy/guide/getting-started)** - Introduction and requirements
+- **[Installation](https://imsus.github.io/laravel-imgproxy/guide/installation)** - Setup and configuration
+- **[Usage Guide](https://imsus.github.io/laravel-imgproxy/guide/usage)** - Basic usage patterns
+- **[Resizing](https://imsus.github.io/laravel-imgproxy/guide/resizing)** - Resize modes, gravity, DPR
+- **[Quality & Format](https://imsus.github.io/laravel-imgproxy/guide/quality)** - Output settings
+- **[Visual Effects](https://imsus.github.io/laravel-imgproxy/guide/effects)** - Blur and sharpen
+- **[Blade Components](https://imsus.github.io/laravel-imgproxy/guide/blade-components)** - Img and Picture components
+- **[Advanced Usage](https://imsus.github.io/laravel-imgproxy/guide/advanced-usage)** - Laravel integration patterns
+- **[API Reference](https://imsus.github.io/laravel-imgproxy/reference/api)** - Complete method reference
+- **[Enums Reference](https://imsus.github.io/laravel-imgproxy/reference/enums)** - Type-safe enums
+- **[Security](https://imsus.github.io/laravel-imgproxy/guide/security)** - Best practices
+- **[Testing](https://imsus.github.io/laravel-imgproxy/contribute/testing)** - Running tests
 
-- **Fluent API** - Chainable methods for building image URLs
-- **HMAC Signing** - Secure URL signing with configurable key/salt
-- **Blade Components** - Ready-to-use Img and Picture components
-- **Type Safe** - PHP 8.2+ enums for all options
-- **Well Tested** - 99.4% test coverage
+## Configuration
+
+Publish the config file and configure via `.env`:
+
+```bash
+php artisan vendor:publish --tag="laravel-imgproxy-config"
+```
+
+```env
+IMGPROXY_ENDPOINT=http://localhost:8080
+IMGPROXY_KEY=
+IMGPROXY_SALT=
+IMGPROXY_DEFAULT_SOURCE_URL_MODE=encoded
+IMGPROXY_DEFAULT_OUTPUT_EXTENSION=jpeg
+IMGPROXY_DEFAULT_GRAVITY=ce
+```
+
+| Option                              | Description                                                    | Default                 |
+| ----------------------------------- | -------------------------------------------------------------- | ----------------------- |
+| `IMGPROXY_ENDPOINT`                 | Your imgproxy server URL                                       | `http://localhost:8080` |
+| `IMGPROXY_KEY`                      | HMAC signing key                                               | `null`                  |
+| `IMGPROXY_SALT`                     | HMAC salt                                                      | `null`                  |
+| `IMGPROXY_DEFAULT_SOURCE_URL_MODE`  | Default source URL mode (`encoded` or `raw`)                   | `encoded`               |
+| `IMGPROXY_DEFAULT_OUTPUT_EXTENSION` | Default output format (`jpeg`, `png`, `webp`, `avif`, `gif`)   | `jpeg`                  |
+| `IMGPROXY_DEFAULT_GRAVITY`          | Default gravity (`ce`, `no`, `so`, `ea`, `we`, `ce`, `c`, `f`) | `ce`                    |
+
+If no key/salt is configured, URLs will be generated unsigned.
+
+## Troubleshooting
+
+### Signature verification failed
+
+- Verify `IMGPROXY_KEY` and `IMGPROXY_SALT` match your imgproxy server configuration
+- Ensure encoding (hex vs base64) is consistent between your app and imgproxy server
+
+### URLs not generating
+
+- Check that `IMGPROXY_ENDPOINT` is accessible from your application
+- Validate the source URL is publicly accessible or allowlisted in imgproxy
+
+### Images loading slowly
+
+- Enable DPR for retina displays: `->setDpr(2)`
+- Use `OutputExtension::AVIF` for best compression
+- Consider lower quality for smaller file sizes: `->setQuality(75)`
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and breaking changes.
 
 ## Commands
 
