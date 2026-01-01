@@ -1,4 +1,8 @@
-<img width="1280" alt="Laravel imgproxy banner" src="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2" style="width: 100%; aspect-ratio:1280/640" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/bb2e37e0-bc75-4e67-b1c8-772fc4b489ea">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2">
+  <img alt="Laravel imgproxy banner" src="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2" style="width: 100%; aspect-ratio:1280/640">
+</picture>
 
 # Laravel imgproxy
 
