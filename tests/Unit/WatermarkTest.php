@@ -76,7 +76,7 @@ describe('Watermarking', function () {
 
         it('validates scale is not negative', function () {
             expect(function () {
-                $this->imgProxy->watermark(0.5, null, 0, 0, -1);
+                $this->imgProxy->watermark(0.5, Gravity::CENTER, 0, 0, -1);
             })->toThrow(\InvalidArgumentException::class, 'Watermark scale must be 0 or greater');
         });
 
@@ -113,52 +113,6 @@ describe('Watermarking', function () {
             expect($url)->toContain('wm:0.7:soea:0:0:0.25')
                 ->and($url)->toContain('width:500')
                 ->and($url)->toContain('quality:85');
-        });
-    });
-
-    describe('watermarkUrl', function () {
-        it('adds custom watermark URL', function () {
-            $url = imgproxy($this->sample_image_url)
-                ->setWidth(300)
-                ->watermarkUrl('https://example.com/logo.png')
-                ->build();
-
-            // URL should be base64 encoded
-            expect($url)->toContain('wmu:');
-        });
-
-        it('encodes URL correctly', function () {
-            $url = imgproxy($this->sample_image_url)
-                ->watermarkUrl('https://example.com/logo.png')
-                ->build();
-
-            expect($url)->toContain('wmu:aHR0cHM6Ly9leGFtcGxlLmNvbS9sb2dvLnBuZw');
-        });
-
-        it('works with other options', function () {
-            $url = imgproxy($this->sample_image_url)
-                ->setWidth(500)
-                ->watermarkUrl('https://example.com/logo.png')
-                ->setQuality(85)
-                ->build();
-
-            expect($url)->toContain('wmu:')
-                ->and($url)->toContain('width:500')
-                ->and($url)->toContain('quality:85');
-        });
-    });
-
-    describe('combined usage', function () {
-        it('can use watermark and watermarkUrl together', function () {
-            $url = imgproxy($this->sample_image_url)
-                ->setWidth(500)
-                ->setHeight(400)
-                ->watermark(0.5, Gravity::SOUTH_EAST, 0, 0, 0.25)
-                ->watermarkUrl('https://example.com/watermark.png')
-                ->build();
-
-            expect($url)->toContain('wm:0.5:soea:0:0:0.25')
-                ->and($url)->toContain('wmu:');
         });
     });
 });

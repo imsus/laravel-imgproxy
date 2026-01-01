@@ -104,13 +104,40 @@ class ImgProxy
     }
 
     /**
+     * Set the gravity with offset values.
+     *
+     * @param  Gravity  $gravity  The gravity position
+     * @param  float  $xOffset  X offset (absolute >=1 or relative <1)
+     * @param  float  $yOffset  Y offset (absolute >=1 or relative <1)
+     */
+    public function setGravityWithOffset(Gravity $gravity, float $xOffset, float $yOffset): self
+    {
+        $this->options['gravity'] = "{$gravity->value}:{$xOffset}:{$yOffset}";
+
+        return $this;
+    }
+
+    /**
+     * Set the focus point for the image.
+     *
+     * @param  float  $x  X coordinate (0-1, where 0=left, 1=right)
+     * @param  float  $y  Y coordinate (0-1, where 0=top, 1=bottom)
+     */
+    public function setFocusPoint(float $x, float $y): self
+    {
+        $this->options['gravity'] = "fp:{$x}:{$y}";
+
+        return $this;
+    }
+
+    /**
      * Set the crop dimensions.
      *
-     * @param  int  $width  Crop width
-     * @param  int  $height  Crop height
+     * @param  float  $width  Crop width (absolute >=1, relative <1, or 0 for full)
+     * @param  float  $height  Crop height (absolute >=1, relative <1, or 0 for full)
      * @param  Gravity|null  $gravity  Optional gravity position (defaults to center)
      */
-    public function crop(int $width, int $height, ?Gravity $gravity = null): self
+    public function crop(float $width, float $height, ?Gravity $gravity = null): self
     {
         $gravity = $gravity ?? Gravity::CENTER;
         $this->options['crop'] = "{$width}:{$height}:{$gravity->value}";
@@ -132,6 +159,31 @@ class ImgProxy
         }
 
         $this->options['dpr'] = $dpr;
+
+        return $this;
+    }
+
+    /**
+     * Set the zoom factor(s) for the image.
+     *
+     * Unlike DPR, zoom doesn't affect gravity offsets, watermark offsets, and paddings.
+     *
+     * @param  float  $zoom  Zoom factor (must be greater than 0)
+     * @param  float|null  $zoomY  Optional Y zoom factor (if different from X)
+     *
+     * @throws \InvalidArgumentException If zoom is not greater than 0
+     */
+    public function zoom(float $zoom, ?float $zoomY = null): self
+    {
+        if ($zoom <= 0) {
+            throw new \InvalidArgumentException('Zoom must be greater than 0');
+        }
+
+        if ($zoomY !== null && $zoomY <= 0) {
+            throw new \InvalidArgumentException('Zoom must be greater than 0');
+        }
+
+        $this->options['z'] = $zoomY !== null ? "{$zoom}:{$zoomY}" : (string) $zoom;
 
         return $this;
     }
@@ -183,6 +235,51 @@ class ImgProxy
     }
 
     /**
+     * Set quality for specific image formats.
+     *
+     * @param  string|array<string, int>  $qualities  Format => quality mapping (e.g., ['jpg' => 80, 'webp' => 90]) or 'format:quality' string
+     * @param  int|null  $quality  Quality value (used when first arg is format string)
+     */
+    public function setFormatQuality(string|array $qualities, ?int $quality = null): self
+    {
+        $parts = [];
+
+        if (is_string($qualities) && $quality !== null) {
+            $parts[] = "{$qualities}:{$quality}";
+        } elseif (is_string($qualities)) {
+            $parts[] = $qualities;
+        } else {
+            foreach ($qualities as $format => $q) {
+                $parts[] = "{$format}:{$q}";
+            }
+        }
+
+        $this->options['fq'] = implode(':', $parts);
+
+        return $this;
+    }
+
+    /**
+     * Set maximum output file size in bytes.
+     *
+     * imgproxy will auto-degrade quality to fit within this size.
+     *
+     * @param  int  $bytes  Maximum file size in bytes (0 or greater)
+     *
+     * @throws \InvalidArgumentException If bytes is negative
+     */
+    public function setMaxBytes(int $bytes): self
+    {
+        if ($bytes < 0) {
+            throw new \InvalidArgumentException('Max bytes must be 0 or greater');
+        }
+
+        $this->options['mb'] = $bytes;
+
+        return $this;
+    }
+
+    /**
      * Set the blur effect strength.
      *
      * @param  float  $sigma  Blur sigma (0.0 and above)
@@ -219,55 +316,81 @@ class ImgProxy
     }
 
     /**
-     * Set the brightness adjustment (-255 to 255).
+     * Enable or disable enlarging the image if it is smaller than the requested size.
      *
-     * @param  int  $brightness  Brightness adjustment (-255 to 255)
-     *
-     * @throws \InvalidArgumentException If brightness is not between -255 and 255
+     * @param  bool  $enlarge  Whether to enlarge the image
      */
-    public function setBrightness(int $brightness): self
+    public function enlarge(bool $enlarge = true): self
     {
-        if ($brightness < -255 || $brightness > 255) {
-            throw new \InvalidArgumentException('Brightness must be between -255 and 255');
-        }
-
-        $this->options['brightness'] = $brightness;
+        $this->options['el'] = $enlarge ? 1 : 0;
 
         return $this;
     }
 
     /**
-     * Set the contrast adjustment (0.0 and above).
+     * Enable extending the image if it is smaller than the requested size.
      *
-     * @param  float  $contrast  Contrast multiplier (0.0 and above)
-     *
-     * @throws \InvalidArgumentException If contrast is negative
+     * @param  bool|Gravity  $extend  Whether to enable extending or the gravity position
      */
-    public function setContrast(float $contrast): self
+    public function extend(bool|Gravity $extend = true): self
     {
-        if ($contrast < 0) {
-            throw new \InvalidArgumentException('Contrast must be 0.0 or greater');
+        if ($extend === false) {
+            $this->options['ex'] = '0';
+
+            return $this;
         }
 
-        $this->options['contrast'] = $contrast;
+        $gravity = $extend instanceof Gravity ? $extend : Gravity::CENTER;
+        $this->options['ex'] = "1:{$gravity->value}:0:0";
 
         return $this;
     }
 
     /**
-     * Set the saturation adjustment (0.0 and above).
+     * Enable extending the image to the requested aspect ratio.
      *
-     * @param  float  $saturation  Saturation multiplier (0.0 and above)
-     *
-     * @throws \InvalidArgumentException If saturation is negative
+     * @param  Gravity|null  $gravity  Gravity position for extending (defaults to center)
      */
-    public function setSaturation(float $saturation): self
+    public function extendAspectRatio(?Gravity $gravity = null): self
     {
-        if ($saturation < 0) {
-            throw new \InvalidArgumentException('Saturation must be 0.0 or greater');
-        }
+        $gravity = $gravity ?? Gravity::CENTER;
+        $this->options['exar'] = "1:{$gravity->value}:0:0";
 
-        $this->options['saturation'] = $saturation;
+        return $this;
+    }
+
+    /**
+     * Enable or disable extending the image to the requested aspect ratio.
+     *
+     * @param  bool  $extend  Whether to enable extending
+     */
+    public function setExtendAspectRatio(bool $extend): self
+    {
+        $this->options['exar'] = $extend ? '1:ce:0:0' : '0';
+
+        return $this;
+    }
+
+    /**
+     * Set the minimum width of the resulting image.
+     *
+     * @param  int  $width  Minimum width in pixels
+     */
+    public function minWidth(int $width): self
+    {
+        $this->options['mw'] = $width;
+
+        return $this;
+    }
+
+    /**
+     * Set the minimum height of the resulting image.
+     *
+     * @param  int  $height  Minimum height in pixels
+     */
+    public function minHeight(int $height): self
+    {
+        $this->options['mh'] = $height;
 
         return $this;
     }
@@ -286,6 +409,37 @@ class ImgProxy
         }
 
         $this->options['pd'] = $padding;
+
+        return $this;
+    }
+
+    /**
+     * Add padding to the image with CSS-style syntax.
+     *
+     * @param  int  $top  Top padding (and for all other sides if they haven't been explicitly set)
+     * @param  int|null  $right  Right padding (and left if not set)
+     * @param  int|null  $bottom  Bottom padding
+     * @param  int|null  $left  Left padding
+     *
+     * @throws \InvalidArgumentException If any padding is negative
+     */
+    public function paddingAll(int $top, ?int $right = null, ?int $bottom = null, ?int $left = null): self
+    {
+        if ($top < 0) {
+            throw new \InvalidArgumentException('Padding must be 0 or greater');
+        }
+
+        $right = $right ?? $top;
+        $bottom = $bottom ?? $right;
+        $left = $left ?? $bottom;
+
+        if ($right < 0 || $bottom < 0 || $left < 0) {
+            throw new \InvalidArgumentException('Padding must be 0 or greater');
+        }
+
+        $this->options['pd'] = $top === $right && $right === $bottom && $bottom === $left
+            ? $top
+            : "{$top}:{$right}:{$bottom}:{$left}";
 
         return $this;
     }
@@ -345,6 +499,42 @@ class ImgProxy
     }
 
     /**
+     * Preserve copyright info while stripping metadata.
+     *
+     * @param  bool  $keep  Whether to keep copyright info
+     */
+    public function keepCopyright(bool $keep = true): self
+    {
+        $this->options['kcr'] = $keep ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Transform embedded color profile to sRGB and remove it.
+     *
+     * @param  bool  $strip  Whether to strip color profile
+     */
+    public function stripColorProfile(bool $strip = true): self
+    {
+        $this->options['scp'] = $strip ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Use embedded thumbnail for HEIC/AVIF instead of main image.
+     *
+     * @param  bool  $enforce  Whether to enforce thumbnail
+     */
+    public function enforceThumbnail(bool $enforce = true): self
+    {
+        $this->options['eth'] = $enforce ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
      * Trim borders from the image.
      *
      * @param  int  $threshold  Trim threshold (0 or greater)
@@ -358,6 +548,36 @@ class ImgProxy
         }
 
         $this->options['trim'] = $threshold;
+
+        return $this;
+    }
+
+    /**
+     * Trim borders from the image with advanced options.
+     *
+     * @param  int  $threshold  Trim threshold (0 or greater)
+     * @param  string|null  $color  Hex color to trim (e.g., 'FF5733')
+     * @param  bool  $equalHor  Trim equal parts from left and right
+     * @param  bool  $equalVer  Trim equal parts from top and bottom
+     *
+     * @throws \InvalidArgumentException If threshold is negative
+     * @throws \InvalidArgumentException If color is not valid 6 digits
+     */
+    public function trimWithColor(int $threshold = 10, ?string $color = null, bool $equalHor = false, bool $equalVer = false): self
+    {
+        if ($threshold < 0) {
+            throw new \InvalidArgumentException('Trim threshold must be 0 or greater');
+        }
+
+        if ($color !== null && ! preg_match('/^[0-9a-fA-F]{6}$/', $color)) {
+            throw new \InvalidArgumentException('Trim color must be a valid 6-digit hex color');
+        }
+
+        $colorPart = $color ?? '';
+        $equalHorPart = $equalHor ? '1' : '0';
+        $equalVerPart = $equalVer ? '1' : '0';
+
+        $this->options['trim'] = "{$threshold}:{$colorPart}:{$equalHorPart}:{$equalVerPart}";
 
         return $this;
     }
@@ -386,18 +606,18 @@ class ImgProxy
      * Format: wm:opacity:position:x_offset:y_offset:scale
      *
      * @param  float  $opacity  Watermark opacity (0.0 to 1.0), defaults to 0.5
-     * @param  Gravity|null  $position  Watermark position, defaults to center
-     * @param  int  $xOffset  X offset in pixels
-     * @param  int  $yOffset  Y offset in pixels
+     * @param  Gravity|string|null  $position  Watermark position (Gravity, 're' for repeat, 'ch' for chessboard), defaults to center
+     * @param  float  $xOffset  X offset (absolute >=1 or relative <1)
+     * @param  float  $yOffset  Y offset (absolute >=1 or relative <1)
      * @param  float  $scale  Scale factor relative to result image, defaults to 0 (no scaling)
      *
      * @throws \InvalidArgumentException If opacity or scale is out of range
      */
     public function watermark(
         float $opacity = 0.5,
-        ?Gravity $position = null,
-        int $xOffset = 0,
-        int $yOffset = 0,
+        Gravity|string $position = Gravity::CENTER,
+        float $xOffset = 0,
+        float $yOffset = 0,
         float $scale = 0
     ): self {
         if ($opacity < 0 || $opacity > 1) {
@@ -408,23 +628,176 @@ class ImgProxy
             throw new \InvalidArgumentException('Watermark scale must be 0 or greater');
         }
 
-        $position = $position ?? Gravity::CENTER;
-        $this->options['wm'] = "{$opacity}:{$position->value}:{$xOffset}:{$yOffset}:{$scale}";
+        $positionValue = $position instanceof Gravity ? $position->value : $position;
+        // Map 'repeat' to 're' and 'chessboard' to 'ch'
+        $positionValue = match ($positionValue) {
+            'repeat' => 're',
+            'chessboard' => 'ch',
+            default => $positionValue,
+        };
+        $this->options['wm'] = "{$opacity}:{$positionValue}:{$xOffset}:{$yOffset}:{$scale}";
 
         return $this;
     }
 
     /**
-     * Use a custom watermark from URL.
+     * Skip processing when output format matches source format.
      *
-     * The URL should be base64 encoded.
-     *
-     * @param  string  $url  URL of the custom watermark image
+     * @param  string|string[]  $formats  Format(s) to skip processing for
      */
-    public function watermarkUrl(string $url): self
+    public function skipProcessing(string|array $formats): self
     {
-        $encodedUrl = rtrim(strtr(base64_encode($url), '+/', '-_'), '=');
-        $this->options['wmu'] = $encodedUrl;
+        $formats = is_array($formats) ? $formats : [$formats];
+        $this->options['skp'] = implode(':', $formats);
+
+        return $this;
+    }
+
+    /**
+     * Stream unprocessed source image directly.
+     *
+     * Bypasses all processing, checking, and worker limits.
+     *
+     * @param  bool  $raw  Whether to enable raw mode
+     */
+    public function raw(bool $raw = true): self
+    {
+        $this->options['raw'] = $raw ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Add cache buster to bypass CDN/proxy/browser cache.
+     *
+     * @param  string  $value  Cache buster value
+     */
+    public function cachebuster(string $value): self
+    {
+        $this->options['cb'] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set expiration timestamp.
+     *
+     * imgproxy will return 404 when expired.
+     *
+     * @param  int  $timestamp  Unix timestamp
+     */
+    public function expires(int $timestamp): self
+    {
+        $this->options['exp'] = $timestamp;
+
+        return $this;
+    }
+
+    /**
+     * Set filename for Content-Disposition header.
+     *
+     * @param  string  $filename  Filename to use
+     * @param  bool  $encoded  Whether the filename is URL-safe Base64 encoded
+     */
+    public function filename(string $filename, bool $encoded = false): self
+    {
+        $encodedFilename = $encoded ? rtrim(strtr(base64_encode($filename), '+/', '-_'), '=') : $filename;
+        $this->options['fn'] = $encoded ? "{$encodedFilename}:1" : $encodedFilename;
+
+        return $this;
+    }
+
+    /**
+     * Force download as attachment.
+     *
+     * @param  bool  $attachment  Whether to force attachment
+     */
+    public function returnAttachment(bool $attachment = true): self
+    {
+        $this->options['att'] = $attachment ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * Use server-defined presets.
+     *
+     * @param  string|string[]  $presets  Preset name(s) to use
+     */
+    public function preset(string|array $presets): self
+    {
+        $presets = is_array($presets) ? $presets : [$presets];
+        $this->options['pr'] = implode(':', $presets);
+
+        return $this;
+    }
+
+    /**
+     * Set maximum source resolution in megapixels.
+     *
+     * Requires IMGPROXY_ALLOW_SECURITY_OPTIONS=true.
+     *
+     * @param  float  $resolution  Maximum resolution in megapixels
+     */
+    public function setMaxSrcResolution(float $resolution): self
+    {
+        $this->options['msr'] = $resolution;
+
+        return $this;
+    }
+
+    /**
+     * Set maximum source file size in bytes.
+     *
+     * Requires IMGPROXY_ALLOW_SECURITY_OPTIONS=true.
+     *
+     * @param  int  $size  Maximum file size in bytes
+     */
+    public function setMaxSrcFileSize(int $size): self
+    {
+        $this->options['msfs'] = $size;
+
+        return $this;
+    }
+
+    /**
+     * Set maximum animation frames to process.
+     *
+     * Requires IMGPROXY_ALLOW_SECURITY_OPTIONS=true.
+     *
+     * @param  int  $frames  Maximum number of frames
+     */
+    public function setMaxAnimationFrames(int $frames): self
+    {
+        $this->options['maf'] = $frames;
+
+        return $this;
+    }
+
+    /**
+     * Set maximum animation frame resolution in megapixels.
+     *
+     * Requires IMGPROXY_ALLOW_SECURITY_OPTIONS=true.
+     *
+     * @param  float  $resolution  Maximum resolution in megapixels
+     */
+    public function setMaxAnimationFrameResolution(float $resolution): self
+    {
+        $this->options['mafr'] = $resolution;
+
+        return $this;
+    }
+
+    /**
+     * Set maximum result dimension in pixels.
+     *
+     * Requires IMGPROXY_ALLOW_SECURITY_OPTIONS=true.
+     *
+     * @param  int  $dimension  Maximum dimension in pixels
+     */
+    public function setMaxResultDimension(int $dimension): self
+    {
+        $this->options['mrd'] = $dimension;
 
         return $this;
     }

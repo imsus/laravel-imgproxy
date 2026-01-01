@@ -58,25 +58,4 @@ describe('Validation', function () {
         })->toThrow(\InvalidArgumentException::class, 'Sharpen sigma must be 0.0 or greater');
     });
 
-    it('validates brightness bounds', function () {
-        expect(function () {
-            $this->imgProxy->setBrightness(-256);
-        })->toThrow(\InvalidArgumentException::class, 'Brightness must be between -255 and 255');
-
-        expect(function () {
-            $this->imgProxy->setBrightness(256);
-        })->toThrow(\InvalidArgumentException::class, 'Brightness must be between -255 and 255');
-    });
-
-    it('validates contrast values', function () {
-        expect(function () {
-            $this->imgProxy->setContrast(-1.0);
-        })->toThrow(\InvalidArgumentException::class, 'Contrast must be 0.0 or greater');
-    });
-
-    it('validates saturation values', function () {
-        expect(function () {
-            $this->imgProxy->setSaturation(-1.0);
-        })->toThrow(\InvalidArgumentException::class, 'Saturation must be 0.0 or greater');
-    });
 });

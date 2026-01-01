@@ -44,8 +44,7 @@ it('can make HTTP request to workbench effects test endpoint', function () {
 
     $data = $response->json();
     expect($data['processed'])->toContain('quality:85')
-        ->and($data['processed'])->toContain('blur:1')
-        ->and($data['processed'])->toContain('brightness:10');
+        ->and($data['processed'])->toContain('blur:1');
 });
 
 it('can make HTTP request to workbench formats test endpoint', function () {
@@ -238,7 +237,7 @@ it('can make HTTP request to workbench core processing test endpoint', function 
     expect($data['processed'])->toContain('width:500')
         ->and($data['processed'])->toContain('height:400')
         ->and($data['processed'])->toContain('pd:20')
-        ->and($data['processed'])->toContain('bg:#FF5733')
+        ->and($data['processed'])->toContain('bg:FF5733')
         ->and($data['processed'])->toContain('ar:1')
         ->and($data['processed'])->toContain('rot:90')
         ->and($data['processed'])->toContain('sm:1')
@@ -252,10 +251,10 @@ it('can make HTTP request to workbench watermark test endpoint', function () {
     $response->assertStatus(200)
         ->assertJsonStructure([
             'original',
-            'watermark',
             'processed',
             'watermark_applied',
             'test',
+            'note',
         ])
         ->assertJson([
             'test' => 'watermark',
@@ -264,6 +263,5 @@ it('can make HTTP request to workbench watermark test endpoint', function () {
     $data = $response->json();
     expect($data['processed'])->toContain('width:500')
         ->and($data['processed'])->toContain('height:400')
-        ->and($data['processed'])->toContain('wm:0.7:soea:0:0:0.25')
-        ->and($data['processed'])->toContain('wmu:');
+        ->and($data['processed'])->toContain('wm:0.7:soea:0:0:0.25');
 });

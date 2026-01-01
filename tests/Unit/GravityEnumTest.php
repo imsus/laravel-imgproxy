@@ -55,10 +55,11 @@ describe('Gravity Enum', function () {
         expect(Gravity::SOUTH_EAST->getDescription())->toBe('South East (bottom right)');
         expect(Gravity::SOUTH_WEST->getDescription())->toBe('South West (bottom left)');
         expect(Gravity::NORTH_WEST->getDescription())->toBe('North West (top left)');
+        expect(Gravity::SMART->getDescription())->toBe('Smart (auto-detect interesting section)');
     });
 
-    it('has all nine gravity cases', function () {
+    it('has all ten gravity cases', function () {
         $cases = Gravity::cases();
-        expect(count($cases))->toBe(9);
+        expect(count($cases))->toBe(10);
     });
 });

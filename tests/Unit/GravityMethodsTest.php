@@ -164,4 +164,84 @@ describe('Gravity Methods', function () {
         expect($url)->toContain('quality:90');
         expect($url)->toContain('blur:1');
     });
+
+    describe('gravity with offsets', function () {
+        it('sets gravity with absolute offsets', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setGravityWithOffset(Gravity::CENTER, 10, 20)
+                ->build();
+
+            expect($url)->toContain('gravity:ce:10:20');
+        });
+
+        it('sets gravity with relative offsets (less than 1)', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setGravityWithOffset(Gravity::EAST, 0.5, 0.25)
+                ->build();
+
+            expect($url)->toContain('gravity:ea:0.5:0.25');
+        });
+    });
+
+    describe('smart gravity', function () {
+        it('sets smart gravity', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setGravity(Gravity::SMART)
+                ->build();
+
+            expect($url)->toContain('gravity:sm');
+        });
+    });
+
+    describe('focus point gravity', function () {
+        it('sets focus point gravity', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setFocusPoint(0.5, 0.75)
+                ->build();
+
+            expect($url)->toContain('gravity:fp:0.5:0.75');
+        });
+
+        it('accepts edge coordinates', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->setFocusPoint(0, 1)
+                ->build();
+
+            expect($url)->toContain('gravity:fp:0:1');
+        });
+    });
+
+    describe('crop with float values', function () {
+        it('accepts float width for relative crop', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->crop(0.5, 0.5)
+                ->build();
+
+            expect($url)->toContain('crop:0.5:0.5:ce');
+        });
+
+        it('accepts float height for relative crop', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->crop(300, 0.75)
+                ->build();
+
+            expect($url)->toContain('crop:300:0.75:ce');
+        });
+
+        it('accepts zero for full source dimension', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->crop(0, 0)
+                ->build();
+
+            expect($url)->toContain('crop:0:0:ce');
+        });
+
+        it('works with custom gravity', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->crop(0.5, 0.5, Gravity::NORTH_EAST)
+                ->build();
+
+            expect($url)->toContain('crop:0.5:0.5:noea');
+        });
+    });
 });

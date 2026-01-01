@@ -13,6 +13,7 @@ enum Gravity: string
     case SOUTH_EAST = 'soea';
     case SOUTH_WEST = 'sowe';
     case NORTH_WEST = 'nowe';
+    case SMART = 'sm';
 
     public static function getDefault(): self
     {
@@ -34,6 +35,7 @@ enum Gravity: string
             self::SOUTH_EAST => 'South East (bottom right)',
             self::SOUTH_WEST => 'South West (bottom left)',
             self::NORTH_WEST => 'North West (top left)',
+            self::SMART => 'Smart (auto-detect interesting section)',
         };
     }
 }
