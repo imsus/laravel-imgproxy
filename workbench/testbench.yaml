@@ -1,0 +1,23 @@
+laravel: '@testbench'
+
+providers: []
+
+migrations: []
+
+seeders: []
+
+workbench:
+  start: '/'
+  install: false
+  health: false
+  discovers:
+    web: true
+    api: true
+    commands: false
+    components: true
+    factories: false
+    views: true
+  build:
+    - asset-publish
+  assets:
+    - laravel-assets

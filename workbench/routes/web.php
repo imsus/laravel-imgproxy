@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', '/imgproxy-visual-test');
+// Visual test page route
+Route::get('/', function () {
+    return view('imgproxy-test');
+});
 
 Route::prefix('imgproxy-test')->group(function () {
     // Basic URL generation test
@@ -262,9 +265,4 @@ Route::prefix('imgproxy-test')->group(function () {
             'visual_tests' => 'Visit /imgproxy-visual-test for browser-based visual testing',
         ]);
     });
-});
-
-// Visual test page route
-Route::get('/imgproxy-visual-test', function () {
-    return view('imgproxy-test');
 });

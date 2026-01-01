@@ -2,7 +2,6 @@
 
 namespace Workbench\App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class WorkbenchServiceProvider extends ServiceProvider
@@ -21,10 +20,5 @@ class WorkbenchServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
-
-        // Visual test page route
-        Route::get('/imgproxy-visual-test', function () {
-            return view('imgproxy-test');
-        });
     }
 }
