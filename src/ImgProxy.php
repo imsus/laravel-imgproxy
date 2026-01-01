@@ -303,7 +303,7 @@ class ImgProxy
             throw new \InvalidArgumentException('Background must be a valid 6-digit hex color');
         }
 
-        $this->options['bg'] = "#{$hex}";
+        $this->options['bg'] = $hex;
 
         return $this;
     }

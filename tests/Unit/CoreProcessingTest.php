@@ -47,7 +47,7 @@ describe('Core Processing', function () {
                 ->background('FF5733')
                 ->build();
 
-            expect($url)->toContain('bg:#FF5733');
+            expect($url)->toContain('bg:FF5733');
         });
 
         it('validates hex color format', function () {
@@ -73,7 +73,7 @@ describe('Core Processing', function () {
                 ->background('aabbcc')
                 ->build();
 
-            expect($url)->toContain('bg:#aabbcc');
+            expect($url)->toContain('bg:aabbcc');
         });
     });
 
@@ -286,7 +286,7 @@ describe('Core Processing', function () {
             expect($url)->toContain('width:400')
                 ->and($url)->toContain('height:300')
                 ->and($url)->toContain('pd:20')
-                ->and($url)->toContain('bg:#FF5733')
+                ->and($url)->toContain('bg:FF5733')
                 ->and($url)->toContain('rot:90')
                 ->and($url)->toContain('pix:8');
         });
