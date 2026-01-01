@@ -11,7 +11,7 @@ A comprehensive Laravel package for [ImgProxy](https://imgproxy.net/) integratio
 
 -   🚀 **Fluent API** - Clean, chainable method syntax
 -   🔒 **Secure URLs** - HMAC-SHA256 signed URLs with hex key/salt validation
--   🎨 **Visual Effects** - Blur, sharpen, brightness, contrast, saturation adjustments
+-   🎨 **Visual Effects** - Blur, sharpen adjustments
 -   ⚡ **Quality Control** - Fine-tune compression for JPEG, WebP, AVIF formats
 -   📐 **Flexible Resizing** - Multiple resize modes with DPR support
 -   🔧 **Laravel Integration** - Service provider, facade, and helper function
@@ -205,9 +205,6 @@ $url = imgproxy('https://example.com/photo.jpg')
     ->setHeight(300)
     ->setBlur(2.0)          // Blur effect
     ->setSharpen(1.5)       // Sharpen details
-    ->setBrightness(20)     // Increase brightness
-    ->setContrast(1.2)      // Enhance contrast
-    ->setSaturation(1.1)    // Boost saturation
     ->build();
 ```
 
@@ -248,9 +245,6 @@ $portraitUrl = imgproxy($portrait)
     ->setWidth(400)
     ->setHeight(600)
     ->setResizeType(ResizeType::FILL)
-    ->setBrightness(10)
-    ->setContrast(1.1)
-    ->setSaturation(1.05)
     ->setQuality(90)
     ->build();
 ```
@@ -270,9 +264,6 @@ $portraitUrl = imgproxy($portrait)
 | `setQuality(int $quality)`           | 0-100             | Set compression quality         |
 | `setBlur(float $sigma)`              | ≥0.0              | Apply blur effect               |
 | `setSharpen(float $sigma)`           | ≥0.0              | Apply sharpen effect            |
-| `setBrightness(int $brightness)`     | -255 to 255       | Adjust brightness               |
-| `setContrast(float $contrast)`       | ≥0.0              | Adjust contrast                 |
-| `setSaturation(float $saturation)`   | ≥0.0              | Adjust saturation               |
 | `setMode(SourceUrlMode $mode)`       | `encoded`/`plain` | Set URL encoding mode           |
 | `setProcessing(string $options)`     | Processing string | Custom processing options       |
 | `build()`                            | -                 | Generate final URL              |
@@ -574,20 +565,14 @@ $enhancedPortrait = imgproxy($portrait)
     ->setWidth(600)
     ->setHeight(800)
     ->setResizeType(ResizeType::FILL)
-    ->setBrightness(8)       // Slightly brighter
-    ->setContrast(1.1)       // Enhanced contrast
-    ->setSaturation(1.05)    // Subtle saturation boost
     ->setSharpen(0.8)        // Gentle sharpening
     ->setQuality(92)
     ->build();
 
-// High contrast black and white
-$highContrastBW = imgproxy($image)
+// Vintage effect
+$vintageEffect = imgproxy($image)
     ->setWidth(800)
     ->setHeight(600)
-    ->setSaturation(0)       // Remove all color
-    ->setContrast(1.5)       // High contrast
-    ->setBrightness(-5)      // Slightly darker
     ->setSharpen(2.0)        // Sharp details
     ->build();
 ```
@@ -600,8 +585,6 @@ $productClean = imgproxy($product)
     ->setWidth(800)
     ->setHeight(800)
     ->setResizeType(ResizeType::FIT)
-    ->setBrightness(15)      // Bright and clean
-    ->setContrast(1.1)       // Good contrast
     ->setSharpen(1.5)        // Sharp product details
     ->setQuality(95)         // High quality for products
     ->setExtension(OutputExtension::WEBP)
@@ -711,7 +694,7 @@ The visual test page includes:
 - **Quality Comparison** - Side-by-side quality levels (30%, 70%, 95%)
 - **Format Comparison** - Visual differences between JPEG, PNG, WebP, AVIF
 - **Resize Types Demo** - Visual behavior of fit, fill, force, auto modes
-- **Effects Showcase** - Blur, sharpen, saturation, brightness effects
+- **Effects Showcase** - Blur, sharpen effects
 - **Complex Processing** - Portrait enhancement and vintage effects
 - **High DPI Examples** - Standard vs 2x DPI comparisons
 
@@ -721,7 +704,7 @@ The package includes **156 comprehensive tests** with **376 assertions** coverin
 
 - ✅ **Unit Tests** (130 tests) - Organized by functionality:
   - `UrlGenerationTest` - Signed URLs, helper, fluent methods
-  - `ValidationTest` - DPR, quality, blur, sharpen, brightness, contrast, saturation
+  - `ValidationTest` - DPR, quality, blur, sharpen
   - `S3UrlTest` - S3 URL handling
   - `ExceptionTest` - Invalid hex key/salt exceptions
   - `EffectsTest` - Quality and effects in URL building
