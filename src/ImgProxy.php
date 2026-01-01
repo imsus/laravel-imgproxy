@@ -5,6 +5,7 @@ namespace Imsus\ImgProxy;
 use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
+use Imsus\ImgProxy\Enums\Rotation;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
 use InvalidArgumentException;
 
@@ -322,17 +323,11 @@ class ImgProxy
     /**
      * Rotate the image by the specified degrees.
      *
-     * @param  int  $degrees  Rotation angle in degrees (0-360)
-     *
-     * @throws \InvalidArgumentException If degrees is not between 0 and 360
+     * @param  Rotation  $rotation  Rotation angle (0, 90, 180, or 270 degrees)
      */
-    public function rotate(int $degrees): self
+    public function rotate(Rotation $rotation): self
     {
-        if ($degrees < 0 || $degrees > 360) {
-            throw new \InvalidArgumentException('Rotation must be between 0 and 360 degrees');
-        }
-
-        $this->options['rot'] = $degrees;
+        $this->options['rot'] = $rotation->value();
 
         return $this;
     }

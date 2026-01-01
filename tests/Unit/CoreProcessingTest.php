@@ -118,46 +118,34 @@ describe('Core Processing', function () {
     describe('rotate', function () {
         it('adds rotation to the URL', function () {
             $url = imgproxy($this->sample_image_url)
-                ->rotate(90)
+                ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)
                 ->build();
 
             expect($url)->toContain('rot:90');
         });
 
-        it('validates rotation bounds - negative', function () {
-            expect(function () {
-                $this->imgProxy->rotate(-1);
-            })->toThrow(\InvalidArgumentException::class, 'Rotation must be between 0 and 360 degrees');
-        });
-
-        it('validates rotation bounds - exceeds 360', function () {
-            expect(function () {
-                $this->imgProxy->rotate(361);
-            })->toThrow(\InvalidArgumentException::class, 'Rotation must be between 0 and 360 degrees');
-        });
-
         it('accepts 0 degrees', function () {
             $url = imgproxy($this->sample_image_url)
-                ->rotate(0)
+                ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_0)
                 ->build();
 
             expect($url)->toContain('rot:0');
         });
 
-        it('accepts 360 degrees', function () {
+        it('accepts 180 degrees', function () {
             $url = imgproxy($this->sample_image_url)
-                ->rotate(360)
-                ->build();
-
-            expect($url)->toContain('rot:360');
-        });
-
-        it('accepts common rotation angles', function () {
-            $url = imgproxy($this->sample_image_url)
-                ->rotate(180)
+                ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_180)
                 ->build();
 
             expect($url)->toContain('rot:180');
+        });
+
+        it('accepts 270 degrees', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_270)
+                ->build();
+
+            expect($url)->toContain('rot:270');
         });
     });
 
@@ -291,7 +279,7 @@ describe('Core Processing', function () {
                 ->setHeight(300)
                 ->padding(20)
                 ->background('FF5733')
-                ->rotate(90)
+                ->rotate(\Imsus\ImgProxy\Enums\Rotation::DEG_90)
                 ->pixelate(8)
                 ->build();
 
