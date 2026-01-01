@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - '.github/workflows/ci.yml'
+      - 'phpstan.neon.dist'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan --error-format=github
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        php: ['8.4', '8.3', '8.2']
+        laravel: ['12.*', '11.*']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: 12.*
+            testbench: 10.*
+          - laravel: 11.*
+            testbench: 9.*
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --prefer-lowest --no-scripts
+
+      - name: Execute tests
+        run: vendor/bin/pest --ci --no-coverage
