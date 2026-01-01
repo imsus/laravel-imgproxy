@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Laravel ImgProxy",
-  description: "A Laravel package for ImgProxy integration",
+  title: "Laravel imgproxy",
+  description: "A Laravel package for imgproxy integration",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

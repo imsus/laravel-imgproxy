@@ -30,9 +30,9 @@ openssl rand -hex 32
 **Problem**: Images return 404 or don't load
 
 **Solutions**:
-- Verify ImgProxy server is running at the configured endpoint
+- Verify imgproxy server is running at the configured endpoint
 - Check source image URLs are accessible
-- Ensure ImgProxy server can reach source URLs (firewall/network issues)
+- Ensure imgproxy server can reach source URLs (firewall/network issues)
 
 ### Poor image quality
 
@@ -90,9 +90,9 @@ $config = config('laravel-imgproxy');
 dd($config);
 ```
 
-## Verify ImgProxy Connection
+## Verify imgproxy Connection
 
-Test if your ImgProxy server is accessible:
+Test if your imgproxy server is accessible:
 
 ```bash
 curl http://localhost:8080/health

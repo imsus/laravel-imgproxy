@@ -4,7 +4,7 @@ The package includes two Blade components inspired by Next.js Image component fo
 
 ## Img Component
 
-The `Img` component generates an optimized image tag with ImgProxy processing.
+The `Img` component generates an optimized image tag with imgproxy processing.
 
 ```blade
 <x-imgproxy-img

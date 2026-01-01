@@ -36,7 +36,7 @@ IMGPROXY_DEFAULT_OUTPUT_EXTENSION=jpeg
 
 | Option | Description | Default | Required |
 |--------|-------------|---------|----------|
-| `endpoint` | ImgProxy server URL | `http://localhost:8080` | Yes |
+| `endpoint` | imgproxy server URL | `http://localhost:8080` | Yes |
 | `key` | Hex-encoded signing key for HMAC-SHA256 | `null` | No* |
 | `salt` | Hex-encoded signing salt | `null` | No* |
 | `default_source_url_mode` | How to encode source URLs | `encoded` | No |
@@ -59,4 +59,4 @@ openssl rand -hex 32
 
 - PHP 8.2+
 - Laravel 10.x or 11.x
-- ImgProxy server (self-hosted or cloud)
+- imgproxy server (self-hosted or cloud)

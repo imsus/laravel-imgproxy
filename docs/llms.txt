@@ -1,8 +1,8 @@
-# Laravel ImgProxy - LLM Context
+# Laravel imgproxy - LLM Context
 
 ## Project Overview
 
-**imsus/laravel-imgproxy** is a Laravel package providing integration with [ImgProxy](https://imgproxy.net/) - a fast and secure image processing server. It offers a fluent API for generating optimized, signed image URLs.
+**imsus/laravel-imgproxy** is a Laravel package providing integration with [imgproxy](https://imgproxy.net/) - a fast and secure image processing server. It offers a fluent API for generating optimized, signed image URLs.
 
 ## Key Features
 

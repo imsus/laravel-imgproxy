@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: Laravel ImgProxy
-  text: A Laravel package for ImgProxy
+  name: Laravel imgproxy
+  text: A Laravel package for imgproxy
   tagline: Fast, secure image processing for Laravel applications
   actions:
     - theme: brand

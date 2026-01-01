@@ -72,7 +72,7 @@ Once the server is running (typically at `http://localhost:8000`), you can acces
 - **Visual Test Suite**: `http://localhost:8000/imgproxy-visual-test` - Complete browser-based visual testing
 
 The visual test page includes:
-- Real Image Processing - See actual ImgProxy results with sample images
+- Real Image Processing - See actual imgproxy results with sample images
 - Quality Comparison - Side-by-side quality levels (30%, 70%, 95%)
 - Format Comparison - Visual differences between JPEG, PNG, WebP, AVIF
 - Resize Types Demo - Visual behavior of fit, fill, force, auto modes

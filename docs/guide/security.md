@@ -88,10 +88,10 @@ IMGPROXY_SALT=prod_salt_here
 
 ## Rate Limiting
 
-Consider implementing rate limiting on your ImgProxy server to prevent abuse:
+Consider implementing rate limiting on your imgproxy server to prevent abuse:
 
 ```php
-// In your ImgProxy configuration
+// In your imgproxy configuration
 rate_limit:
   period: 1
   limit: 1000  # requests per period
@@ -127,7 +127,7 @@ public function processImage(string $imageUrl, ?int $width, ?int $height): strin
 
 ## Secure Endpoint Configuration
 
-Configure your ImgProxy server securely:
+Configure your imgproxy server securely:
 
 ```yaml
 # imgproxy.yml

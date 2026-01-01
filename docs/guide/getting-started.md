@@ -1,6 +1,6 @@
 # Introduction
 
-Laravel ImgProxy is a Laravel package that provides a fluent API for generating URLs with [ImgProxy](https://imgproxy.net/), a fast and secure image processing server.
+Laravel imgproxy is a Laravel package that provides a fluent API for generating URLs with [imgproxy](https://imgproxy.net/), a fast and secure image processing server.
 
 ## Features
 
@@ -17,7 +17,7 @@ Laravel ImgProxy is a Laravel package that provides a fluent API for generating 
 
 - PHP 8.2+
 - Laravel 10.x or 11.x
-- ImgProxy server (self-hosted or cloud)
+- imgproxy server (self-hosted or cloud)
 
 ## Quick Start
 
@@ -45,9 +45,9 @@ $url = imgproxy('https://example.com/image.jpg')
     ->build();
 ```
 
-## Why ImgProxy?
+## Why imgproxy?
 
-ImgProxy is a fast and secure image processing server that provides:
+imgproxy is a fast and secure image processing server that provides:
 
 - **Fast Processing** - Optimized for high performance
 - **Security** - Prevent image-based attacks

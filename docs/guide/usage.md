@@ -47,7 +47,7 @@ $url = ImgProxy::url('https://example.com/image.jpg')
 
 ## Result
 
-The `build()` method returns the complete, signed ImgProxy URL:
+The `build()` method returns the complete, signed imgproxy URL:
 
 ```php
 "http://localhost:8080/signed-url/width:800/height:600/quality:85/..."

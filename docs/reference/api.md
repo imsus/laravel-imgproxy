@@ -4,7 +4,7 @@
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `endpoint` | `string` | `http://localhost:8080` | ImgProxy server URL |
+| `endpoint` | `string` | `http://localhost:8080` | imgproxy server URL |
 | `key` | `string\|null` | `null` | Hex-encoded HMAC signing key |
 | `salt` | `string\|null` | `null` | Hex-encoded HMAC signing salt |
 | `default_source_url_mode` | `string` | `encoded` | Default URL encoding mode |
@@ -42,10 +42,10 @@ config(['laravel-imgproxy.key' => 'new_key']);
 
 ## Helper Function
 
-Get an instance of ImgProxy:
+Get an instance of imgproxy:
 
 ```php
-imgproxy(); // Returns ImgProxy builder instance
+imgproxy(); // Returns imgproxy builder instance
 ```
 
 ## Facade

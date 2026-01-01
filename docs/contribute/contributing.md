@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to Laravel ImgProxy! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Laravel imgproxy! This document provides guidelines and instructions for contributing.
 
 ## Getting Started
 
