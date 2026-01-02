@@ -2,6 +2,7 @@
 
 namespace Imsus\ImgProxy;
 
+use Imsus\ImgProxy\Commands\KeyGenerateCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -13,7 +14,8 @@ class ImgProxyServiceProvider extends PackageServiceProvider
             ->name('laravel-imgproxy')
             ->hasConfigFile()
             ->hasViewComponents('imgproxy', Components\Img::class)
-            ->hasViewComponents('imgproxy', Components\Picture::class);
+            ->hasViewComponents('imgproxy', Components\Picture::class)
+            ->hasCommands(KeyGenerateCommand::class);
     }
 
     public function register()

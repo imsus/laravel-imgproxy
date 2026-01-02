@@ -5,9 +5,8 @@
 Use strong, unique keys for your environment:
 
 ```bash
-# Generate strong keys
-IMGPROXY_KEY=$(openssl rand -hex 32)
-IMGPROXY_SALT=$(openssl rand -hex 32)
+# Generate secure keys using the artisan command
+php artisan imgproxy:key
 
 # Use HTTPS in production
 IMGPROXY_ENDPOINT=https://imgproxy.yoursite.com
@@ -63,9 +62,8 @@ class ImageProcessor
 Regularly rotate your signing keys:
 
 ```bash
-# Generate new keys
-openssl rand -hex 32  # New key
-openssl rand -hex 32  # New salt
+# Generate new keys using the artisan command
+php artisan imgproxy:key
 
 # Update .env file
 # Deploy to production

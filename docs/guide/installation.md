@@ -46,11 +46,16 @@ IMGPROXY_DEFAULT_OUTPUT_EXTENSION=jpeg
 
 ### Generating Keys
 
-Generate a hex-encoded key and salt using:
+Generate secure signing keys using the built-in artisan command:
 
 ```bash
-openssl rand -hex 32
+php artisan imgproxy:key
 ```
+
+This command generates 64-character hex strings for `IMGPROXY_KEY` and `IMGPROXY_SALT`, saves them to your `.env` file, and displays them in the console.
+
+> [!TIP]
+> You can also generate keys manually using `openssl rand -hex 32`, but the artisan command is faster and more convenient.
 
 > [!CAUTION]
 > The `key` and `salt` must be in hex-encoded format (64 characters each).
