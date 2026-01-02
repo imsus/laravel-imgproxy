@@ -1,6 +1,6 @@
 {
     "name": "imsus/laravel-imgproxy",
-    "description": "Laravel integration for ImgProxy",
+    "description": "High-performance, secure image processing for Laravel. Seamlessly generate signed imgproxy URLs to resize, crop, and transform images on the fly.",
     "keywords": [
         "laravel",
         "imgproxy",

@@ -250,3 +250,5 @@ MIT License. See [LICENSE](LICENSE.md) for details.
 Laravel is a trademark of https://laravel.com/legal/trademark.
 
 imgproxy is a trademark of https://imgproxy.net/.
+
+![](https://cloud.umami.is/p/Ex000voJD)
