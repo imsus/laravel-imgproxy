@@ -7,4 +7,6 @@ return [
     'default_source_url_mode' => env('IMGPROXY_DEFAULT_SOURCE_URL_MODE', 'encoded'),
     'default_output_extension' => env('IMGPROXY_DEFAULT_OUTPUT_EXTENSION', 'jpeg'),
     'default_gravity' => env('IMGPROXY_DEFAULT_GRAVITY', 'ce'),
+    'use_short_options' => env('IMGPROXY_USE_SHORT_OPTIONS', false),
+    'fallback_url' => env('IMGPROXY_FALLBACK_URL'),
 ];

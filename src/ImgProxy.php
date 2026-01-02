@@ -30,6 +30,10 @@ class ImgProxy
 
     private ?string $processing_options = null;
 
+    private bool $use_short_options = false;
+
+    private ?string $fallback_url = null;
+
     public function __construct()
     {
         $this->endpoint = config('imgproxy.endpoint', 'http://localhost:8080');
@@ -37,6 +41,8 @@ class ImgProxy
         $this->salt = $this->validateHexString(config('imgproxy.salt', ''), 'salt');
         $this->source_url_mode = SourceUrlMode::fromString(config('imgproxy.default_source_url_mode')) ?? SourceUrlMode::getDefault();
         $this->default_output_extension = OutputExtension::fromExtension(config('imgproxy.default_output_extension')) ?? OutputExtension::getDefault();
+        $this->use_short_options = config('imgproxy.use_short_options', false);
+        $this->fallback_url = config('imgproxy.fallback_url');
     }
 
     /**
@@ -1032,6 +1038,8 @@ class ImgProxy
         $copy->overridden_extension = $this->overridden_extension;
         $copy->options = $this->options;
         $copy->processing_options = $this->processing_options;
+        $copy->use_short_options = $this->use_short_options;
+        $copy->fallback_url = $this->fallback_url;
 
         return $copy;
     }
@@ -1076,11 +1084,64 @@ class ImgProxy
 
     private function buildProcessingOptions(): string
     {
-        return implode('/', array_map(
-            fn ($key, $value) => "{$key}:{$value}",
-            array_keys($this->options),
-            $this->options
-        ));
+        $shortOptions = [
+            'resize' => 'rs',
+            'size' => 's',
+            'resizing_type' => 'rt',
+            'width' => 'w',
+            'height' => 'h',
+            'min-width' => 'mw',
+            'min-height' => 'mh',
+            'zoom' => 'z',
+            'dpr' => 'dpr',
+            'enlarge' => 'el',
+            'extend' => 'ex',
+            'extend_aspect_ratio' => 'exar',
+            'gravity' => 'g',
+            'crop' => 'c',
+            'trim' => 't',
+            'padding' => 'pd',
+            'auto_rotate' => 'ar',
+            'rotate' => 'rot',
+            'background' => 'bg',
+            'blur' => 'bl',
+            'sharpen' => 'sh',
+            'pixelate' => 'pix',
+            'watermark' => 'wm',
+            'strip_metadata' => 'sm',
+            'keep_copyright' => 'kcr',
+            'strip_color_profile' => 'scp',
+            'enforce_thumbnail' => 'eth',
+            'quality' => 'q',
+            'format_quality' => 'fq',
+            'max_bytes' => 'mb',
+            'format' => 'f',
+            'skip_processing' => 'skp',
+            'raw' => 'raw',
+            'cachebuster' => 'cb',
+            'expires' => 'exp',
+            'filename' => 'fn',
+            'return_attachment' => 'att',
+            'preset' => 'pr',
+            'max_src_resolution' => 'msr',
+            'max_src_file_size' => 'msfs',
+            'max_animation_frames' => 'maf',
+            'max_animation_frame_resolution' => 'mafr',
+            'max_result_dimension' => 'mrd',
+        ];
+
+        $map = [];
+
+        foreach ($this->options as $key => $value) {
+            if ($this->use_short_options) {
+                $shortKey = $shortOptions[$key] ?? $key;
+                $map[] = "{$shortKey}:{$value}";
+            } else {
+                $map[] = "{$key}:{$value}";
+            }
+        }
+
+        return implode('/', $map);
     }
 
     /**
