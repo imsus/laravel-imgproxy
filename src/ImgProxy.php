@@ -52,6 +52,30 @@ class ImgProxy
     }
 
     /**
+     * Set the width of the output image.
+     *
+     * @param  int  $width  The desired width in pixels
+     */
+    public function setWidth(int $width): self
+    {
+        $this->options['width'] = $width;
+
+        return $this;
+    }
+
+    /**
+     * Set the width of the output image.
+     *
+     * Alias of {@see setWidth()}.
+     *
+     * @param  int  $width  The desired width in pixels
+     */
+    public function width(int $width): self
+    {
+        return $this->setWidth($width);
+    }
+
+    /**
      * Set the height of the output image.
      *
      * @param  int  $height  The desired height in pixels
@@ -64,15 +88,15 @@ class ImgProxy
     }
 
     /**
-     * Set the width of the output image.
+     * Set the height of the output image.
      *
-     * @param  int  $width  The desired width in pixels
+     * Alias of {@see setHeight()}.
+     *
+     * @param  int  $height  The desired height in pixels
      */
-    public function setWidth(int $width): self
+    public function height(int $height): self
     {
-        $this->options['width'] = $width;
-
-        return $this;
+        return $this->setHeight($height);
     }
 
     /**
@@ -87,6 +111,56 @@ class ImgProxy
         $this->options['resizing_type'] = $mode->value;
 
         return $this;
+    }
+
+    /**
+     * Set resize type to cover (FILL).
+     *
+     * Resizes the image to fill the specified dimensions, cropping if necessary.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FILL}.
+     */
+    public function cover(): self
+    {
+        return $this->setResizeType(ResizeType::FILL);
+    }
+
+    /**
+     * Set resize type to contain (FIT).
+     *
+     * Resizes the image to fit within the specified dimensions.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FIT}.
+     */
+    public function contain(): self
+    {
+        return $this->setResizeType(ResizeType::FIT);
+    }
+
+    /**
+     * Set resize type to fill-down.
+     *
+     * Resizes the image to fill the specified dimensions, downscaling only.
+     * Unlike force(), this maintains aspect ratio.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FILL_DOWN}.
+     */
+    public function fillDown(): self
+    {
+        return $this->setResizeType(ResizeType::FILL_DOWN);
+    }
+
+    /**
+     * Set resize type to force (stretch).
+     *
+     * Resizes the image without keeping the aspect ratio.
+     * Similar to CSS object-fit: fill.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FORCE}.
+     */
+    public function force(): self
+    {
+        return $this->setResizeType(ResizeType::FORCE);
     }
 
     /**
@@ -164,6 +238,18 @@ class ImgProxy
     }
 
     /**
+     * Set the device pixel ratio (DPR) for the image.
+     *
+     * Alias of {@see setDpr()}.
+     *
+     * @param  int  $dpr  The device pixel ratio (1-8)
+     */
+    public function dpr(int $dpr): self
+    {
+        return $this->setDpr($dpr);
+    }
+
+    /**
      * Set the zoom factor(s) for the image.
      *
      * Unlike DPR, zoom doesn't affect gravity offsets, watermark offsets, and paddings.
@@ -217,6 +303,69 @@ class ImgProxy
     }
 
     /**
+     * Set output format to WebP.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::WEBP}.
+     */
+    public function webp(): self
+    {
+        return $this->setExtension(OutputExtension::WEBP);
+    }
+
+    /**
+     * Set output format to AVIF.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::AVIF}.
+     */
+    public function avif(): self
+    {
+        return $this->setExtension(OutputExtension::AVIF);
+    }
+
+    /**
+     * Set output format to PNG.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::PNG}.
+     */
+    public function png(): self
+    {
+        return $this->setExtension(OutputExtension::PNG);
+    }
+
+    /**
+     * Set output format to JPEG.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::JPEG}.
+     */
+    public function jpg(): self
+    {
+        return $this->setExtension(OutputExtension::JPEG);
+    }
+
+    /**
+     * Set output format to GIF.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::GIF}.
+     */
+    public function gif(): self
+    {
+        return $this->setExtension(OutputExtension::GIF);
+    }
+
+    /**
+     * Set output format to SVG.
+     *
+     * Note: SVG output is only supported when the source image is SVG.
+     * When source is SVG and SVG output is requested, imgproxy returns the source unchanged.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::SVG}.
+     */
+    public function svg(): self
+    {
+        return $this->setExtension(OutputExtension::SVG);
+    }
+
+    /**
      * Set the image quality (0-100).
      *
      * @param  int  $quality  The quality level (0-100)
@@ -232,6 +381,18 @@ class ImgProxy
         $this->options['quality'] = $quality;
 
         return $this;
+    }
+
+    /**
+     * Set the image quality (0-100).
+     *
+     * Alias of {@see setQuality()}.
+     *
+     * @param  int  $quality  The quality level (0-100)
+     */
+    public function quality(int $quality): self
+    {
+        return $this->setQuality($quality);
     }
 
     /**
@@ -677,6 +838,18 @@ class ImgProxy
         $this->options['cb'] = $value;
 
         return $this;
+    }
+
+    /**
+     * Add cache busting version to force CDN/proxy refresh.
+     *
+     * Alias of {@see cachebuster()}.
+     *
+     * @param  int|string  $version  Version identifier (e.g., timestamp, build number, or string)
+     */
+    public function v(int|string $version): self
+    {
+        return $this->cachebuster((string) $version);
     }
 
     /**
