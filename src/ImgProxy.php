@@ -160,19 +160,17 @@ class ImgProxy
     {
         $instance = new self;
 
-        // Check if the disk supports temporaryUrl (private disks like S3)
-        if (method_exists($disk, 'temporaryUrl')) {
-            try {
-                // Attempt to get a temporary URL, which indicates a private disk
-                // We'll use the default expiration (1 hour) if not specified
-                $url = $disk->temporaryUrl($path);
-                $instance->source_url = $url;
+        // Try to get a temporary URL for private disks (S3, etc.)
+        // Falls back to regular URL if temporaryUrl fails or isn't supported
+        try {
+            // Use 1 hour expiration for presigned URLs
+            $url = $disk->temporaryUrl($path, now()->addHour());
+            $instance->source_url = $url;
 
-                return $instance;
-            } catch (\Throwable $e) {
-                // If temporaryUrl fails (e.g., driver doesn't support it or misconfigured),
-                // fall back to using the regular URL method
-            }
+            return $instance;
+        } catch (\Throwable $e) {
+            // If temporaryUrl fails (e.g., driver doesn't support it or misconfigured),
+            // fall back to using the regular URL method
         }
 
         // For public disks, use the regular url() method
