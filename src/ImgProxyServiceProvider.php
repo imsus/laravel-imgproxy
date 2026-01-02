@@ -29,6 +29,7 @@ class ImgProxyServiceProvider extends PackageServiceProvider
     public function boot()
     {
         $this->registerMacros();
+        $this->commands(KeyGenerateCommand::class);
     }
 
     protected function registerMacros(): void
