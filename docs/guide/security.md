@@ -47,9 +47,9 @@ class ImageProcessor
         }
 
         return imgproxy($imageUrl)
-            ->setWidth(800)
-            ->setHeight(600)
-            ->setQuality(85)
+            ->width(800)
+            ->height(600)
+            ->quality(85)
             ->build();
     }
 }
@@ -117,8 +117,8 @@ public function processImage(string $imageUrl, ?int $width, ?int $height): strin
     }
 
     return imgproxy($imageUrl)
-        ->setWidth($width)
-        ->setHeight($height)
+        ->width($width)
+        ->height($height)
         ->build();
 }
 ```
@@ -151,9 +151,9 @@ class AuditedImageProcessor
         $startTime = microtime(true);
 
         $url = imgproxy($imageUrl)
-            ->setWidth($options['width'] ?? null)
-            ->setHeight($options['height'] ?? null)
-            ->setQuality($options['quality'] ?? 85)
+            ->width($options['width'] ?? null)
+            ->height($options['height'] ?? null)
+            ->quality($options['quality'] ?? 85)
             ->build();
 
         $duration = microtime(true) - $startTime;

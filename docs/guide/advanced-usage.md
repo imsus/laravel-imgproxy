@@ -24,7 +24,38 @@ For advanced use cases, you can set raw processing options:
 
 ```php
 $url = imgproxy('https://example.com/image.jpg')
-    ->setProcessing('rs:fill:400:300:1/rt:fit/q:85/bl:2.0')
+    ->processing('rs:fill:400:300:1/rt:fit/q:85/bl:2.0')
+    ->build();
+```
+
+## Cache Busting
+
+Use the `v()` method to invalidate cached images when you update the source image:
+
+```php
+$url = imgproxy('https://example.com/image.jpg')
+    ->width(300)
+    ->height(200)
+    ->v(2)  // Increment this value to force refresh
+    ->build();
+```
+
+## Fallback URL
+
+Set a fallback image for when the source URL is missing or invalid:
+
+```php
+// Using config fallback
+$url = imgproxy('https://example.com/missing.jpg')
+    ->width(300)
+    ->height(200)
+    ->build();
+
+// Per-request fallback
+$url = imgproxy('https://example.com/missing.jpg')
+    ->width(300)
+    ->height(200)
+    ->fallback('https://example.com/placeholder.jpg')
     ->build();
 ```
 
@@ -43,7 +74,7 @@ Blade::directive('imgproxy', function ($expression) {
 });
 
 Blade::directive('avatar', function ($expression) {
-    return "<?php echo imgproxy($expression)->setWidth(150)->setHeight(150)->setResizeType(\Imsus\ImgProxy\Enums\ResizeType::FILL)->build(); ?>";
+    return "<?php echo imgproxy($expression)->width(150)->height(150)->cover()->build(); ?>";
 });
 ```
 
@@ -67,11 +98,11 @@ class User extends Model
         }
 
         return imgproxy($this->avatar)
-            ->setWidth(150)
-            ->setHeight(150)
-            ->setResizeType(ResizeType::FILL)
-            ->setExtension(OutputExtension::WEBP)
-            ->setQuality(85)
+            ->width(150)
+            ->height(150)
+            ->cover()
+            ->webp()
+            ->quality(85)
             ->build();
     }
 }
@@ -90,9 +121,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'avatar' => [
-                'small' => imgproxy($this->avatar)->setWidth(50)->setHeight(50)->build(),
-                'medium' => imgproxy($this->avatar)->setWidth(150)->setHeight(150)->build(),
-                'large' => imgproxy($this->avatar)->setWidth(300)->setHeight(300)->build(),
+                'small' => imgproxy($this->avatar)->width(50)->height(50)->build(),
+                'medium' => imgproxy($this->avatar)->width(150)->height(150)->build(),
+                'large' => imgproxy($this->avatar)->width(300)->height(300)->build(),
             ],
         ];
     }
@@ -109,12 +140,12 @@ class UserAvatar
     public static function generate(string $imageUrl, int $size = 150): string
     {
         return imgproxy($imageUrl)
-            ->setWidth($size)
-            ->setHeight($size)
-            ->setResizeType(ResizeType::FILL)
-            ->setExtension(OutputExtension::WEBP)
-            ->setQuality(85)
-            ->setSharpen(0.5)
+            ->width($size)
+            ->height($size)
+            ->cover()
+            ->webp()
+            ->quality(85)
+            ->sharpen(0.5)
             ->build();
     }
 }
@@ -136,11 +167,11 @@ class ResponsiveImage
 
         foreach ($sizes as $width) {
             $url = imgproxy($imageUrl)
-                ->setWidth($width)
-                ->setHeight(intval($width * 0.75)) // 4:3 aspect ratio
-                ->setResizeType(ResizeType::FILL)
-                ->setExtension(OutputExtension::WEBP)
-                ->setQuality(85)
+                ->width($width)
+                ->height(intval($width * 0.75)) // 4:3 aspect ratio
+                ->cover()
+                ->webp()
+                ->quality(85)
                 ->build();
 
             $srcset[] = "{$url} {$width}w";
@@ -157,7 +188,7 @@ $srcsetString = implode(', ', $srcset);
 ```
 
 ```blade
-<img src="{{ imgproxy($image)->setWidth(800)->build() }}"
+<img src="{{ imgproxy($image)->width(800)->build() }}"
      srcset="{{ $srcsetString }}"
      sizes="(max-width: 768px) 100vw, 50vw"
      alt="Responsive image">
@@ -169,11 +200,11 @@ $srcsetString = implode(', ', $srcset);
 
 ```php
 $enhancedPortrait = imgproxy($portrait)
-    ->setWidth(600)
-    ->setHeight(800)
-    ->setResizeType(ResizeType::FILL)
-    ->setSharpen(0.8)
-    ->setQuality(92)
+    ->width(600)
+    ->height(800)
+    ->cover()
+    ->sharpen(0.8)
+    ->quality(92)
     ->build();
 ```
 
@@ -181,11 +212,11 @@ $enhancedPortrait = imgproxy($portrait)
 
 ```php
 $productClean = imgproxy($product)
-    ->setWidth(800)
-    ->setHeight(800)
-    ->setResizeType(ResizeType::FIT)
-    ->setSharpen(1.5)
-    ->setQuality(95)
-    ->setExtension(OutputExtension::WEBP)
+    ->width(800)
+    ->height(800)
+    ->contain()
+    ->sharpen(1.5)
+    ->quality(95)
+    ->webp()
     ->build();
 ```

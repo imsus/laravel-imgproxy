@@ -23,16 +23,14 @@ Laravel imgproxy is a Laravel package that provides a fluent API for generating 
 
 ```php
 use Imsus\ImgProxy\Facades\ImgProxy;
-use Imsus\ImgProxy\Enums\ResizeType;
-use Imsus\ImgProxy\Enums\OutputExtension;
 
 // Generate a resized, optimized image URL
 $url = ImgProxy::url('https://example.com/image.jpg')
-    ->setWidth(800)
-    ->setHeight(600)
-    ->setResizeType(ResizeType::FILL)
-    ->setExtension(OutputExtension::WEBP)
-    ->setQuality(85)
+    ->width(800)
+    ->height(600)
+    ->cover()
+    ->webp()
+    ->quality(85)
     ->build();
 ```
 
@@ -40,8 +38,8 @@ Or use the helper function:
 
 ```php
 $url = imgproxy('https://example.com/image.jpg')
-    ->setWidth(800)
-    ->setHeight(600)
+    ->width(800)
+    ->height(600)
     ->build();
 ```
 

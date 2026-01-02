@@ -6,9 +6,9 @@ Apply a gaussian blur effect to the image:
 
 ```php
 $url = imgproxy($url)
-    ->setWidth(500)
-    ->setHeight(300)
-    ->setBlur(2.0)
+    ->width(500)
+    ->height(300)
+    ->blur(2.0)
     ->build();
 ```
 
@@ -20,9 +20,9 @@ Apply sharpening to enhance image details:
 
 ```php
 $url = imgproxy($url)
-    ->setWidth(500)
-    ->setHeight(300)
-    ->setSharpen(1.5)
+    ->width(500)
+    ->height(300)
+    ->sharpen(1.5)
     ->build();
 ```
 
@@ -34,11 +34,11 @@ Chain multiple effects together:
 
 ```php
 $url = imgproxy('https://example.com/photo.jpg')
-    ->setWidth(500)
-    ->setHeight(300)
-    ->setBlur(2.0)
-    ->setSharpen(1.5)
-    ->setQuality(85)
+    ->width(500)
+    ->height(300)
+    ->blur(2.0)
+    ->sharpen(1.5)
+    ->quality(85)
     ->build();
 ```
 
@@ -53,27 +53,27 @@ $url = imgproxy('https://example.com/photo.jpg')
 
 ```php
 // Gentle blur for background images
-imgproxy($url)->setBlur(1.0)->build();
+imgproxy($url)->blur(1.0)->build();
 
 // Strong blur for privacy/obfuscation
-imgproxy($url)->setBlur(5.0)->build();
+imgproxy($url)->blur(5.0)->build();
 
 // Subtle sharpening for product photos
-imgproxy($url)->setSharpen(0.5)->build();
+imgproxy($url)->sharpen(0.5)->build();
 
 // Strong sharpening for detailed images
-imgproxy($url)->setSharpen(2.0)->build();
+imgproxy($url)->sharpen(2.0)->build();
 ```
 
 ## Complete Example
 
 ```php
 $url = imgproxy('https://example.com/photo.jpg')
-    ->setWidth(800)
-    ->setHeight(600)
-    ->setResizeType(ResizeType::FILL)
-    ->setBlur(2.0)
-    ->setSharpen(1.0)
-    ->setQuality(85)
+    ->width(800)
+    ->height(600)
+    ->cover()
+    ->blur(2.0)
+    ->sharpen(1.0)
+    ->quality(85)
     ->build();
 ```
