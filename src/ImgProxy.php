@@ -253,6 +253,46 @@ class ImgProxy
     }
 
     /**
+     * Set output format to WebP.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::WEBP}.
+     */
+    public function webp(): self
+    {
+        return $this->setExtension(OutputExtension::WEBP);
+    }
+
+    /**
+     * Set output format to AVIF.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::AVIF}.
+     */
+    public function avif(): self
+    {
+        return $this->setExtension(OutputExtension::AVIF);
+    }
+
+    /**
+     * Set output format to PNG.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::PNG}.
+     */
+    public function png(): self
+    {
+        return $this->setExtension(OutputExtension::PNG);
+    }
+
+    /**
+     * Set output format to JPEG.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::JPEG}.
+     */
+    public function jpg(): self
+    {
+        return $this->setExtension(OutputExtension::JPEG);
+    }
+
+    /**
      * Set the image quality (0-100).
      *
      * @param  int  $quality  The quality level (0-100)
