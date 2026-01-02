@@ -2,6 +2,7 @@
 
 namespace Imsus\ImgProxy;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
@@ -147,6 +148,37 @@ class ImgProxy
         $this->source_url = $source_url;
 
         return $this;
+    }
+
+    /**
+     * Create an ImgProxy instance from a Storage disk path.
+     *
+     * @param  \Illuminate\Filesystem\FilesystemAdapter  $disk  The storage disk
+     * @param  string  $path  The file path on the disk
+     */
+    public static function fromStorage(FilesystemAdapter $disk, string $path): self
+    {
+        $instance = new self;
+
+        // Check if the disk supports temporaryUrl (private disks like S3)
+        if (method_exists($disk, 'temporaryUrl')) {
+            try {
+                // Attempt to get a temporary URL, which indicates a private disk
+                // We'll use the default expiration (1 hour) if not specified
+                $url = $disk->temporaryUrl($path);
+                $instance->source_url = $url;
+
+                return $instance;
+            } catch (\Throwable $e) {
+                // If temporaryUrl fails (e.g., driver doesn't support it or misconfigured),
+                // fall back to using the regular URL method
+            }
+        }
+
+        // For public disks, use the regular url() method
+        $instance->source_url = $disk->url($path);
+
+        return $instance;
     }
 
     /**
