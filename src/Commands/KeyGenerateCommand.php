@@ -3,7 +3,6 @@
 namespace Imsus\ImgProxy\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class KeyGenerateCommand extends Command
 {
@@ -26,8 +25,8 @@ class KeyGenerateCommand extends Command
      */
     public function handle(): int
     {
-        $key = Str::random(64, 'hex');
-        $salt = Str::random(64, 'hex');
+        $key = bin2hex(random_bytes(32));
+        $salt = bin2hex(random_bytes(32));
 
         $this->info('IMGPROXY_KEY='.$key);
         $this->info('IMGPROXY_SALT='.$salt);
@@ -35,27 +34,34 @@ class KeyGenerateCommand extends Command
         $envPath = base_path('.env');
         $envContent = file_exists($envPath) ? file_get_contents($envPath) : '';
 
-        $pattern = '/^IMGPROXY_KEY=.*$/m';
-        $replacement = 'IMGPROXY_KEY='.$key;
-        $envContent = preg_replace($pattern, $replacement, $envContent, -1, $count);
+        $envContent = $this->updateEnvValue($envContent, 'IMGPROXY_KEY', $key);
+        $envContent = $this->updateEnvValue($envContent, 'IMGPROXY_SALT', $salt);
 
-        if ($count === 0) {
-            $envContent .= "\nIMGPROXY_KEY=".$key;
+        if (file_put_contents($envPath, $envContent) === false) {
+            $this->error('Failed to save keys to the .env file.');
+
+            return self::FAILURE;
         }
-
-        $pattern = '/^IMGPROXY_SALT=.*$/m';
-        $replacement = 'IMGPROXY_SALT='.$salt;
-        $envContent = preg_replace($pattern, $replacement, $envContent, -1, $count);
-
-        if ($count === 0) {
-            $envContent .= "\nIMGPROXY_SALT=".$salt;
-        }
-
-        file_put_contents($envPath, $envContent);
 
         $this->newLine();
         $this->components->task('Keys generated and saved to .env');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Update or append an environment variable in the content string.
+     */
+    private function updateEnvValue(string $content, string $key, string $value): string
+    {
+        $pattern = '/^'.$key.'=.*$/m';
+        $replacement = $key.'='.$value;
+        $content = preg_replace($pattern, $replacement, $content, -1, $count);
+
+        if ($count === 0) {
+            $content .= "\n".$key.'='.$value;
+        }
+
+        return $content;
     }
 }
