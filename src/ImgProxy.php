@@ -859,6 +859,18 @@ class ImgProxy
     }
 
     /**
+     * Set a fallback URL to use when the source URL is invalid.
+     *
+     * @param  string  $url  The fallback image URL
+     */
+    public function fallback(string $url): self
+    {
+        $this->fallback_url = $url;
+
+        return $this;
+    }
+
+    /**
      * Set expiration timestamp.
      *
      * imgproxy will return 404 when expired.
@@ -1007,6 +1019,10 @@ class ImgProxy
         try {
             $this->validateSourceUrl();
         } catch (\InvalidArgumentException $e) {
+            if ($this->fallback_url) {
+                return $this->fallback_url;
+            }
+
             return $this->source_url;
         }
 
