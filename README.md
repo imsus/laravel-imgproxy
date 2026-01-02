@@ -100,6 +100,30 @@ ImgProxy::url('https://example.com/image.jpg')
 --}}
 ```
 
+### Laravel Storage Integration
+
+Seamless integration with Laravel's Storage facade for both public and private disks:
+
+```php
+use Illuminate\Support\Facades\Storage;
+
+// Public disk - uses disk->url()
+Storage::disk('public')->imgproxy('avatars/user.jpg')
+    ->width(300)
+    ->height(200)
+    ->webp()
+    ->build();
+
+// Private disk (S3) - automatically uses temporaryUrl()
+Storage::disk('s3')->imgproxy('products/image.jpg')
+    ->width(800)
+    ->height(600)
+    ->cover()
+    ->build();
+```
+
+The macro automatically detects disk visibility and generates the appropriate URLs (presigned URLs for private disks).
+
 ## Quick Start
 
 ### Prerequisites

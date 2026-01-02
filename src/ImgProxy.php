@@ -2,12 +2,12 @@
 
 namespace Imsus\ImgProxy;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Imsus\ImgProxy\Enums\Gravity;
 use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\Rotation;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
-use Illuminate\Filesystem\FilesystemAdapter;
 use InvalidArgumentException;
 
 class ImgProxy
