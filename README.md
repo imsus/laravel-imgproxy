@@ -176,6 +176,16 @@ IMGPROXY_DEFAULT_GRAVITY=ce
 
 If no key/salt is configured, URLs will be generated unsigned.
 
+### Generating Keys
+
+Generate secure signing keys automatically:
+
+```bash
+php artisan imgproxy:key
+```
+
+This command generates 64-character hex strings for `IMGPROXY_KEY` and `IMGPROXY_SALT`, saves them to your `.env` file, and displays them in the console.
+
 ## Troubleshooting
 
 ### Signature verification failed
@@ -205,6 +215,8 @@ composer test          # Run tests
 composer test-coverage # Run tests with coverage
 composer format        # Format code
 composer start         # Start workbench server
+
+php artisan imgproxy:key  # Generate IMGPROXY_KEY and IMGPROXY_SALT
 ```
 
 ## License
