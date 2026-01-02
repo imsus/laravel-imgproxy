@@ -114,6 +114,42 @@ class ImgProxy
     }
 
     /**
+     * Set resize type to cover (FILL).
+     *
+     * Resizes the image to fill the specified dimensions, cropping if necessary.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FILL}.
+     */
+    public function cover(): self
+    {
+        return $this->setResizeType(ResizeType::FILL);
+    }
+
+    /**
+     * Set resize type to contain (FIT).
+     *
+     * Resizes the image to fit within the specified dimensions.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FIT}.
+     */
+    public function contain(): self
+    {
+        return $this->setResizeType(ResizeType::FIT);
+    }
+
+    /**
+     * Set resize type to fill (FILL_DOWN).
+     *
+     * Resizes the image to fill the specified dimensions, downscaling only.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FILL_DOWN}.
+     */
+    public function fill(): self
+    {
+        return $this->setResizeType(ResizeType::FILL_DOWN);
+    }
+
+    /**
      * Set the gravity for image positioning (crop, fill, etc.).
      *
      * @param  Gravity  $gravity  The gravity position
