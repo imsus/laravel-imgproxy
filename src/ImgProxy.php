@@ -804,6 +804,18 @@ class ImgProxy
     }
 
     /**
+     * Add cache busting version to force CDN/proxy refresh.
+     *
+     * Alias of {@see cachebuster()}.
+     *
+     * @param  int|string  $version  Version identifier (e.g., timestamp, build number, or string)
+     */
+    public function v(int|string $version): self
+    {
+        return $this->cachebuster((string) $version);
+    }
+
+    /**
      * Set expiration timestamp.
      *
      * imgproxy will return 404 when expired.
