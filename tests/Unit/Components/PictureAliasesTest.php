@@ -268,3 +268,77 @@ describe('Picture component short property aliases', function () {
             ->and($fallback)->toContain('height:600');
     });
 });
+
+describe('Picture component property precedence', function () {
+    it('quality property takes precedence over q alias', function () {
+        $component = new Picture(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            quality: 90,
+            q: 80,
+        );
+
+        $urls = $component->buildUrls();
+
+        foreach ($urls as $url) {
+            expect($url)->toContain('quality:90');
+        }
+    });
+
+    it('resizeType property takes precedence over fit alias', function () {
+        $component = new Picture(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            resizeType: ResizeType::FIT,
+            fit: ResizeType::FILL,
+        );
+
+        $urls = $component->buildUrls();
+
+        foreach ($urls as $url) {
+            expect($url)->toContain('resizing_type:fit');
+        }
+    });
+
+    it('gravity property takes precedence over grav alias', function () {
+        $component = new Picture(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            gravity: Gravity::NORTH,
+            grav: Gravity::CENTER,
+        );
+
+        $urls = $component->buildUrls();
+
+        foreach ($urls as $url) {
+            expect($url)->toContain('gravity:no');
+        }
+    });
+
+    it('all original properties take precedence over all aliases', function () {
+        $component = new Picture(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            width: 1000,
+            height: 800,
+            quality: 95,
+            resizeType: ResizeType::FIT,
+            gravity: Gravity::SOUTH_EAST,
+            w: 800,
+            h: 600,
+            q: 80,
+            fit: ResizeType::FILL,
+            grav: Gravity::CENTER,
+        );
+
+        $urls = $component->buildUrls();
+
+        foreach ($urls as $url) {
+            expect($url)->toContain('width:1000')
+                ->and($url)->toContain('height:800')
+                ->and($url)->toContain('quality:95')
+                ->and($url)->toContain('resizing_type:fit')
+                ->and($url)->toContain('gravity:soea');
+        }
+    });
+});

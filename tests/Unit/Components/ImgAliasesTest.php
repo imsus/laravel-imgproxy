@@ -241,3 +241,85 @@ describe('Img component short property aliases', function () {
         expect($url)->toContain('quality:75');
     });
 });
+
+describe('Img component property precedence', function () {
+    it('quality property takes precedence over q alias', function () {
+        $component = new Img(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            quality: 90,
+            q: 80,
+        );
+
+        $url = $component->buildUrl();
+
+        expect($url)->toContain('quality:90');
+    });
+
+    it('resizeType property takes precedence over fit alias', function () {
+        $component = new Img(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            resizeType: ResizeType::FIT,
+            fit: ResizeType::FILL,
+        );
+
+        $url = $component->buildUrl();
+
+        expect($url)->toContain('resizing_type:fit');
+    });
+
+    it('format property takes precedence over fmt alias', function () {
+        $component = new Img(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            format: OutputExtension::AVIF,
+            fmt: OutputExtension::WEBP,
+        );
+
+        $url = $component->buildUrl();
+
+        expect($url)->toEndWith('.avif');
+    });
+
+    it('gravity property takes precedence over grav alias', function () {
+        $component = new Img(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            gravity: Gravity::NORTH,
+            grav: Gravity::CENTER,
+        );
+
+        $url = $component->buildUrl();
+
+        expect($url)->toContain('gravity:no');
+    });
+
+    it('all original properties take precedence over all aliases', function () {
+        $component = new Img(
+            src: 'https://example.com/image.jpg',
+            alt: 'Test image',
+            width: 500,
+            height: 400,
+            quality: 95,
+            resizeType: ResizeType::FIT,
+            format: OutputExtension::PNG,
+            gravity: Gravity::SOUTH_EAST,
+            w: 300,
+            h: 200,
+            q: 80,
+            fit: ResizeType::FILL,
+            fmt: OutputExtension::WEBP,
+            grav: Gravity::CENTER,
+        );
+
+        $url = $component->buildUrl();
+
+        expect($url)->toContain('width:500')
+            ->and($url)->toContain('height:400')
+            ->and($url)->toContain('quality:95')
+            ->and($url)->toContain('resizing_type:fit')
+            ->and($url)->toEndWith('.png')
+            ->and($url)->toContain('gravity:soea');
+    });
+});

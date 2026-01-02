@@ -61,7 +61,7 @@ class Img extends Component
         // Use alias properties with coalesce - original properties take precedence
         $width = $this->width ?? $this->w;
         $height = $this->height ?? $this->h;
-        $quality = $this->q !== 75 ? $this->q : ($this->quality ?? 75);
+        $quality = $this->quality !== 75 ? $this->quality : ($this->q ?? 75);
         $resizeType = $this->resizeType ?? $this->fit;
         $format = $this->format ?? $this->fmt;
         $gravity = $this->gravity ?? $this->grav;
