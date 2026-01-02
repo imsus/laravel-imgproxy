@@ -55,10 +55,10 @@ describe('Fit Shortcut Methods', function () {
         });
     });
 
-    describe('fill()', function () {
-        it('sets resize type to FILL_DOWN (fill)', function () {
+    describe('fillDown()', function () {
+        it('sets resize type to FILL_DOWN (fill-down)', function () {
             $url = imgproxy($this->sample_image_url)
-                ->fill()
+                ->fillDown()
                 ->build();
 
             expect($url)->toContain('resizing_type:fill-down');
@@ -68,12 +68,34 @@ describe('Fit Shortcut Methods', function () {
             $url = imgproxy($this->sample_image_url)
                 ->width(300)
                 ->height(200)
-                ->fill()
+                ->fillDown()
                 ->build();
 
             expect($url)->toContain('width:300')
                 ->and($url)->toContain('height:200')
                 ->and($url)->toContain('resizing_type:fill-down');
+        });
+    });
+
+    describe('force()', function () {
+        it('sets resize type to FORCE (stretch)', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->force()
+                ->build();
+
+            expect($url)->toContain('resizing_type:force');
+        });
+
+        it('is chainable with other options', function () {
+            $url = imgproxy($this->sample_image_url)
+                ->width(300)
+                ->height(200)
+                ->force()
+                ->build();
+
+            expect($url)->toContain('width:300')
+                ->and($url)->toContain('height:200')
+                ->and($url)->toContain('resizing_type:force');
         });
     });
 
@@ -94,7 +116,7 @@ describe('Fit Shortcut Methods', function () {
             $url = imgproxy($this->sample_image_url)
                 ->cover()
                 ->contain()
-                ->fill()
+                ->fillDown()
                 ->build();
 
             expect($url)->toContain('resizing_type:fill-down')
@@ -111,9 +133,13 @@ describe('Fit Shortcut Methods', function () {
             $containSetter = imgproxy($this->sample_image_url)->setResizeType(ResizeType::FIT)->build();
             expect($containShortcut)->toBe($containSetter);
 
-            $fillShortcut = imgproxy($this->sample_image_url)->fill()->build();
-            $fillSetter = imgproxy($this->sample_image_url)->setResizeType(ResizeType::FILL_DOWN)->build();
-            expect($fillShortcut)->toBe($fillSetter);
+            $fillDownShortcut = imgproxy($this->sample_image_url)->fillDown()->build();
+            $fillDownSetter = imgproxy($this->sample_image_url)->setResizeType(ResizeType::FILL_DOWN)->build();
+            expect($fillDownShortcut)->toBe($fillDownSetter);
+
+            $forceShortcut = imgproxy($this->sample_image_url)->force()->build();
+            $forceSetter = imgproxy($this->sample_image_url)->setResizeType(ResizeType::FORCE)->build();
+            expect($forceShortcut)->toBe($forceSetter);
         });
     });
 

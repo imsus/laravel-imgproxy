@@ -138,15 +138,29 @@ class ImgProxy
     }
 
     /**
-     * Set resize type to fill (FILL_DOWN).
+     * Set resize type to fill-down.
      *
      * Resizes the image to fill the specified dimensions, downscaling only.
+     * Unlike force(), this maintains aspect ratio.
      *
      * Alias of {@see setResizeType()} with {@see ResizeType::FILL_DOWN}.
      */
-    public function fill(): self
+    public function fillDown(): self
     {
         return $this->setResizeType(ResizeType::FILL_DOWN);
+    }
+
+    /**
+     * Set resize type to force (stretch).
+     *
+     * Resizes the image without keeping the aspect ratio.
+     * Similar to CSS object-fit: fill.
+     *
+     * Alias of {@see setResizeType()} with {@see ResizeType::FORCE}.
+     */
+    public function force(): self
+    {
+        return $this->setResizeType(ResizeType::FORCE);
     }
 
     /**
@@ -326,6 +340,29 @@ class ImgProxy
     public function jpg(): self
     {
         return $this->setExtension(OutputExtension::JPEG);
+    }
+
+    /**
+     * Set output format to GIF.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::GIF}.
+     */
+    public function gif(): self
+    {
+        return $this->setExtension(OutputExtension::GIF);
+    }
+
+    /**
+     * Set output format to SVG.
+     *
+     * Note: SVG output is only supported when the source image is SVG.
+     * When source is SVG and SVG output is requested, imgproxy returns the source unchanged.
+     *
+     * Alias of {@see setExtension()} with {@see OutputExtension::SVG}.
+     */
+    public function svg(): self
+    {
+        return $this->setExtension(OutputExtension::SVG);
     }
 
     /**
