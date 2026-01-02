@@ -72,7 +72,7 @@ describe('Storage Integration', function () {
 
         $mockDisk = Mockery::mock(FilesystemAdapter::class)
             ->shouldReceive('temporaryUrl')
-            ->with('private/image.jpg')
+            ->with('private/image.jpg', Mockery::any())
             ->andReturn($signedUrl)
             ->getMock()
             ->shouldReceive('url')
@@ -94,7 +94,7 @@ describe('Storage Integration', function () {
     it('fromStorage falls back to url when temporaryUrl throws', function () {
         $mockDisk = Mockery::mock(FilesystemAdapter::class)
             ->shouldReceive('temporaryUrl')
-            ->with('fallback.jpg')
+            ->with('fallback.jpg', Mockery::any())
             ->andThrow(new \Exception('Not supported'))
             ->getMock()
             ->shouldReceive('url')
