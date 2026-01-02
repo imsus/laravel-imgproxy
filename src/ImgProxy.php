@@ -7,6 +7,7 @@ use Imsus\ImgProxy\Enums\OutputExtension;
 use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\Rotation;
 use Imsus\ImgProxy\Enums\SourceUrlMode;
+use Illuminate\Filesystem\FilesystemAdapter;
 use InvalidArgumentException;
 
 class ImgProxy
@@ -152,10 +153,10 @@ class ImgProxy
     /**
      * Create an ImgProxy instance from a Storage disk path.
      *
-     * @param  \Illuminate\Contracts\Filesystem\FilesystemAdapter  $disk  The storage disk
+     * @param  \Illuminate\Filesystem\FilesystemAdapter  $disk  The storage disk
      * @param  string  $path  The file path on the disk
      */
-    public static function fromStorage($disk, string $path): self
+    public static function fromStorage(FilesystemAdapter $disk, string $path): self
     {
         $instance = new self;
 
