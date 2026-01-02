@@ -26,6 +26,16 @@ class ImgProxyServiceProvider extends PackageServiceProvider
         $this->registerHelpers();
     }
 
+    public function boot()
+    {
+        $this->registerMacros();
+    }
+
+    protected function registerMacros(): void
+    {
+        require_once __DIR__.'/Macros/StorageMacros.php';
+    }
+
     protected function registerHelpers(): void
     {
         require_once __DIR__.'/helpers.php';
