@@ -52,6 +52,30 @@ class ImgProxy
     }
 
     /**
+     * Set the width of the output image.
+     *
+     * @param  int  $width  The desired width in pixels
+     */
+    public function setWidth(int $width): self
+    {
+        $this->options['width'] = $width;
+
+        return $this;
+    }
+
+    /**
+     * Set the width of the output image.
+     *
+     * Alias of {@see setWidth()}.
+     *
+     * @param  int  $width  The desired width in pixels
+     */
+    public function width(int $width): self
+    {
+        return $this->setWidth($width);
+    }
+
+    /**
      * Set the height of the output image.
      *
      * @param  int  $height  The desired height in pixels
@@ -64,15 +88,15 @@ class ImgProxy
     }
 
     /**
-     * Set the width of the output image.
+     * Set the height of the output image.
      *
-     * @param  int  $width  The desired width in pixels
+     * Alias of {@see setHeight()}.
+     *
+     * @param  int  $height  The desired height in pixels
      */
-    public function setWidth(int $width): self
+    public function height(int $height): self
     {
-        $this->options['width'] = $width;
-
-        return $this;
+        return $this->setHeight($height);
     }
 
     /**
@@ -164,6 +188,18 @@ class ImgProxy
     }
 
     /**
+     * Set the device pixel ratio (DPR) for the image.
+     *
+     * Alias of {@see setDpr()}.
+     *
+     * @param  int  $dpr  The device pixel ratio (1-8)
+     */
+    public function dpr(int $dpr): self
+    {
+        return $this->setDpr($dpr);
+    }
+
+    /**
      * Set the zoom factor(s) for the image.
      *
      * Unlike DPR, zoom doesn't affect gravity offsets, watermark offsets, and paddings.
@@ -232,6 +268,18 @@ class ImgProxy
         $this->options['quality'] = $quality;
 
         return $this;
+    }
+
+    /**
+     * Set the image quality (0-100).
+     *
+     * Alias of {@see setQuality()}.
+     *
+     * @param  int  $quality  The quality level (0-100)
+     */
+    public function quality(int $quality): self
+    {
+        return $this->setQuality($quality);
     }
 
     /**
