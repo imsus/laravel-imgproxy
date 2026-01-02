@@ -2,7 +2,6 @@
 
 namespace Imsus\ImgProxy\Tests\Unit;
 
-use Illuminate\Support\Facades\Artisan;
 use Imsus\ImgProxy\Commands\KeyGenerateCommand;
 
 describe('KeyGenerateCommand', function () {
@@ -46,7 +45,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, '');
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toMatch('/\nIMGPROXY_KEY=[a-f0-9]{64}/m');
@@ -59,7 +58,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, "IMGPROXY_KEY=oldkey\nIMGPROXY_SALT=oldsalt\n");
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->not->toContain('oldkey');
@@ -72,7 +71,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, "APP_NAME=test\n");
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toContain('APP_NAME=test');
@@ -86,7 +85,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, '');
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             preg_match('/IMGPROXY_KEY=([a-f0-9]+)/', $content, $keyMatch);
@@ -105,7 +104,7 @@ describe('KeyGenerateCommand', function () {
                 unlink($envPath);
             }
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toMatch('/\nIMGPROXY_KEY=[a-f0-9]{64}/m');
@@ -118,7 +117,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, "APP_NAME=test\nIMGPROXY_SALT=existing_salt\nOTHER=value\n");
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toContain('APP_NAME=test');
@@ -135,7 +134,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, "APP_ENV=production\nDB_CONNECTION=pgsql\nIMGPROXY_KEY=old\n");
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toContain('APP_ENV=production');
@@ -150,7 +149,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, '');
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toMatch('/^IMGPROXY_KEY=[a-f0-9]{64}$/m');
@@ -163,7 +162,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, "# This is a comment\n");
 
-            Artisan::call('imgproxy:key');
+            $this->artisan('imgproxy:key')->assertExitCode(0);
 
             $content = file_get_contents($envPath);
             expect($content)->toContain('# This is a comment');
@@ -177,9 +176,7 @@ describe('KeyGenerateCommand', function () {
             $envPath = base_path('.env');
             file_put_contents($envPath, '');
 
-            $exitCode = Artisan::call('imgproxy:key');
-
-            expect($exitCode)->toBe(0);
+            $this->artisan('imgproxy:key')->assertSuccessful();
 
             unlink($envPath);
         });
