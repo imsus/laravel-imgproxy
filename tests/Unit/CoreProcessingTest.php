@@ -7,6 +7,8 @@ use Imsus\ImgProxy\ImgProxy;
 beforeEach(function () {
     $this->imgProxy = new ImgProxy;
     $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
+    // Enable short options for these tests
+    config()->set('imgproxy.use_short_options', true);
 });
 
 describe('Core Processing', function () {
@@ -110,8 +112,8 @@ describe('Core Processing', function () {
                 ->build();
 
             expect($url)->toContain('ar:1')
-                ->and($url)->toContain('width:300')
-                ->and($url)->toContain('quality:85');
+                ->and($url)->toContain('w:300')
+                ->and($url)->toContain('q:85');
         });
     });
 
@@ -182,8 +184,8 @@ describe('Core Processing', function () {
                 ->build();
 
             expect($url)->toContain('sm:1')
-                ->and($url)->toContain('width:300')
-                ->and($url)->toContain('quality:90');
+                ->and($url)->toContain('w:300')
+                ->and($url)->toContain('q:90');
         });
     });
 
@@ -193,7 +195,7 @@ describe('Core Processing', function () {
                 ->trim()
                 ->build();
 
-            expect($url)->toContain('trim:10');
+            expect($url)->toContain('t:10');
         });
 
         it('adds trim with custom threshold', function () {
@@ -201,7 +203,7 @@ describe('Core Processing', function () {
                 ->trim(20)
                 ->build();
 
-            expect($url)->toContain('trim:20');
+            expect($url)->toContain('t:20');
         });
 
         it('validates threshold is non-negative', function () {
@@ -215,7 +217,7 @@ describe('Core Processing', function () {
                 ->trim(0)
                 ->build();
 
-            expect($url)->toContain('trim:0');
+            expect($url)->toContain('t:0');
         });
 
         it('accepts large threshold values', function () {
@@ -223,7 +225,7 @@ describe('Core Processing', function () {
                 ->trim(100)
                 ->build();
 
-            expect($url)->toContain('trim:100');
+            expect($url)->toContain('t:100');
         });
     });
 
@@ -267,8 +269,8 @@ describe('Core Processing', function () {
                 ->build();
 
             expect($url)->toContain('pix:15')
-                ->and($url)->toContain('width:300')
-                ->and($url)->toContain('quality:80');
+                ->and($url)->toContain('w:300')
+                ->and($url)->toContain('q:80');
         });
     });
 
@@ -283,8 +285,8 @@ describe('Core Processing', function () {
                 ->pixelate(8)
                 ->build();
 
-            expect($url)->toContain('width:400')
-                ->and($url)->toContain('height:300')
+            expect($url)->toContain('w:400')
+                ->and($url)->toContain('h:300')
                 ->and($url)->toContain('pd:20')
                 ->and($url)->toContain('bg:FF5733')
                 ->and($url)->toContain('rot:90')

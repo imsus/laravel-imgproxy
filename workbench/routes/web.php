@@ -129,6 +129,8 @@ Route::prefix('imgproxy-test')->group(function () {
             'has_salt' => ! empty(config('imgproxy.salt')),
             'default_source_url_mode' => config('imgproxy.default_source_url_mode'),
             'default_output_extension' => config('imgproxy.default_output_extension'),
+            'use_short_options' => config('imgproxy.use_short_options'),
+            'fallback_url' => config('imgproxy.fallback_url'),
             'test' => 'configuration',
         ]);
     });

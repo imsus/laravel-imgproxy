@@ -8,6 +8,8 @@ use Imsus\ImgProxy\ImgProxy;
 beforeEach(function () {
     $this->imgProxy = new ImgProxy;
     $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
+    // Enable short options for these tests
+    config()->set('imgproxy.use_short_options', true);
 });
 
 describe('JPEG XL Format', function () {
@@ -25,7 +27,7 @@ describe('JPEG XL Format', function () {
             ->setExtension(OutputExtension::JPEG_XL)
             ->build();
 
-        expect($url)->toContain('width:300')
+        expect($url)->toContain('w:300')
             ->and($url)->toContain('.jxl');
     });
 
@@ -36,7 +38,7 @@ describe('JPEG XL Format', function () {
             ->build();
 
         expect($url)->toContain('.jxl')
-            ->and($url)->toContain('quality:85');
+            ->and($url)->toContain('q:85');
     });
 
     it('works with format quality settings', function () {

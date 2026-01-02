@@ -8,6 +8,8 @@ use Imsus\ImgProxy\ImgProxy;
 beforeEach(function () {
     $this->imgProxy = new ImgProxy;
     $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
+    // Enable short options for these tests
+    config()->set('imgproxy.use_short_options', true);
 });
 
 describe('Watermarking', function () {
@@ -111,8 +113,8 @@ describe('Watermarking', function () {
                 ->build();
 
             expect($url)->toContain('wm:0.7:soea:0:0:0.25')
-                ->and($url)->toContain('width:500')
-                ->and($url)->toContain('quality:85');
+                ->and($url)->toContain('w:500')
+                ->and($url)->toContain('q:85');
         });
     });
 });

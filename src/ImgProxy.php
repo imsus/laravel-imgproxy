@@ -30,6 +30,102 @@ class ImgProxy
 
     private ?string $processing_options = null;
 
+    private bool $use_short_options = false;
+
+    private ?string $fallback_url = null;
+
+    private const SHORT_OPTIONS = [
+        'resize' => 'rs',
+        'size' => 's',
+        'resizing_type' => 'rt',
+        'width' => 'w',
+        'height' => 'h',
+        'min-width' => 'mw',
+        'min-height' => 'mh',
+        'zoom' => 'z',
+        'dpr' => 'dpr',
+        'enlarge' => 'el',
+        'extend' => 'ex',
+        'extend_aspect_ratio' => 'exar',
+        'gravity' => 'g',
+        'crop' => 'c',
+        'trim' => 't',
+        'padding' => 'pd',
+        'auto_rotate' => 'ar',
+        'rotate' => 'rot',
+        'background' => 'bg',
+        'blur' => 'bl',
+        'sharpen' => 'sh',
+        'pixelate' => 'pix',
+        'watermark' => 'wm',
+        'strip_metadata' => 'sm',
+        'keep_copyright' => 'kcr',
+        'strip_color_profile' => 'scp',
+        'enforce_thumbnail' => 'eth',
+        'quality' => 'q',
+        'format_quality' => 'fq',
+        'max_bytes' => 'mb',
+        'format' => 'f',
+        'skip_processing' => 'skp',
+        'raw' => 'raw',
+        'cachebuster' => 'cb',
+        'expires' => 'exp',
+        'filename' => 'fn',
+        'return_attachment' => 'att',
+        'preset' => 'pr',
+        'max_src_resolution' => 'msr',
+        'max_src_file_size' => 'msfs',
+        'max_animation_frames' => 'maf',
+        'max_animation_frame_resolution' => 'mafr',
+        'max_result_dimension' => 'mrd',
+    ];
+
+    private const FULL_OPTIONS = [
+        'rs' => 'resize',
+        's' => 'size',
+        'rt' => 'resizing_type',
+        'w' => 'width',
+        'h' => 'height',
+        'mw' => 'min-width',
+        'mh' => 'min-height',
+        'z' => 'zoom',
+        'dpr' => 'dpr',
+        'el' => 'enlarge',
+        'ex' => 'extend',
+        'exar' => 'extend_aspect_ratio',
+        'g' => 'gravity',
+        'c' => 'crop',
+        't' => 'trim',
+        'pd' => 'padding',
+        'ar' => 'auto_rotate',
+        'rot' => 'rotate',
+        'bg' => 'background',
+        'bl' => 'blur',
+        'sh' => 'sharpen',
+        'pix' => 'pixelate',
+        'wm' => 'watermark',
+        'sm' => 'strip_metadata',
+        'kcr' => 'keep_copyright',
+        'scp' => 'strip_color_profile',
+        'eth' => 'enforce_thumbnail',
+        'q' => 'quality',
+        'fq' => 'format_quality',
+        'mb' => 'max_bytes',
+        'f' => 'format',
+        'skp' => 'skip_processing',
+        'raw' => 'raw',
+        'cb' => 'cachebuster',
+        'exp' => 'expires',
+        'fn' => 'filename',
+        'att' => 'return_attachment',
+        'pr' => 'preset',
+        'msr' => 'max_src_resolution',
+        'msfs' => 'max_src_file_size',
+        'maf' => 'max_animation_frames',
+        'mafr' => 'max_animation_frame_resolution',
+        'mrd' => 'max_result_dimension',
+    ];
+
     public function __construct()
     {
         $this->endpoint = config('imgproxy.endpoint', 'http://localhost:8080');
@@ -37,6 +133,8 @@ class ImgProxy
         $this->salt = $this->validateHexString(config('imgproxy.salt', ''), 'salt');
         $this->source_url_mode = SourceUrlMode::fromString(config('imgproxy.default_source_url_mode')) ?? SourceUrlMode::getDefault();
         $this->default_output_extension = OutputExtension::fromExtension(config('imgproxy.default_output_extension')) ?? OutputExtension::getDefault();
+        $this->use_short_options = config('imgproxy.use_short_options', false);
+        $this->fallback_url = config('imgproxy.fallback_url');
     }
 
     /**
@@ -853,6 +951,18 @@ class ImgProxy
     }
 
     /**
+     * Set a fallback URL to use when the source URL is invalid.
+     *
+     * @param  string  $url  The fallback image URL
+     */
+    public function fallback(string $url): self
+    {
+        $this->fallback_url = $url;
+
+        return $this;
+    }
+
+    /**
      * Set expiration timestamp.
      *
      * imgproxy will return 404 when expired.
@@ -1001,6 +1111,10 @@ class ImgProxy
         try {
             $this->validateSourceUrl();
         } catch (\InvalidArgumentException $e) {
+            if ($this->fallback_url) {
+                return $this->fallback_url;
+            }
+
             return $this->source_url;
         }
 
@@ -1032,6 +1146,8 @@ class ImgProxy
         $copy->overridden_extension = $this->overridden_extension;
         $copy->options = $this->options;
         $copy->processing_options = $this->processing_options;
+        $copy->use_short_options = $this->use_short_options;
+        $copy->fallback_url = $this->fallback_url;
 
         return $copy;
     }
@@ -1076,11 +1192,20 @@ class ImgProxy
 
     private function buildProcessingOptions(): string
     {
-        return implode('/', array_map(
-            fn ($key, $value) => "{$key}:{$value}",
-            array_keys($this->options),
-            $this->options
-        ));
+        $map = [];
+
+        foreach ($this->options as $key => $value) {
+            if ($this->use_short_options) {
+                $shortKey = self::SHORT_OPTIONS[$key] ?? $key;
+                $map[] = "{$shortKey}:{$value}";
+            } else {
+                // Convert short keys to full names when short options are disabled
+                $fullKey = self::FULL_OPTIONS[$key] ?? $key;
+                $map[] = "{$fullKey}:{$value}";
+            }
+        }
+
+        return implode('/', $map);
     }
 
     /**
