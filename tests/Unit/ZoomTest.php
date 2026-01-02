@@ -7,6 +7,8 @@ use Imsus\ImgProxy\ImgProxy;
 beforeEach(function () {
     $this->imgProxy = new ImgProxy;
     $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
+    // Enable short options for these tests
+    config()->set('imgproxy.use_short_options', true);
 });
 
 describe('Zoom', function () {
@@ -56,6 +58,6 @@ describe('Zoom', function () {
             ->build();
 
         expect($url)->toContain('z:1.5')
-            ->and($url)->toContain('width:300');
+            ->and($url)->toContain('w:300');
     });
 });

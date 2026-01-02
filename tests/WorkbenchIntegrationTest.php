@@ -236,13 +236,13 @@ it('can make HTTP request to workbench core processing test endpoint', function 
     $data = $response->json();
     expect($data['processed'])->toContain('width:500')
         ->and($data['processed'])->toContain('height:400')
-        ->and($data['processed'])->toContain('pd:20')
-        ->and($data['processed'])->toContain('bg:FF5733')
-        ->and($data['processed'])->toContain('ar:1')
-        ->and($data['processed'])->toContain('rot:90')
-        ->and($data['processed'])->toContain('sm:1')
+        ->and($data['processed'])->toContain('padding:20')
+        ->and($data['processed'])->toContain('background:FF5733')
+        ->and($data['processed'])->toContain('auto_rotate:1')
+        ->and($data['processed'])->toContain('rotate:90')
+        ->and($data['processed'])->toContain('strip_metadata:1')
         ->and($data['processed'])->toContain('trim:15')
-        ->and($data['processed'])->toContain('pix:10');
+        ->and($data['processed'])->toContain('pixelate:10');
 });
 
 it('can make HTTP request to workbench watermark test endpoint', function () {
@@ -263,5 +263,5 @@ it('can make HTTP request to workbench watermark test endpoint', function () {
     $data = $response->json();
     expect($data['processed'])->toContain('width:500')
         ->and($data['processed'])->toContain('height:400')
-        ->and($data['processed'])->toContain('wm:0.7:soea:0:0:0.25');
+        ->and($data['processed'])->toContain('watermark:0.7:soea:0:0:0.25');
 });

@@ -34,6 +34,98 @@ class ImgProxy
 
     private ?string $fallback_url = null;
 
+    private const SHORT_OPTIONS = [
+        'resize' => 'rs',
+        'size' => 's',
+        'resizing_type' => 'rt',
+        'width' => 'w',
+        'height' => 'h',
+        'min-width' => 'mw',
+        'min-height' => 'mh',
+        'zoom' => 'z',
+        'dpr' => 'dpr',
+        'enlarge' => 'el',
+        'extend' => 'ex',
+        'extend_aspect_ratio' => 'exar',
+        'gravity' => 'g',
+        'crop' => 'c',
+        'trim' => 't',
+        'padding' => 'pd',
+        'auto_rotate' => 'ar',
+        'rotate' => 'rot',
+        'background' => 'bg',
+        'blur' => 'bl',
+        'sharpen' => 'sh',
+        'pixelate' => 'pix',
+        'watermark' => 'wm',
+        'strip_metadata' => 'sm',
+        'keep_copyright' => 'kcr',
+        'strip_color_profile' => 'scp',
+        'enforce_thumbnail' => 'eth',
+        'quality' => 'q',
+        'format_quality' => 'fq',
+        'max_bytes' => 'mb',
+        'format' => 'f',
+        'skip_processing' => 'skp',
+        'raw' => 'raw',
+        'cachebuster' => 'cb',
+        'expires' => 'exp',
+        'filename' => 'fn',
+        'return_attachment' => 'att',
+        'preset' => 'pr',
+        'max_src_resolution' => 'msr',
+        'max_src_file_size' => 'msfs',
+        'max_animation_frames' => 'maf',
+        'max_animation_frame_resolution' => 'mafr',
+        'max_result_dimension' => 'mrd',
+    ];
+
+    private const FULL_OPTIONS = [
+        'rs' => 'resize',
+        's' => 'size',
+        'rt' => 'resizing_type',
+        'w' => 'width',
+        'h' => 'height',
+        'mw' => 'min-width',
+        'mh' => 'min-height',
+        'z' => 'zoom',
+        'dpr' => 'dpr',
+        'el' => 'enlarge',
+        'ex' => 'extend',
+        'exar' => 'extend_aspect_ratio',
+        'g' => 'gravity',
+        'c' => 'crop',
+        't' => 'trim',
+        'pd' => 'padding',
+        'ar' => 'auto_rotate',
+        'rot' => 'rotate',
+        'bg' => 'background',
+        'bl' => 'blur',
+        'sh' => 'sharpen',
+        'pix' => 'pixelate',
+        'wm' => 'watermark',
+        'sm' => 'strip_metadata',
+        'kcr' => 'keep_copyright',
+        'scp' => 'strip_color_profile',
+        'eth' => 'enforce_thumbnail',
+        'q' => 'quality',
+        'fq' => 'format_quality',
+        'mb' => 'max_bytes',
+        'f' => 'format',
+        'skp' => 'skip_processing',
+        'raw' => 'raw',
+        'cb' => 'cachebuster',
+        'exp' => 'expires',
+        'fn' => 'filename',
+        'att' => 'return_attachment',
+        'pr' => 'preset',
+        'msr' => 'max_src_resolution',
+        'msfs' => 'max_src_file_size',
+        'maf' => 'max_animation_frames',
+        'mafr' => 'max_animation_frame_resolution',
+        'mrd' => 'max_result_dimension',
+    ];
+
     public function __construct()
     {
         $this->endpoint = config('imgproxy.endpoint', 'http://localhost:8080');
@@ -1100,60 +1192,16 @@ class ImgProxy
 
     private function buildProcessingOptions(): string
     {
-        $shortOptions = [
-            'resize' => 'rs',
-            'size' => 's',
-            'resizing_type' => 'rt',
-            'width' => 'w',
-            'height' => 'h',
-            'min-width' => 'mw',
-            'min-height' => 'mh',
-            'zoom' => 'z',
-            'dpr' => 'dpr',
-            'enlarge' => 'el',
-            'extend' => 'ex',
-            'extend_aspect_ratio' => 'exar',
-            'gravity' => 'g',
-            'crop' => 'c',
-            'trim' => 't',
-            'padding' => 'pd',
-            'auto_rotate' => 'ar',
-            'rotate' => 'rot',
-            'background' => 'bg',
-            'blur' => 'bl',
-            'sharpen' => 'sh',
-            'pixelate' => 'pix',
-            'watermark' => 'wm',
-            'strip_metadata' => 'sm',
-            'keep_copyright' => 'kcr',
-            'strip_color_profile' => 'scp',
-            'enforce_thumbnail' => 'eth',
-            'quality' => 'q',
-            'format_quality' => 'fq',
-            'max_bytes' => 'mb',
-            'format' => 'f',
-            'skip_processing' => 'skp',
-            'raw' => 'raw',
-            'cachebuster' => 'cb',
-            'expires' => 'exp',
-            'filename' => 'fn',
-            'return_attachment' => 'att',
-            'preset' => 'pr',
-            'max_src_resolution' => 'msr',
-            'max_src_file_size' => 'msfs',
-            'max_animation_frames' => 'maf',
-            'max_animation_frame_resolution' => 'mafr',
-            'max_result_dimension' => 'mrd',
-        ];
-
         $map = [];
 
         foreach ($this->options as $key => $value) {
             if ($this->use_short_options) {
-                $shortKey = $shortOptions[$key] ?? $key;
+                $shortKey = self::SHORT_OPTIONS[$key] ?? $key;
                 $map[] = "{$shortKey}:{$value}";
             } else {
-                $map[] = "{$key}:{$value}";
+                // Convert short keys to full names when short options are disabled
+                $fullKey = self::FULL_OPTIONS[$key] ?? $key;
+                $map[] = "{$fullKey}:{$value}";
             }
         }
 

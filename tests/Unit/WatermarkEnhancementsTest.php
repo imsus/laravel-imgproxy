@@ -8,6 +8,8 @@ use Imsus\ImgProxy\ImgProxy;
 beforeEach(function () {
     $this->imgProxy = new ImgProxy;
     $this->sample_image_url = 'https://placehold.co/600x400/jpeg';
+    // Enable short options for these tests
+    config()->set('imgproxy.use_short_options', true);
 });
 
 describe('Watermark Enhancements', function () {
