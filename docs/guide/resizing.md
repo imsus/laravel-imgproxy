@@ -6,8 +6,8 @@ Set the width and height for your image:
 
 ```php
 $url = imgproxy('https://example.com/image.jpg')
-    ->setWidth(300)
-    ->setHeight(200)
+    ->width(300)
+    ->height(200)
     ->build();
 ```
 
@@ -17,22 +17,30 @@ Use only width or height to maintain the original aspect ratio:
 
 ```php
 // Width only - height auto-calculated
-$url = imgproxy($url)->setWidth(300)->build();
+$url = imgproxy($url)->width(300)->build();
 
 // Height only - width auto-calculated
-$url = imgproxy($url)->setHeight(300)->build();
+$url = imgproxy($url)->height(300)->build();
 ```
 
 ## Resize Types
 
-Choose how the image is resized using `ResizeType` enum:
+Choose how the image is resized using the fluent fit methods or `ResizeType` enum:
 
 ```php
 use Imsus\ImgProxy\Enums\ResizeType;
 
+// Using fluent shortcut
 $url = imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
+    ->width(300)
+    ->height(200)
+    ->cover()
+    ->build();
+
+// Using enum directly
+$url = imgproxy($url)
+    ->width(300)
+    ->height(200)
     ->setResizeType(ResizeType::FILL)
     ->build();
 ```
@@ -52,23 +60,23 @@ $url = imgproxy($url)
 ```php
 // Fit - image fits within bounds, no cropping
 imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
-    ->setResizeType(ResizeType::FIT)
+    ->width(300)
+    ->height(200)
+    ->contain()
     ->build();
 
 // Fill - image fills bounds, excess is cropped
 imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
-    ->setResizeType(ResizeType::FILL)
+    ->width(300)
+    ->height(200)
+    ->cover()
     ->build();
 
-// Force - ignore aspect ratio, exact dimensions
+// Fill-down - force dimensions, smaller images preserved
 imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
-    ->setResizeType(ResizeType::FORCE)
+    ->width(300)
+    ->height(200)
+    ->fill()
     ->build();
 ```
 
@@ -80,10 +88,10 @@ When using `FILL` resize type, you can specify the gravity position to control w
 use Imsus\ImgProxy\Enums\Gravity;
 
 $url = imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
-    ->setResizeType(ResizeType::FILL)
-    ->setGravity(Gravity::CENTER)
+    ->width(300)
+    ->height(200)
+    ->cover()
+    ->gravity(Gravity::CENTER)
     ->build();
 ```
 
@@ -107,10 +115,10 @@ Use `auto` gravity for smart cropping based on image content:
 
 ```php
 $url = imgproxy($url)
-    ->setWidth(300)
-    ->setHeight(200)
-    ->setResizeType(ResizeType::FILL)
-    ->setGravity(Gravity::AUTO)
+    ->width(300)
+    ->height(200)
+    ->cover()
+    ->gravity(Gravity::AUTO)
     ->build();
 ```
 
@@ -120,13 +128,13 @@ For high DPI displays (Retina, etc.), set the DPR to generate higher resolution 
 
 ```php
 // Standard display (1x)
-$url = imgproxy($url)->setWidth(300)->setDpr(1)->build();
+$url = imgproxy($url)->width(300)->dpr(1)->build();
 
 // Retina display (2x)
-$url = imgproxy($url)->setWidth(300)->setDpr(2)->build();
+$url = imgproxy($url)->width(300)->dpr(2)->build();
 
 // High DPI displays (3x)
-$url = imgproxy($url)->setWidth(300)->setDpr(3)->build();
+$url = imgproxy($url)->width(300)->dpr(3)->build();
 ```
 
 The actual image size will be `width * dpr` pixels, providing crisp images on high-resolution screens.
@@ -134,14 +142,13 @@ The actual image size will be `width * dpr` pixels, providing crisp images on hi
 ## Complete Resize Example
 
 ```php
-use Imsus\ImgProxy\Enums\ResizeType;
 use Imsus\ImgProxy\Enums\Gravity;
 
 $url = imgproxy('https://example.com/image.jpg')
-    ->setWidth(800)
-    ->setHeight(600)
-    ->setResizeType(ResizeType::FILL)
-    ->setGravity(Gravity::CENTER)
-    ->setDpr(2)
+    ->width(800)
+    ->height(600)
+    ->cover()
+    ->gravity(Gravity::CENTER)
+    ->dpr(2)
     ->build();
 ```

@@ -110,8 +110,8 @@ The visual test page includes:
 ```php
 it('generates a basic URL', function () {
     $url = imgproxy('https://example.com/image.jpg')
-        ->setWidth(300)
-        ->setHeight(200)
+        ->width(300)
+        ->height(200)
         ->build();
 
     expect($url)->toContain('width:300');
@@ -124,7 +124,7 @@ it('generates a basic URL', function () {
 ```php
 it('generates signed URLs', function () {
     $url = imgproxy('https://example.com/image.jpg')
-        ->setWidth(300)
+        ->width(300)
         ->build();
 
     // URLs should not contain 'insecure'
@@ -137,7 +137,7 @@ it('generates signed URLs', function () {
 ```php
 it('throws exception for invalid quality', function () {
     expect(fn() => imgproxy('https://example.com/image.jpg')
-        ->setQuality(150)
+        ->quality(150)
         ->build())->toThrow(InvalidArgumentException::class);
 });
 ```

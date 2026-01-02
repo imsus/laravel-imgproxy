@@ -6,7 +6,7 @@ Set the compression quality (0-100):
 
 ```php
 $url = imgproxy($url)
-    ->setQuality(85)
+    ->quality(85)
     ->build();
 ```
 
@@ -21,31 +21,37 @@ $url = imgproxy($url)
 ```php
 // Thumbnail - smaller file size
 $thumbnail = imgproxy($image)
-    ->setWidth(150)
-    ->setHeight(150)
-    ->setQuality(70)
+    ->width(150)
+    ->height(150)
+    ->quality(70)
     ->build();
 
 // Hero image - balance quality and size
 $hero = imgproxy($image)
-    ->setWidth(1200)
-    ->setHeight(600)
-    ->setQuality(85)
+    ->width(1200)
+    ->height(600)
+    ->quality(85)
     ->build();
 
 // Product image - prioritize quality
 $product = imgproxy($image)
-    ->setWidth(800)
-    ->setHeight(600)
-    ->setQuality(95)
+    ->width(800)
+    ->height(600)
+    ->quality(95)
     ->build();
 ```
 
 ## Output Format
 
-Specify the output image format:
+Specify the output image format using format shortcuts or the enum:
 
 ```php
+// Using fluent shortcuts
+$url = imgproxy($url)
+    ->webp()
+    ->build();
+
+// Using enum
 use Imsus\ImgProxy\Enums\OutputExtension;
 
 $url = imgproxy($url)
@@ -55,38 +61,38 @@ $url = imgproxy($url)
 
 ### Available Formats
 
-| Format | Enum Value | Best For |
-|--------|------------|----------|
-| JPEG | `JPEG` | Photographs, general use |
-| PNG | `PNG` | Transparency, graphics |
-| WebP | `WEBP` | Modern browsers, best compression |
-| AVIF | `AVIF` | Best compression, newest format |
-| GIF | `GIF` | Animations |
-| ICO | `ICO` | Favicons |
-| SVG | `SVG` | Vector images |
-| HEIC | `HEIC` | Apple devices |
-| BMP | `BMP` | Windows compatibility |
-| TIFF | `TIFF` | High-quality printing |
+| Format | Shortcut | Enum Value | Best For |
+|--------|----------|------------|----------|
+| JPEG | `jpg()` | `JPEG` | Photographs, general use |
+| PNG | `png()` | `PNG` | Transparency, graphics |
+| WebP | `webp()` | `WEBP` | Modern browsers, best compression |
+| AVIF | `avif()` | `AVIF` | Best compression, newest format |
+| GIF | - | `GIF` | Animations |
+| ICO | - | `ICO` | Favicons |
+| SVG | - | `SVG` | Vector images |
+| HEIC | - | `HEIC` | Apple devices |
+| BMP | - | `BMP` | Windows compatibility |
+| TIFF | - | `TIFF` | High-quality printing |
 
 ### Format Selection Strategy
 
 ```php
 // Modern browsers - use AVIF for best compression
 $avifUrl = imgproxy($image)
-    ->setExtension(OutputExtension::AVIF)
-    ->setQuality(75)
+    ->avif()
+    ->quality(75)
     ->build();
 
 // Fallback for older browsers - use WebP
 $webpUrl = imgproxy($image)
-    ->setExtension(OutputExtension::WEBP)
-    ->setQuality(85)
+    ->webp()
+    ->quality(85)
     ->build();
 
 // Universal fallback - use JPEG
 $jpegUrl = imgproxy($image)
-    ->setExtension(OutputExtension::JPEG)
-    ->setQuality(90)
+    ->jpg()
+    ->quality(90)
     ->build();
 ```
 
@@ -96,24 +102,22 @@ Different formats handle quality differently:
 
 ```php
 // JPEG - quality directly affects compression
-imgproxy($url)->setQuality(85)->setExtension(OutputExtension::JPEG)->build();
+imgproxy($url)->quality(85)->jpg()->build();
 
 // WebP - good quality at smaller sizes
-imgproxy($url)->setQuality(80)->setExtension(OutputExtension::WEBP)->build();
+imgproxy($url)->quality(80)->webp()->build();
 
 // AVIF - lower quality still looks great
-imgproxy($url)->setQuality(70)->setExtension(OutputExtension::AVIF)->build();
+imgproxy($url)->quality(70)->avif()->build();
 ```
 
 ## Complete Example
 
 ```php
-use Imsus\ImgProxy\Enums\OutputExtension;
-
 $url = imgproxy('https://example.com/image.jpg')
-    ->setWidth(800)
-    ->setHeight(600)
-    ->setExtension(OutputExtension::WEBP)
-    ->setQuality(85)
+    ->width(800)
+    ->height(600)
+    ->webp()
+    ->quality(85)
     ->build();
 ```

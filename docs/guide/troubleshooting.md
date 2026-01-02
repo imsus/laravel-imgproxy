@@ -39,9 +39,9 @@ openssl rand -hex 32
 **Problem**: Generated images have poor quality
 
 **Solutions**:
-- Increase quality setting: `->setQuality(90)`
-- Use appropriate output format: `->setExtension(OutputExtension::WEBP)`
-- Avoid excessive sharpening: `->setSharpen(1.0)` instead of higher values
+- Increase quality setting: `->quality(90)`
+- Use appropriate output format: `->webp()`
+- Avoid excessive sharpening: `->sharpen(1.0)` instead of higher values
 
 ### URLs are too long
 
@@ -59,7 +59,7 @@ Enable plain URL mode for debugging:
 ```php
 $debugUrl = imgproxy('https://example.com/image.jpg')
     ->setMode(SourceUrlMode::PLAIN)
-    ->setWidth(300)
+    ->width(300)
     ->build();
 
 echo $debugUrl;
