@@ -24,19 +24,19 @@ The `Img` component generates an optimized image tag with imgproxy processing.
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `string` | Required | Source image URL |
-| `alt` | `string` | Required | Alt text for accessibility |
-| `width` | `int?` | `null` | Target width in pixels |
-| `height` | `int?` | `null` | Target height in pixels |
-| `resizeType` | `ResizeType?` | `null` | Resize mode (fit, fill, force, etc.) |
-| `format` | `OutputExtension?` | `null` | Output format (jpeg, png, webp, avif) |
-| `quality` | `int` | `75` | Compression quality (0-100) |
-| `dpr` | `int?` | `null` | Device pixel ratio |
-| `gravity` | `Gravity?` | `null` | Gravity position for crop/fill |
-| `lazy` | `bool` | `true` | Enable lazy loading |
-| `sizes` | `string?` | `null` | HTML sizes attribute |
+| Prop         | Type               | Default  | Description                           |
+| ------------ | ------------------ | -------- | ------------------------------------- |
+| `src`        | `string`           | Required | Source image URL                      |
+| `alt`        | `string`           | Required | Alt text for accessibility            |
+| `width`      | `int?`             | `null`   | Target width in pixels                |
+| `height`     | `int?`             | `null`   | Target height in pixels               |
+| `resizeType` | `ResizeType?`      | `null`   | Resize mode (fit, fill, force, etc.)  |
+| `format`     | `OutputExtension?` | `null`   | Output format (jpeg, png, webp, avif) |
+| `quality`    | `int`              | `75`     | Compression quality (0-100)           |
+| `dpr`        | `int?`             | `null`   | Device pixel ratio                    |
+| `gravity`    | `Gravity?`         | `null`   | Gravity position for crop/fill        |
+| `lazy`       | `bool`             | `true`   | Enable lazy loading                   |
+| `sizes`      | `string?`          | `null`   | HTML sizes attribute                  |
 
 ### Example
 
@@ -72,19 +72,19 @@ The `Picture` component generates a `<picture>` element with multiple format sou
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `string` | Required | Source image URL |
-| `alt` | `string` | Required | Alt text for accessibility |
-| `width` | `int?` | `null` | Target width in pixels |
-| `height` | `int?` | `null` | Target height in pixels |
-| `formats` | `array` | `['webp', 'avif', 'jpeg']` | Output formats in priority order |
-| `resizeType` | `ResizeType?` | `null` | Resize mode (fit, fill, force, etc.) |
-| `quality` | `int` | `75` | Compression quality (0-100) |
-| `dpr` | `int?` | `null` | Device pixel ratio |
-| `gravity` | `Gravity?` | `null` | Gravity position for crop/fill |
-| `lazy` | `bool` | `true` | Enable lazy loading |
-| `sizes` | `string?` | `null` | HTML sizes attribute |
+| Prop         | Type          | Default                    | Description                          |
+| ------------ | ------------- | -------------------------- | ------------------------------------ |
+| `src`        | `string`      | Required                   | Source image URL                     |
+| `alt`        | `string`      | Required                   | Alt text for accessibility           |
+| `width`      | `int?`        | `null`                     | Target width in pixels               |
+| `height`     | `int?`        | `null`                     | Target height in pixels              |
+| `formats`    | `array`       | `['webp', 'avif', 'jpeg']` | Output formats in priority order     |
+| `resizeType` | `ResizeType?` | `null`                     | Resize mode (fit, fill, force, etc.) |
+| `quality`    | `int`         | `75`                       | Compression quality (0-100)          |
+| `dpr`        | `int?`        | `null`                     | Device pixel ratio                   |
+| `gravity`    | `Gravity?`    | `null`                     | Gravity position for crop/fill       |
+| `lazy`       | `bool`        | `true`                     | Enable lazy loading                  |
+| `sizes`      | `string?`     | `null`                     | HTML sizes attribute                 |
 
 ### Example
 
@@ -102,3 +102,46 @@ The `Picture` component generates a `<picture>` element with multiple format sou
 ```
 
 This generates a `<picture>` element with `<source>` tags for AVIF, WebP, and JPEG formats, allowing browsers to choose the best supported format.
+
+## Short Property Aliases
+
+For cleaner markup, all components support short property aliases. These are especially useful when you want to reduce verbosity in your templates.
+
+### Alias Mapping
+
+| Original Prop | Alias  | Type               |
+| ------------- | ------ | ------------------ |
+| `width`       | `w`    | `int?`             |
+| `height`      | `h`    | `int?`             |
+| `quality`     | `q`    | `int`              |
+| `format`      | `fmt`  | `OutputExtension?` |
+| `resizeType`  | `fit`  | `ResizeType?`      |
+| `gravity`     | `grav` | `Gravity?`         |
+
+### Usage Example
+
+```blade
+<!-- Verbose (still works) -->
+<x-imgproxy-img
+    src="image.jpg"
+    :width="300"
+    :height="200"
+    resize-type="fill"
+    format="webp"
+    :quality="85"
+    gravity="ce"
+/>
+
+<!-- Concise (using aliases) -->
+<x-imgproxy-img
+    src="image.jpg"
+    :w="300"
+    :h="200"
+    fit="fill"
+    fmt="webp"
+    :q="85"
+    grav="ce"
+/>
+```
+
+Both approaches produce identical results. When both the original and alias are provided, the original property takes precedence.

@@ -11,6 +11,24 @@ class Img extends Component
 {
     /**
      * Create a new component instance.
+     *
+     * @param  string  $src  Source image URL
+     * @param  string|null  $alt  Alt text for accessibility
+     * @param  int|null  $width  Image width (alias: w)
+     * @param  int|null  $height  Image height (alias: h)
+     * @param  ResizeType|null  $resizeType  Resize mode (alias: fit)
+     * @param  OutputExtension|null  $format  Output format (alias: fmt)
+     * @param  int  $quality  Image quality 0-100 (alias: q)
+     * @param  int|null  $dpr  Device pixel ratio
+     * @param  Gravity|null  $gravity  Gravity position (alias: grav)
+     * @param  bool  $lazy  Enable lazy loading
+     * @param  string|null  $sizes  Sizes attribute for responsive images
+     * @param  int|null  $w  Short alias for width
+     * @param  int|null  $h  Short alias for height
+     * @param  int|null  $q  Short alias for quality
+     * @param  ResizeType|null  $fit  Short alias for resizeType
+     * @param  OutputExtension|null  $fmt  Short alias for format
+     * @param  Gravity|null  $grav  Short alias for gravity
      */
     public function __construct(
         public string $src,
@@ -24,6 +42,13 @@ class Img extends Component
         public ?Gravity $gravity = null,
         public bool $lazy = true,
         public ?string $sizes = null,
+        // Short property aliases
+        public ?int $w = null,
+        public ?int $h = null,
+        public ?int $q = 75,
+        public ?ResizeType $fit = null,
+        public ?OutputExtension $fmt = null,
+        public ?Gravity $grav = null,
     ) {}
 
     /**
@@ -33,32 +58,40 @@ class Img extends Component
     {
         $url = imgproxy($this->src);
 
-        if ($this->width !== null) {
-            $url->setWidth($this->width);
+        // Use alias properties with coalesce - original properties take precedence
+        $width = $this->width ?? $this->w;
+        $height = $this->height ?? $this->h;
+        $quality = $this->q !== 75 ? $this->q : ($this->quality ?? 75);
+        $resizeType = $this->resizeType ?? $this->fit;
+        $format = $this->format ?? $this->fmt;
+        $gravity = $this->gravity ?? $this->grav;
+
+        if ($width !== null) {
+            $url->width($width);
         }
 
-        if ($this->height !== null) {
-            $url->setHeight($this->height);
+        if ($height !== null) {
+            $url->height($height);
         }
 
-        if ($this->resizeType !== null) {
-            $url->setResizeType($this->resizeType);
+        if ($resizeType !== null) {
+            $url->setResizeType($resizeType);
         }
 
-        if ($this->format !== null) {
-            $url->setExtension($this->format);
+        if ($format !== null) {
+            $url->setExtension($format);
         }
 
-        if ($this->quality > 0) {
-            $url->setQuality($this->quality);
+        if ($quality > 0) {
+            $url->quality($quality);
         }
 
         if ($this->dpr !== null) {
-            $url->setDpr($this->dpr);
+            $url->dpr($this->dpr);
         }
 
-        if ($this->gravity !== null) {
-            $url->setGravity($this->gravity);
+        if ($gravity !== null) {
+            $url->setGravity($gravity);
         }
 
         return $url->build();
