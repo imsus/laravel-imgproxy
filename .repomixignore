@@ -1,17 +1,17 @@
-# Ignore Documentation
+# Docs
 docs/
 
-# Ignore GitHub-specific files
+# GitHub
 .github/
 
-# Ignore Meta/Legal files
+# Meta/Legal
 CHANGELOG.md
 LICENSE.md
 CONTRIBUTING.md
 SECURITY.md
 FUNDING.yml
 
-# Ignore Tooling configs
+# Tooling
 package.json
 package-lock.json
 phpstan.neon
@@ -19,19 +19,16 @@ phpunit.xml.dist
 .editorconfig
 .gitattributes
 docker-compose.yml
+.claude
 
-# Ignore Workbench boilerplate (keep only logic if needed)
-# If you want strictly package code + tests, ignore the whole folder:
+# Workbench
 workbench/
-# OR keep only the routes/views if you use them for feature context:
-# workbench/app/
-# workbench/bootstrap/
-# workbench/storage/
-# workbench/composer.json
-
-# Ignore the SVG watermark - it's a huge token waste
 resources/dist/
 *.svg
 
-# Ignore the README and other non-code documentation
-README.md
+# Test
+tests/Unit/*EnumTest.php
+tests/Unit/*AliasesTest.php
+
+# Repomix
+repomix-output.xml

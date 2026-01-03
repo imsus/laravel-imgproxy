@@ -1,3 +1,5 @@
+<img src="https://cloud.umami.is/p/Ex000voJD" alt="Analytics Pixel" style="position:absolute">
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/bb2e37e0-bc75-4e67-b1c8-772fc4b489ea">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/71b48db1-7d28-426f-b803-f4f69b3b70b2">
@@ -28,7 +30,7 @@ You can call imgproxy's raw API directly, but you'd repeat boilerplate code acro
 - **HMAC Signing** - Secure URL signing with configurable key/salt
 - **Blade Components** - Ready-to-use Img and Picture components
 - **Type Safe** - PHP 8.2+ enums for all options
-- **Well Tested** - 99.4% test coverage
+- **Well Tested** - 99.2% test coverage
 
 ## Quick Glance
 
@@ -250,5 +252,3 @@ MIT License. See [LICENSE](LICENSE.md) for details.
 Laravel is a trademark of https://laravel.com/legal/trademark.
 
 imgproxy is a trademark of https://imgproxy.net/.
-
-![](https://cloud.umami.is/p/Ex000voJD)
