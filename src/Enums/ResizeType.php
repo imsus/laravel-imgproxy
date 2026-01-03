@@ -50,4 +50,12 @@ enum ResizeType: string
             self::AUTO => 'If both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.',
         };
     }
+
+    /**
+     * Create a ResizeType from a string value (case-insensitive).
+     */
+    public static function fromString(string $value): ?self
+    {
+        return self::tryFrom(strtolower($value));
+    }
 }

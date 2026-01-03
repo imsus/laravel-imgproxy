@@ -57,4 +57,25 @@ describe('ResizeType Enum', function () {
         $cases = ResizeType::cases();
         expect(count($cases))->toBe(5);
     });
+
+    describe('fromString()', function () {
+        it('creates ResizeType from lowercase string', function () {
+            expect(ResizeType::fromString('fit'))->toBe(ResizeType::FIT);
+            expect(ResizeType::fromString('fill'))->toBe(ResizeType::FILL);
+            expect(ResizeType::fromString('fill-down'))->toBe(ResizeType::FILL_DOWN);
+            expect(ResizeType::fromString('force'))->toBe(ResizeType::FORCE);
+            expect(ResizeType::fromString('auto'))->toBe(ResizeType::AUTO);
+        });
+
+        it('creates ResizeType from uppercase string', function () {
+            expect(ResizeType::fromString('FIT'))->toBe(ResizeType::FIT);
+            expect(ResizeType::fromString('FILL'))->toBe(ResizeType::FILL);
+            expect(ResizeType::fromString('FORCE'))->toBe(ResizeType::FORCE);
+        });
+
+        it('returns null for invalid string', function () {
+            expect(ResizeType::fromString('invalid'))->toBeNull();
+            expect(ResizeType::fromString(''))->toBeNull();
+        });
+    });
 });
