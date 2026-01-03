@@ -11,7 +11,7 @@ class KeyGenerateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'imgproxy:key';
+    protected $signature = 'imgproxy:key {--p|path= : Path to .env file (defaults to .env in project root)}';
 
     /**
      * The console command description.
@@ -31,13 +31,19 @@ class KeyGenerateCommand extends Command
         $this->info('IMGPROXY_KEY='.$key);
         $this->info('IMGPROXY_SALT='.$salt);
 
-        $envPath = base_path('.env');
+        $envPath = $this->option('path') ?: base_path('.env');
         $envContent = file_exists($envPath) ? file_get_contents($envPath) : '';
 
         $envContent = $this->updateEnvValue($envContent, 'IMGPROXY_KEY', $key);
         $envContent = $this->updateEnvValue($envContent, 'IMGPROXY_SALT', $salt);
 
-        if (file_put_contents($envPath, $envContent) === false) {
+        try {
+            $result = file_put_contents($envPath, $envContent);
+        } catch (\Throwable $e) {
+            $result = false;
+        }
+
+        if ($result === false) {
             $this->error('Failed to save keys to the .env file.');
 
             return self::FAILURE;

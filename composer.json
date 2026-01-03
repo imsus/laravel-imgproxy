@@ -77,8 +77,8 @@
             "npm run docs:dev -- --port 5173"
         ],
         "analyse": "vendor/bin/phpstan analyse",
-        "test": "vendor/bin/pest --parallel",
-        "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --parallel --coverage",
+        "test": "vendor/bin/pest",
+        "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage",
         "format": "vendor/bin/pint"
     },
     "config": {
