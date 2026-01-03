@@ -20,7 +20,7 @@ enum Rotation: int
     public static function fromString(string $value): ?self
     {
         // Validate that the string is a valid integer representation
-        if (! ctype_digit($value) && $value !== '0') {
+        if (! ctype_digit($value)) {
             return null;
         }
 
