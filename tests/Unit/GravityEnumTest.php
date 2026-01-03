@@ -62,4 +62,30 @@ describe('Gravity Enum', function () {
         $cases = Gravity::cases();
         expect(count($cases))->toBe(10);
     });
+
+    describe('fromString()', function () {
+        it('creates Gravity from lowercase string', function () {
+            expect(Gravity::fromString('ce'))->toBe(Gravity::CENTER);
+            expect(Gravity::fromString('no'))->toBe(Gravity::NORTH);
+            expect(Gravity::fromString('so'))->toBe(Gravity::SOUTH);
+            expect(Gravity::fromString('ea'))->toBe(Gravity::EAST);
+            expect(Gravity::fromString('we'))->toBe(Gravity::WEST);
+            expect(Gravity::fromString('noea'))->toBe(Gravity::NORTH_EAST);
+            expect(Gravity::fromString('soea'))->toBe(Gravity::SOUTH_EAST);
+            expect(Gravity::fromString('sowe'))->toBe(Gravity::SOUTH_WEST);
+            expect(Gravity::fromString('nowe'))->toBe(Gravity::NORTH_WEST);
+            expect(Gravity::fromString('sm'))->toBe(Gravity::SMART);
+        });
+
+        it('creates Gravity from uppercase string', function () {
+            expect(Gravity::fromString('CE'))->toBe(Gravity::CENTER);
+            expect(Gravity::fromString('NO'))->toBe(Gravity::NORTH);
+            expect(Gravity::fromString('SM'))->toBe(Gravity::SMART);
+        });
+
+        it('returns null for invalid string', function () {
+            expect(Gravity::fromString('invalid'))->toBeNull();
+            expect(Gravity::fromString(''))->toBeNull();
+        });
+    });
 });

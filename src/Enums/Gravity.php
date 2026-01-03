@@ -38,4 +38,12 @@ enum Gravity: string
             self::SMART => 'Smart (auto-detect interesting section)',
         };
     }
+
+    /**
+     * Create a Gravity from a string value (case-insensitive).
+     */
+    public static function fromString(string $value): ?self
+    {
+        return self::tryFrom(strtolower($value));
+    }
 }
