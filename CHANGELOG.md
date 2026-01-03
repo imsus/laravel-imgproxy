@@ -2,6 +2,137 @@
 
 All notable changes to `laravel-imgproxy` will be documented in this file.
 
+## v1.1.0 - 2026-01-02
+
+### New Features
+
+#### Fluent API Aliases
+
+Shorter method aliases for common operations:
+
+| Method        | Alias For              | Example    |
+| ------------- | ---------------------- | ---------- |
+| `w($width)`   | `setWidth($width)`     | `->w(300)` |
+| `h($height)`  | `setHeight($height)`   | `->h(200)` |
+| `q($quality)` | `setQuality($quality)` | `->q(85)`  |
+| `dpr($ratio)` | `setDpr($ratio)`       | `->dpr(2)` |
+
+Format shortcut methods:
+
+| Method   | Output      |
+| -------- | ----------- |
+| `webp()` | format:webp |
+| `avif()` | format:avif |
+| `png()`  | format:png  |
+| `jpg()`  | format:jpeg |
+| `gif()`  | format:gif  |
+| `svg()`  | format:svg  |
+
+Fit shortcut methods:
+
+| Method                     | Output                        |
+| -------------------------- | ----------------------------- |
+| `cover($width, $height)`   | resize:$width:$height:cover   |
+| `contain($width, $height)` | resize:$width:$height:contain |
+| `fit($width, $height)`     | resize:$width:$height:fit     |
+
+Cache busting: `->v($timestamp)` generates `:$timestamp` URL segment.
+
+#### Laravel Storage Integration
+
+**Public Disks Macro:**
+
+```php
+ImgProxy::storage('public')->url('/images/cat.jpg')->w(300)->build();
+// Or with the macro:
+// Generated signed URL for public disk
+```
+
+**Private Disks with Temporary URLs:**
+
+```php
+ImgProxy::storage('s3')->url('/private/image.jpg')->w(300)->build();
+// Automatically uses temporaryUrl() for authenticated access
+```
+
+The `storage()` macro detects disk visibility and handles authentication accordingly.
+
+#### Fallback URL
+
+Set a fallback image URL when the source is invalid:
+
+```php
+->fallbackUrl('https://example.com/placeholder.jpg')
+```
+
+#### Short Options Configuration
+
+New `short_options` config for cleaner URLs. When enabled, outputs like `w:300` instead of `width:300`.
+
+```php
+// config/imgproxy.php
+'short_options' => true,
+```
+
+#### Key Generation Command
+
+Generate key and salt for ImgProxy configuration:
+
+```bash
+php artisan imgproxy:key
+```
+
+Outputs random hex-encoded key (32 bytes) and salt (16 bytes).
+
+#### Blade Component Short Aliases
+
+Components now accept short property aliases:
+
+| Alias | Full Prop  |
+| ----- | ---------- |
+| `w`   | width      |
+| `h`   | height     |
+| `q`   | quality    |
+| `d`   | dpr        |
+| `rt`  | resizeType |
+| `f`   | format     |
+| `g`   | gravity    |
+| `s`   | sizes      |
+| `lt`  | lazy       |
+
+```blade
+<x-imgproxy-img src="..." w="300" h="200" q="85" />
+```
+
+### Improvements
+
+- **Documentation**: Complete rewrite with clearer examples, new storage integration guide, and consolidated reference
+- **CI/CD**: Refactored workflows with Dependabot, dedicated docs deployment, and consolidated PR checks
+- **Tests**: Added 12 new test files covering aliases, storage integration, fit shortcuts, format shortcuts, and more
+
+### Bug Fixes
+
+- Fixed wrong argument params in methods
+- Fixed artisan call in test environment
+- Fixed KeyGenerateCommand registration
+- Fixed Storage facade integration for public disks
+- Fixed str random function usage in key generation
+
+### Maintenance
+
+- Removed `.cursorrules` file
+- Added tracker section to README
+- Improved composer.json description
+
+### Stats
+
+- Tests: 281 new tests added (1,162 total)
+- Assertions: 696 new assertions (2,612 total)
+- New files: 12
+- Modified files: 57
+
+**Full Changelog**: https://github.com/imsus/laravel-imgproxy/compare/v1.0.0...v1.1.0
+
 ## v1.0.0 - 2026-01-01
 
 ### New Features
@@ -165,7 +296,7 @@ Single image component inspired by Next.js Image.
 Props:
 
 | Prop       | Type             | Default  | Description                           |
-|------------|------------------|----------|---------------------------------------|
+| ---------- | ---------------- | -------- | ------------------------------------- |
 | src        | string           | Required | Source image URL                      |
 | alt        | string?          | null     | Alt text for accessibility            |
 | width      | int?             | null     | Target width in pixels                |
@@ -216,7 +347,7 @@ Renders:
 Props:
 
 | Prop       | Type        | Default                  | Description                      |
-|------------|-------------|--------------------------|----------------------------------|
+| ---------- | ----------- | ------------------------ | -------------------------------- |
 | src        | string      | Required                 | Source image URL                 |
 | alt        | string?     | null                     | Alt text for accessibility       |
 | width      | int?        | null                     | Target width in pixels           |
@@ -385,7 +516,7 @@ Benefit:
 2 new watermark methods:
 
 | Method                                                     | Format                        | Description                                  |
-|------------------------------------------------------------|-------------------------------|----------------------------------------------|
+| ---------------------------------------------------------- | ----------------------------- | -------------------------------------------- |
 | watermark($opacity, $position, $xOffset, $yOffset, $scale) | wm:opacity:position:x:y:scale | Built-in watermark with configurable options |
 | watermarkUrl($url)                                         | wmu:<base64-encoded-url>      | Custom watermark from URL                    |
 
