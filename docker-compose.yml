@@ -11,5 +11,5 @@ services:
       - IMGPROXY_GZIP_PROGRESSIVE=true
       - IMGPROXY_MAX_SRC_REQUESTS=10
       - IMGPROXY_WATERMARK_PATH=/tmp/watermark.svg
-      - IMGPROXY_WATERMARK_OPACITY=1.0 # Since you set opacity in Figma, keep this 1.0
+      - IMGPROXY_WATERMARK_OPACITY=1.0
     restart: unless-stopped
