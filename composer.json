@@ -78,7 +78,7 @@
         ],
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --parallel",
-        "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --parallel --coverage",
+        "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage --parallel",
         "format": "vendor/bin/pint"
     },
     "config": {
