@@ -6,6 +6,8 @@ on:
       - '**.php'
       - 'composer.json'
       - 'composer.lock'
+      - '.github/workflows/pr.yml'
+      - 'phpstan.neon.dist'
 
 permissions:
   contents: read
@@ -27,6 +29,9 @@ jobs:
 
       - name: Check code style
         run: ./vendor/bin/pint --test
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan --error-format=github
 
       - name: Run tests
         run: vendor/bin/pest --ci --no-coverage
