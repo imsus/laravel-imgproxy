@@ -6,7 +6,7 @@ Thank you for considering contributing to Laravel-ImgProxy! This document outlin
 
 ### Prerequisites
 
-- PHP 8.3 or higher
+- PHP 8.2+
 - Composer
 - Laravel 11+ (for development workbench)
 - Docker (optional, for running ImgProxy server)
