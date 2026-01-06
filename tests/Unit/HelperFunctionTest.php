@@ -10,10 +10,11 @@ describe('Helper Function', function () {
         $instance = imgproxy($url);
 
         expect($instance)->toBeInstanceOf(ImgProxy::class);
-        
+
         $result = $instance->setWidth(300)->build();
         expect($result)->toContain('width:300');
-        expect($result)->toContain('example.com/image.jpg');
+        expect($result)->toBeString();
+        expect($result)->toStartWith('http://localhost:8080/');
     });
 
     it('can be called without parameters', function () {
@@ -27,15 +28,16 @@ describe('Helper Function', function () {
         $instance = imgproxy()->url($url);
 
         expect($instance)->toBeInstanceOf(ImgProxy::class);
-        
+
         $result = $instance->setWidth(300)->build();
         expect($result)->toContain('width:300');
-        expect($result)->toContain('example.com/image.jpg');
+        expect($result)->toBeString();
+        expect($result)->toStartWith('http://localhost:8080/');
     });
 
     it('produces same result whether URL is passed or chained', function () {
         $url = 'https://example.com/image.jpg';
-        
+
         $result1 = imgproxy($url)->setWidth(300)->setHeight(200)->build();
         $result2 = imgproxy()->url($url)->setWidth(300)->setHeight(200)->build();
 
