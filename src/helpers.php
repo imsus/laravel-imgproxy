@@ -3,8 +3,14 @@
 use Imsus\ImgProxy\ImgProxy;
 
 if (! function_exists('imgproxy')) {
-    function imgproxy(string $url): ImgProxy
+    function imgproxy(?string $url = null): ImgProxy
     {
-        return (new ImgProxy)->url($url);
+        $instance = new ImgProxy;
+
+        if ($url !== null) {
+            return $instance->url($url);
+        }
+
+        return $instance;
     }
 }
