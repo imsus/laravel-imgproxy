@@ -4,7 +4,7 @@
     },
     "devDependencies": {
         "gh-pages": "^6.3.0",
-        "vitepress": "^2.0.0-alpha.17"
+        "vitepress": "^2.0.0-alpha.18"
     },
     "scripts": {
         "docs:dev": "vitepress dev docs",
