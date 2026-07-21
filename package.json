@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "vue": "^3.5.39"
+        "vue": "^3.5.40"
     },
     "devDependencies": {
         "gh-pages": "^6.3.0",
