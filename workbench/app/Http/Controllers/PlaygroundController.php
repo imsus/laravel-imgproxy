@@ -21,11 +21,19 @@ use Imsus\LaravelImgproxy\Enums\ResizeType;
 final class PlaygroundController
 {
     /**
-     * A stable, high-resolution source image the local imgproxy can fetch:
-     * the "Blue Marble" photograph (NASA / Apollo 17), public domain, hosted
-     * on Wikimedia Commons.
+     * The demo source URL: the workbench app's own /sample/blue-marble.jpg
+     * (the "Blue Marble" photograph, NASA / Apollo 17, public domain).
+     *
+     * imgproxy runs in Docker, so the URL must be reachable from inside the
+     * container. The default uses host.docker.internal, which Docker Desktop
+     * resolves to the host; other Docker setups (e.g. Dory) need the host's
+     * LAN IP instead — set PLAYGROUND_SOURCE in workbench/.env then. The
+     * demos need no external image host: Wikimedia rate-limits hotlinking.
      */
-    private const string SOURCE = 'https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg';
+    private function source(): string
+    {
+        return (string) config('laravel-imgproxy.source', 'http://host.docker.internal:8000/sample/blue-marble.jpg');
+    }
 
     /**
      * @return array{configured: bool, source: string, instance: array{name: string, url: string, signed: bool, signature_size: int|null, encoding: string}, demos: list<array{label: string, description: string, url: string, note: string|null}>, presets: array{client: list<array{label: string, code: string, url: string}>, server: array{label: string, code: string, url: string, status: int|null}}, storage: array{public: string, private: string}}
@@ -37,7 +45,7 @@ final class PlaygroundController
         if ($instance['url'] === '') {
             return view('playground', [
                 'configured' => false,
-                'source' => self::SOURCE,
+                'source' => $this->source(),
                 'instance' => $instance,
                 'demos' => [],
                 'presets' => ['client' => [], 'server' => ['label' => '', 'code' => '', 'url' => '', 'status' => null]],
@@ -47,7 +55,7 @@ final class PlaygroundController
 
         return view('playground', [
             'configured' => true,
-            'source' => self::SOURCE,
+            'source' => $this->source(),
             'instance' => $instance,
             'demos' => $this->demos(),
             'presets' => $this->presets(),
@@ -85,7 +93,7 @@ final class PlaygroundController
             [
                 'label' => 'Resize, quality, format',
                 'description' => 'Fill 300×300, 80% quality, WebP output.',
-                'builder' => imgproxy()->url(self::SOURCE)
+                'builder' => imgproxy()->url($this->source())
                     ->resize(ResizeType::Fill, 300, 300)
                     ->quality(80)
                     ->format(Format::Webp),
@@ -94,7 +102,7 @@ final class PlaygroundController
             [
                 'label' => 'Crop with gravity',
                 'description' => 'Crop a relative 0.5×0.5 area anchored to the north edge, then fit 400×400.',
-                'builder' => imgproxy()->url(self::SOURCE)
+                'builder' => imgproxy()->url($this->source())
                     ->crop(0.5, 0.5, Gravity::North)
                     ->resize(ResizeType::Fit, 400, 400),
                 'note' => null,
@@ -102,37 +110,37 @@ final class PlaygroundController
             [
                 'label' => 'Effects',
                 'description' => 'Width 600, gaussian blur 1.5, sharpen 0.5.',
-                'builder' => imgproxy()->url(self::SOURCE)->width(600)->blur(1.5)->sharpen(0.5),
+                'builder' => imgproxy()->url($this->source())->width(600)->blur(1.5)->sharpen(0.5),
                 'note' => null,
             ],
             [
                 'label' => 'Zoom',
                 'description' => 'Width 400 zoomed ×2 — renders 800px wide.',
-                'builder' => imgproxy()->url(self::SOURCE)->width(400)->zoom(2),
+                'builder' => imgproxy()->url($this->source())->width(400)->zoom(2),
                 'note' => null,
             ],
             [
                 'label' => 'Rotate and flip',
                 'description' => 'Rotate 90° and flip vertically.',
-                'builder' => imgproxy()->url(self::SOURCE)->rotate(90)->flip(vertical: true),
+                'builder' => imgproxy()->url($this->source())->rotate(90)->flip(vertical: true),
                 'note' => null,
             ],
             [
                 'label' => 'Focus point',
                 'description' => 'Crop 0.5×0.5 and focus on (0.5, 0.2) — the vertical center, 20% from the top.',
-                'builder' => imgproxy()->url(self::SOURCE)->crop(0.5, 0.5)->focusPoint(0.5, 0.2),
+                'builder' => imgproxy()->url($this->source())->crop(0.5, 0.5)->focusPoint(0.5, 0.2),
                 'note' => null,
             ],
             [
                 'label' => 'LQIP placeholder',
                 'description' => 'A 16px blurred WebP of the same source — the blur-up preview used by the components.',
-                'builder' => imgproxy()->url(self::SOURCE)->placeholder(),
+                'builder' => imgproxy()->url($this->source())->placeholder(),
                 'note' => 'The placeholder goes in the src; the full image loads through the srcset (see the component demo).',
             ],
             [
                 'label' => 'Raw escape hatch',
                 'description' => 'A cache buster appended verbatim with raw(), unvalidated.',
-                'builder' => imgproxy()->url(self::SOURCE)->raw('cb:playground-v1'),
+                'builder' => imgproxy()->url($this->source())->raw('cb:playground-v1'),
                 'note' => null,
             ],
         ];
@@ -159,17 +167,17 @@ final class PlaygroundController
             [
                 'label' => 'thumb',
                 'code' => "Imgproxy::url(\$source)->preset('thumb')->url()",
-                'builder' => imgproxy()->url(self::SOURCE)->preset('thumb'),
+                'builder' => imgproxy()->url($this->source())->preset('thumb'),
             ],
             [
                 'label' => 'hero',
                 'code' => "Imgproxy::url(\$source)->preset('hero')->url()",
-                'builder' => imgproxy()->url(self::SOURCE)->preset('hero'),
+                'builder' => imgproxy()->url($this->source())->preset('hero'),
             ],
             [
                 'label' => 'hero overridden',
                 'code' => "Imgproxy::url(\$source)->preset('hero')->width(800)->url()",
-                'builder' => imgproxy()->url(self::SOURCE)->preset('hero')->width(800),
+                'builder' => imgproxy()->url($this->source())->preset('hero')->width(800),
             ],
         ];
 
@@ -177,7 +185,7 @@ final class PlaygroundController
         // registered on the server via IMGPROXY_PRESETS / IMGPROXY_PRESETS_PATH.
         // The local demo server has none, so this request fails — the expected
         // behavior until the server defines the preset.
-        $serverBuilder = imgproxy()->url(self::SOURCE)->imgproxyPreset('sharp');
+        $serverBuilder = imgproxy()->url($this->source())->imgproxyPreset('sharp');
 
         return [
             'client' => array_map(

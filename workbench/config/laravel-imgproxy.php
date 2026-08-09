@@ -30,4 +30,6 @@ return [
         ],
     ],
 
+    'source' => env('PLAYGROUND_SOURCE', 'http://host.docker.internal:8000/sample/blue-marble.jpg'),
+
 ];

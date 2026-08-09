@@ -108,8 +108,9 @@
     @if ($configured)
         <section>
             <h2>Source image</h2>
-            <p>All demos use the same source: the "Blue Marble" photograph (NASA / Apollo 17, public domain), fetched
-                by the imgproxy server, not the app:</p>
+            <p>All demos use the same source: the "Blue Marble" photograph (NASA / Apollo 17, public domain). The
+                workbench app serves it locally at <code>/sample/blue-marble.jpg</code> and imgproxy fetches it from
+                there — no external image host involved:</p>
             <pre>{{ $source }}</pre>
             <img class="source" src="{{ $source }}" alt="The demo source image">
         </section>
@@ -280,7 +281,7 @@ composer analyse       # phpstan</pre>
     </section>
 
     <footer>
-        Source image: "The Blue Marble" (NASA / Apollo 17, public domain), served via Wikimedia Commons. Generated with <code>composer build &amp;&amp; composer serve</code>.
+        Source image: "The Blue Marble" (NASA / Apollo 17, public domain), served locally by the workbench app. Generated with <code>composer build &amp;&amp; composer serve</code>.
     </footer>
 </div>
 </body>
