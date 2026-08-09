@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LaravelImgproxy\LaravelImgproxy;
 
 use BackedEnum;
+use DateTimeInterface;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use LaravelImgproxy\LaravelImgproxy\Enums\Format;
 use LaravelImgproxy\LaravelImgproxy\Enums\Gravity;
@@ -91,6 +93,22 @@ final class Builder
             $this->signer->signatureSize(),
             $this->presets,
         );
+    }
+
+    /**
+     * Return a copy of the builder whose source is a file on a Storage disk.
+     *
+     * Public disks use the disk's URL; private disks use a pre-signed
+     * temporary URL. Requires a Laravel application with the Storage
+     * filesystem configured.
+     *
+     * @param  int|DateTimeInterface|null  $expiration  Temporary URL lifetime in seconds from now, an absolute time, or null for the default 5 minutes.
+     *
+     * @throws InvalidArgumentException When the disk is not configured.
+     */
+    public function disk(string $disk, string $path, int|DateTimeInterface|null $expiration = null): self
+    {
+        return $this->withSource(DiskUrl::resolve(Storage::disk($disk), $path, $expiration));
     }
 
     /**
@@ -929,6 +947,23 @@ final class Builder
             $this->source,
             $this->encoding,
             [...$this->segments, $segment],
+            $this->signer->key(),
+            $this->signer->salt(),
+            $this->signer->signatureSize(),
+            $this->presets,
+        );
+    }
+
+    /**
+     * Return a copy of the builder with a different source.
+     */
+    private function withSource(string $source): self
+    {
+        return new self(
+            $this->baseUrl,
+            $source,
+            $this->encoding,
+            $this->segments,
             $this->signer->key(),
             $this->signer->salt(),
             $this->signer->signatureSize(),

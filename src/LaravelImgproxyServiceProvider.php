@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelImgproxy\LaravelImgproxy;
 
+use DateTimeInterface;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelImgproxyServiceProvider extends ServiceProvider
@@ -23,6 +25,13 @@ class LaravelImgproxyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        FilesystemAdapter::macro('imgproxy', function (string $path, int|DateTimeInterface|null $expiration = null): Builder {
+            /** @var FilesystemAdapter $disk */
+            $disk = $this;
+
+            return imgproxy()->url(DiskUrl::resolve($disk, $path, $expiration));
+        });
+
         if (! $this->app->runningInConsole()) {
             return;
         }
