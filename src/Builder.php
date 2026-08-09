@@ -429,6 +429,12 @@ final class Builder
         );
     }
 
+    /**
+     * The source encoded as a URL path segment, in the current encoding.
+     *
+     * The plain encoding percent-encodes the source behind a `plain/` prefix;
+     * the default encoding is URL-safe base64 without padding.
+     */
     private function encodedSource(): string
     {
         if ($this->encoding === 'plain') {
@@ -494,6 +500,9 @@ final class Builder
         }
     }
 
+    /**
+     * @throws InvalidArgumentException When the encoding is not supported.
+     */
     private function validateEncoding(string $encoding): void
     {
         if (! in_array($encoding, self::ENCODINGS, true)) {
