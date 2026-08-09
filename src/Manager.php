@@ -7,7 +7,7 @@ namespace LaravelImgproxy\LaravelImgproxy;
 use InvalidArgumentException;
 
 /**
- * Resolves imgproxy instance configuration from the published config file.
+ * Resolves imgproxy instances from the published config file.
  *
  * @phpstan-type InstanceConfig array{url: string|null, key: string|null, salt: string|null, signature_size: int|null, encoding: string}
  */
@@ -27,14 +27,11 @@ final class Manager
     }
 
     /**
-     * Resolve the configuration of an imgproxy instance.
+     * Resolve an imgproxy instance.
      *
-     *
-     * @return InstanceConfig
-     *
-     * @throws InvalidArgumentException When the instance is not configured.
+     * @throws InvalidArgumentException When the instance is not configured or has no base URL.
      */
-    public function instance(?string $name = null): array
+    public function instance(?string $name = null): Instance
     {
         $name ??= $this->config['default'];
 
@@ -44,6 +41,24 @@ final class Manager
             throw new InvalidArgumentException("The imgproxy instance [{$name}] is not configured.");
         }
 
-        return $instances[$name];
+        $config = $instances[$name];
+
+        return new Instance(
+            $config['url'] ?? '',
+            $config['key'] ?? null,
+            $config['salt'] ?? null,
+            $config['signature_size'] ?? null,
+            $config['encoding'],
+        );
+    }
+
+    /**
+     * Build a URL for the given source on the default (or named) instance.
+     *
+     * @throws InvalidArgumentException When the instance is not configured or has no base URL.
+     */
+    public function url(string $source, ?string $instance = null): Builder
+    {
+        return $this->instance($instance)->url($source);
     }
 }

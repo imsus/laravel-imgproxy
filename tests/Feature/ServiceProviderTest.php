@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use LaravelImgproxy\LaravelImgproxy\Instance;
 use LaravelImgproxy\LaravelImgproxy\Manager;
 
 it('registers the manager as a singleton', function () {
@@ -29,10 +30,19 @@ it('defines the presets section', function () {
 });
 
 it('resolves the default instance through the manager', function () {
+    config()->set('laravel-imgproxy.instances.default', [
+        'url' => 'https://imgproxy.example.com',
+        'key' => null,
+        'salt' => null,
+        'signature_size' => null,
+        'encoding' => 'base64',
+    ]);
+
     $manager = app(Manager::class);
 
     expect($manager->defaultInstance())->toBe('default')
-        ->and($manager->instance())->toBe(config('laravel-imgproxy.instances.default'));
+        ->and($manager->instance())->toBeInstanceOf(Instance::class)
+        ->and($manager->instance()->baseUrl())->toBe('https://imgproxy.example.com');
 });
 
 it('reads the default instance connection from the environment', function () {
