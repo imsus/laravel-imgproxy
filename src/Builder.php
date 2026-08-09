@@ -18,6 +18,12 @@ use ValueError;
  * Every mutation returns a new instance, so a base builder can be reused
  * for several URL variants. The source and the base URL are fixed at
  * construction; processing option segments are appended in call order.
+ *
+ * Option segment formats and validation ranges target imgproxy v4 (4.0.x).
+ * They are verified against the v4 processing docs
+ * (https://docs.imgproxy.net/usage/processing) and the v4 server source at
+ * imgproxy master eef3b31 (2026-08-06). Re-verify the option methods and
+ * the Enums namespace when the imgproxy server version changes.
  */
 final class Builder
 {

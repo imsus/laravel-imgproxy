@@ -7,6 +7,9 @@ namespace LaravelImgproxy\LaravelImgproxy\Enums;
 /**
  * The imgproxy resizing type (`rs` option).
  *
+ * Values match imgproxy v4 (4.0.x); verified against the v4 processing docs
+ * and imgproxy master eef3b31 (2026-08-06). Re-verify when upgrading imgproxy.
+ *
  * @see https://docs.imgproxy.net/usage/processing#resizing-type
  */
 enum ResizeType: string
