@@ -1,5 +1,7 @@
 # Upgrading from 1.x to 2.0.0
 
+v1 is still published on Packagist (`composer require imsus/laravel-imgproxy:^1.0`). Its source lives on the [`1.x` branch](https://github.com/imsus/laravel-imgproxy/tree/1.x).
+
 2.0.0 is a ground-up rewrite. There is no v1 API compatibility layer, so most v1 call sites need changes. The package now targets PHP ^8.4 and Laravel 13 only, and covers the imgproxy v4 option surface with short option segments.
 
 ## Namespace and class names

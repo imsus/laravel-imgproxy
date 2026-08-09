@@ -23,8 +23,10 @@ imgproxy integration for Laravel. Generate signed, processed image URLs with an 
 You can install the package via Composer:
 
 ```bash
-composer require imsus/laravel-imgproxy
+composer require imsus/laravel-imgproxy:^2.0
 ```
+
+> **Using 1.x?** v1 stays available. Pin `^1.0` to keep the last 1.x release, or `1.x-dev` for the maintenance branch. v1 requires PHP ^8.2 and Laravel 10–12; v2 requires PHP ^8.4 and Laravel 13. The v1 source lives on the [`1.x` branch](https://github.com/imsus/laravel-imgproxy/tree/1.x), and its Packagist versions remain published. Migrating? See [UPGRADING](UPGRADING.md).
 
 Publish the configuration file:
 
