@@ -21,3 +21,4 @@
   - Watermark positions include `re` (repeat, free); `ch` is pro and out of scope.
 - Trailing defaults are trimmed: `resize(Fill, 300, 400)` emits `rs:fill:300:400` (enlarge omitted). Verified live: a real v4 imgproxy returns 200 `image/webp` for the signed fluent chain `rs:fill:300:400/g:sm/q:80/f:webp`.
 - Golden-vector signatures were computed independently with Python (HMAC-SHA256, base64url, no padding) and pinned in `tests/Unit/BuilderOptionsTest.php`; key `secret`/salt `hello` matches the issue-03 verified pair.
+- **Correction (issue 05, 2026-08-09):** the `enlarge` option shortcut was emitted as `en:1`, but v4 (server source `options/parser/processing_options.go` at eef3b31 and a live v4 imgproxy) only registers `enlarge`/`el` — `en:1` returns "Invalid URL" (404). The builder now emits `el:`; the affected golden vectors in `tests/Unit/BuilderOptionsTest.php` were recomputed and re-pinned.
