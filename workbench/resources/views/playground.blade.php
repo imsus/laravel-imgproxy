@@ -100,7 +100,7 @@
 
         :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-        code, pre, .mono {
+        code, pre, .mono, .term {
             font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
         }
 
@@ -266,8 +266,7 @@
         .stage--natural { aspect-ratio: auto; }
         .stage--natural img { width: 320px; max-width: 100%; height: auto; object-fit: contain; }
 
-        body[data-mode="recipes"] .stage { display: none; }
-        body[data-mode="recipes"] .demo-card { grid-template-columns: 1fr; }
+        .term-stack { display: grid; gap: 10px; max-width: 860px; }
 
         /* Demo cards -------------------------------------------------------- */
 
@@ -366,7 +365,7 @@
         }
     </style>
 </head>
-<body data-mode="prints">
+<body>
 <div class="masthead">
     <div class="masthead-inner">
         <div>
@@ -375,10 +374,6 @@
         </div>
         <div class="controls" role="group" aria-label="Playground controls">
             @if ($configured)
-                <div class="seg" role="group" aria-label="View mode">
-                    <button type="button" data-mode-btn="prints" aria-pressed="true">Prints</button>
-                    <button type="button" data-mode-btn="recipes" aria-pressed="false">Recipes</button>
-                </div>
                 <button type="button" class="btn" id="check-all">Check all against imgproxy</button>
             @endif
             <div class="seg" role="group" aria-label="Theme">
@@ -639,37 +634,50 @@
     <section aria-labelledby="commands-title">
         <p class="eyebrow">CLI</p>
         <h2 id="commands-title">Artisan commands</h2>
-        <p class="term" style="margin-top:4px">
-            <button type="button" class="copy" data-copy="php artisan imgproxy:key
+        <div class="term-stack">
+            <p class="term">
+                <button type="button" class="copy" data-copy="php artisan imgproxy:key
 # IMGPROXY_KEY=...
-# IMGPROXY_SALT=...
-
-php artisan imgproxy:health
-# The imgproxy instance [default] is healthy: HTTP 200.
-
-php artisan imgproxy:health --instance=staging
+# IMGPROXY_SALT=...">Copy</button>
+                <span>php artisan imgproxy:key</span>
+                <br><span class="dim"># IMGPROXY_KEY=...</span>
+                <br><span class="dim"># IMGPROXY_SALT=...</span>
+            </p>
+            <p class="term">
+                <button type="button" class="copy" data-copy="php artisan imgproxy:health
+# The imgproxy instance [default] is healthy: HTTP 200.">Copy</button>
+                <span>php artisan imgproxy:health</span>
+                <br><span class="dim"># The imgproxy instance [default] is healthy: HTTP 200.</span>
+            </p>
+            <p class="term">
+                <button type="button" class="copy" data-copy="php artisan imgproxy:health --instance=staging
 # The imgproxy instance [staging] is healthy: HTTP 200.">Copy</button>
-            <span>php artisan imgproxy:key</span>
-            <br><span class="dim"># IMGPROXY_KEY=...</span>
-            <br><span class="dim"># IMGPROXY_SALT=...</span>
-            <br><br><span>php artisan imgproxy:health</span>
-            <br><span class="dim"># The imgproxy instance [default] is healthy: HTTP 200.</span>
-            <br><br><span>php artisan imgproxy:health --instance=staging</span>
-            <br><span class="dim"># The imgproxy instance [staging] is healthy: HTTP 200.</span>
-        </p>
+                <span>php artisan imgproxy:health --instance=staging</span>
+                <br><span class="dim"># The imgproxy instance [staging] is healthy: HTTP 200.</span>
+            </p>
+        </div>
     </section>
 
     <section aria-labelledby="validation-title">
         <p class="eyebrow">QA</p>
         <h2 id="validation-title">Validation</h2>
-        <p class="term" style="margin-top:4px">
-            <button type="button" class="copy" data-copy="composer test          # phpstan + pint + type coverage + pest
-composer lint:check    # pint --test
-composer analyse       # phpstan">Copy</button>
-            <span>composer test</span> <span class="dim"># phpstan + pint + type coverage + pest</span>
-            <br><span>composer lint:check</span> <span class="dim"># pint --test</span>
-            <br><span>composer analyse</span> <span class="dim"># phpstan</span>
-        </p>
+        <div class="term-stack">
+            <p class="term">
+                <button type="button" class="copy" data-copy="composer test
+# phpstan + pint + type coverage + pest">Copy</button>
+                <span>composer test</span> <span class="dim"># phpstan + pint + type coverage + pest</span>
+            </p>
+            <p class="term">
+                <button type="button" class="copy" data-copy="composer lint:check
+# pint --test">Copy</button>
+                <span>composer lint:check</span> <span class="dim"># pint --test</span>
+            </p>
+            <p class="term">
+                <button type="button" class="copy" data-copy="composer analyse
+# phpstan">Copy</button>
+                <span>composer analyse</span> <span class="dim"># phpstan</span>
+            </p>
+        </div>
         <p class="lead">Live integration tests against a real imgproxy run when <code>IMGPROXY_URL</code>,
             <code>IMGPROXY_KEY</code>, and <code>IMGPROXY_SALT</code> are exported in the shell running
             <code>composer test</code>; they skip otherwise.</p>
@@ -702,22 +710,6 @@ composer analyse       # phpstan">Copy</button>
         })());
         themeButtons.forEach(function (b) {
             b.addEventListener('click', function () { applyTheme(b.getAttribute('data-theme-btn')); });
-        });
-
-        /* Prints / recipes view mode. */
-        var modeButtons = $$('[data-mode-btn]');
-        function applyMode(mode) {
-            document.body.dataset.mode = mode;
-            modeButtons.forEach(function (b) {
-                b.setAttribute('aria-pressed', String(b.getAttribute('data-mode-btn') === mode));
-            });
-            try { localStorage.setItem('pg-mode', mode); } catch (e) { /* private mode */ }
-        }
-        applyMode((function () {
-            try { return localStorage.getItem('pg-mode') || 'prints'; } catch (e) { return 'prints'; }
-        })());
-        modeButtons.forEach(function (b) {
-            b.addEventListener('click', function () { applyMode(b.getAttribute('data-mode-btn')); });
         });
 
         /* Copy recipe. */
