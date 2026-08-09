@@ -8,6 +8,8 @@ use DateTimeInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use LaravelImgproxy\LaravelImgproxy\Console\Commands\ImgproxyHealthCommand;
+use LaravelImgproxy\LaravelImgproxy\Console\Commands\ImgproxyKeyCommand;
 use LaravelImgproxy\LaravelImgproxy\View\Components\Img;
 use LaravelImgproxy\LaravelImgproxy\View\Components\Picture;
 
@@ -43,6 +45,11 @@ class LaravelImgproxyServiceProvider extends ServiceProvider
         if (! $this->app->runningInConsole()) {
             return;
         }
+
+        $this->commands([
+            ImgproxyKeyCommand::class,
+            ImgproxyHealthCommand::class,
+        ]);
 
         $this->publishes([
             __DIR__.'/../config/laravel-imgproxy.php' => config_path('laravel-imgproxy.php'),
