@@ -36,11 +36,12 @@ final class PlaygroundController
     }
 
     /**
-     * @return array{configured: bool, source: string, instance: array{name: string, url: string, signed: bool, signature_size: int|null, encoding: string}, demos: list<array{label: string, description: string, url: string, note: string|null}>, presets: array{client: list<array{label: string, code: string, url: string}>, server: array{label: string, code: string, url: string, status: int|null}}, storage: array{public: string, private: string}}
+     * @return array{configured: bool, source: string, instance: array{name: string, url: string, signed: bool, signature_size: int|null, encoding: string, health: int|null}, demos: list<array{label: string, description: string, url: string, note: string|null}>, presets: array{client: list<array{label: string, code: string, url: string}>, server: array{label: string, code: string, url: string, status: int|null}}, storage: array{public: string, private: string}}
      */
     public function __invoke(): View
     {
         $instance = $this->instance();
+        $instance['health'] = $instance['url'] !== '' ? $this->health($instance['url']) : null;
 
         if ($instance['url'] === '') {
             return view('playground', [
@@ -61,6 +62,18 @@ final class PlaygroundController
             'presets' => $this->presets(),
             'storage' => $this->storageUrls(),
         ]);
+    }
+
+    /**
+     * The imgproxy /health HTTP status, or null when unreachable.
+     */
+    private function health(string $baseUrl): ?int
+    {
+        try {
+            return Http::timeout(2)->get(rtrim($baseUrl, '/').'/health')->status();
+        } catch (ConnectionException) {
+            return null;
+        }
     }
 
     /**
