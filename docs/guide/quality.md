@@ -12,7 +12,7 @@ Beyond resizing, the two decisions that matter most for image delivery are compr
 Set the compression quality (0–100). Lower values produce smaller files at the cost of visual fidelity:
 
 ```php
-Imgproxy::url($source)->quality(80)->url();
+Imgproxy::image($source)->quality(80)->url();
 // q:80
 ```
 
@@ -25,7 +25,7 @@ Convert the output to a specific image format. Pass a `Format` enum or its strin
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;
 
-Imgproxy::url($source)->format(Format::Webp)->url();
+Imgproxy::image($source)->format(Format::Webp)->url();
 // f:webp
 ```
 
@@ -51,13 +51,13 @@ If you are serving images to browsers, the `<x-imgproxy-picture>` Blade componen
 
 ```php
 // Modern browsers
-Imgproxy::url($source)->format(Format::Avif)->quality(75)->url();
+Imgproxy::image($source)->format(Format::Avif)->quality(75)->url();
 
 // Wide compatibility
-Imgproxy::url($source)->format(Format::Webp)->quality(80)->url();
+Imgproxy::image($source)->format(Format::Webp)->quality(80)->url();
 
 // Universal fallback
-Imgproxy::url($source)->format(Format::Jpg)->quality(90)->url();
+Imgproxy::image($source)->format(Format::Jpg)->quality(90)->url();
 ```
 
 ## Format Quality
@@ -65,7 +65,7 @@ Imgproxy::url($source)->format(Format::Jpg)->quality(90)->url();
 Override the quality for specific formats. The argument is an associative array mapping format strings to quality values:
 
 ```php
-Imgproxy::url($source)
+Imgproxy::image($source)
     ->formatQuality(['webp' => 80, 'avif' => 65])
     ->url();
 // fq:webp:80:avif:65
@@ -80,21 +80,21 @@ Skip processing for specific source formats. The listed formats pass through unc
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;
 
-Imgproxy::url($source)
+Imgproxy::image($source)
     ->skipProcessing(Format::Svg, Format::Gif)
     ->url();
 // skp:svg:gif
 ```
 
-## Raw Response
+## Raw Image
 
 When enabled, imgproxy returns the processed image without transformation headers:
 
 ```php
-Imgproxy::url($source)->rawResponse()->url();
+Imgproxy::image($source)->raw()->url();
 // raw:1
 
-Imgproxy::url($source)->rawResponse(false)->url();
+Imgproxy::image($source)->withoutRaw()->url();
 // raw:0
 ```
 
@@ -104,7 +104,7 @@ Multiply the image dimensions by a factor for HiDPI (Retina) displays. The brows
 
 ```php
 // 2× for Retina displays
-Imgproxy::url($source)->width(400)->dpr(2)->url();
+Imgproxy::image($source)->width(400)->dpr(2)->url();
 // w:400/dpr:2
 // Actual output: 800px wide
 ```
@@ -116,7 +116,7 @@ Unlike `zoom()`, `dpr()` also scales gravity offsets and paddings.
 Strip EXIF, IPTC, and other metadata from the output:
 
 ```php
-Imgproxy::url($source)->stripMetadata(true)->url();
+Imgproxy::image($source)->stripMetadata()->url();
 // sm:1
 ```
 
@@ -125,9 +125,9 @@ Imgproxy::url($source)->stripMetadata(true)->url();
 Preserve copyright info when stripping metadata. Only useful in combination with `stripMetadata()`:
 
 ```php
-Imgproxy::url($source)
-    ->stripMetadata(true)
-    ->keepCopyright(true)
+Imgproxy::image($source)
+    ->stripMetadata()
+    ->keepCopyright()
     ->url();
 // sm:1/kcr:1
 ```
@@ -137,7 +137,7 @@ Imgproxy::url($source)
 Transform the embedded color profile to sRGB and remove it from the image:
 
 ```php
-Imgproxy::url($source)->stripColorProfile(true)->url();
+Imgproxy::image($source)->stripColorProfile()->url();
 // scp:1
 ```
 
@@ -146,7 +146,7 @@ Imgproxy::url($source)->stripColorProfile(true)->url();
 Keep high-bit images as high-bit instead of downscaling them to 8-bit:
 
 ```php
-Imgproxy::url($source)->preserveHdr(true)->url();
+Imgproxy::image($source)->preserveHDR()->url();
 // ph:1
 ```
 
@@ -155,14 +155,14 @@ Imgproxy::url($source)->preserveHdr(true)->url();
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;
 
-$url = Imgproxy::url($source)
+$url = Imgproxy::image($source)
     ->resize(ResizeType::Fill, 800, 600)
     ->format(Format::Webp)
     ->quality(80)
     ->formatQuality(['webp' => 75, 'avif' => 60])
     ->dpr(2)
-    ->stripMetadata(true)
-    ->stripColorProfile(true)
+    ->stripMetadata()
+    ->stripColorProfile()
     ->url();
 ```
 

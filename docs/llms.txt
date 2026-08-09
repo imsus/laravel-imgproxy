@@ -39,17 +39,17 @@
 
 | Group | Methods |
 | --- | ---|
-| Construction & terminal | `__construct`, `url`, `__toString`, `encoding`, `disk` |
-| Resize | `resize`, `size`, `resizingType`, `width`, `height`, `minWidth`, `minHeight`, `zoom` |
+| Construction & terminal | `__construct`, `url`, `__toString`, `sourceEncoding`, `disk` |
+| Resize | `resize`, `resizeWithGravity`, `width`, `height`, `minWidth`, `minHeight`, `zoom` |
 | Crop & gravity | `crop`, `trim`, `padding`, `gravity`, `focusPoint` |
-| Quality & format | `quality`, `format`, `formatQuality`, `skipProcessing`, `rawResponse` |
+| Quality & format | `quality`, `format`, `formatQuality`, `skipProcessing`, `raw`, `withoutRaw` |
 | Effects | `blur`, `sharpen`, `pixelate`, `dpr`, `placeholder` |
-| Transform | `rotate`, `autoRotate`, `flip`, `enlarge`, `extend`, `extendAspectRatio` |
+| Transform | `rotate`, `autoRotate`, `withoutAutoRotate`, `flip`, `enlarge`, `withoutEnlarge`, `extend`, `withoutExtend`, `extendAspectRatio`, `withoutExtendAspectRatio` |
 | Background & watermark | `background`, `watermark` |
-| Output | `stripMetadata`, `keepCopyright`, `stripColorProfile`, `preserveHdr`, `enforceThumbnail`, `returnAttachment`, `cacheBuster`, `expires`, `filename`, `imgproxyPreset` |
-| Security | `maxSrcResolution`, `maxSrcFileSize`, `maxAnimationFrames`, `maxAnimationFrameResolution`, `maxResultDimension` |
-| Escape hatch | `raw` |
-| Presets | `preset` |
+| Output | `stripMetadata`, `withoutMetadata`, `keepCopyright`, `withoutCopyright`, `stripColorProfile`, `withoutColorProfile`, `preserveHDR`, `enforceThumbnail`, `returnAttachment`, `cacheBuster`, `expires`, `filename`, `preset` |
+| Security | `maxSourceResolution`, `maxSourceFileSize`, `maxAnimationFrames`, `maxAnimationFrameResolution`, `maxResultDimension` |
+| Escape hatch | `withOption` |
+| Presets | `applyPreset` |
 
 ## Usage Pattern
 
@@ -58,14 +58,14 @@ use Imsus\LaravelImgproxy\Imgproxy;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
 use Imsus\LaravelImgproxy\Enums\Format;
 
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->quality(80)
     ->format(Format::Webp)
     ->url();
 
 // Helper is equivalent:
-$url = imgproxy()->url('https://example.com/image.jpg')->width(640)->url();
+$url = imgproxy()->image('https://example.com/image.jpg')->width(640)->url();
 ```
 
 ## Configuration

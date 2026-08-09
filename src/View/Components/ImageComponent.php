@@ -87,14 +87,14 @@ abstract class ImageComponent extends Component
     protected function builder(): Builder
     {
         if ($this->disk !== null && $this->path !== null) {
-            $builder = imgproxy()->url(DiskUrl::resolve(Storage::disk($this->disk), $this->path));
+            $builder = imgproxy()->image(DiskUrl::resolve(Storage::disk($this->disk), $this->path));
         } elseif ($this->src !== '') {
-            $builder = imgproxy()->url($this->src);
+            $builder = imgproxy()->image($this->src);
         } else {
             throw new InvalidArgumentException('The imgproxy component requires a source URL or a disk and path.');
         }
 
-        return $this->preset !== null ? $builder->preset($this->preset) : $builder;
+        return $this->preset !== null ? $builder->applyPreset($this->preset) : $builder;
     }
 
     /**

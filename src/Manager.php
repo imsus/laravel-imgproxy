@@ -58,8 +58,8 @@ final class Manager
      *
      * @throws InvalidArgumentException When the instance is not configured or has no base URL.
      */
-    public function url(string $source, ?string $instance = null): Builder
+    public function image(string $source, ?string $instance = null): Builder
     {
-        return $this->instance($instance)->url($source);
+        return $this->instance($instance)->image($source);
     }
 }

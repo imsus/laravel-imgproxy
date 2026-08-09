@@ -1,7 +1,7 @@
 @php
     // Compute the rendered URLs once; the fallback srcset is null unless the placeholder is enabled.
     $sources = $sources();
-    $fallbackSrc = $fallbackSrc();
+    $fallbackSrcUrl = $fallbackSrcUrl();
     $fallbackSrcset = $fallbackSrcset();
 @endphp
 
@@ -10,7 +10,7 @@
         <source srcset="{{ $source['srcset'] }}" type="{{ $source['type'] }}" @if ($sizes !== null) sizes="{{ $sizes }}" @endif>
     @endforeach
     <img
-        src="{{ $fallbackSrc }}"
+        src="{{ $fallbackSrcUrl }}"
         @if ($fallbackSrcset !== null) srcset="{{ $fallbackSrcset }}" @endif
         @if ($sizes !== null) sizes="{{ $sizes }}" @endif
         loading="{{ $loading }}"

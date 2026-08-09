@@ -13,12 +13,12 @@ The `Imgproxy` facade and the `imgproxy()` helper both resolve the default insta
 use Imsus\LaravelImgproxy\Imgproxy;
 
 // Facade
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->width(640)
     ->url();
 
 // Helper — equivalent
-$url = imgproxy()->url('https://example.com/image.jpg')
+$url = imgproxy()->image('https://example.com/image.jpg')
     ->width(640)
     ->url();
 ```
@@ -34,14 +34,14 @@ $url = Imgproxy::instance('staging')
 
 ## Building URLs
 
-Every URL begins with `->url($source)`. You then chain as many option methods as you need and finish with `->url()` or `__toString()`:
+Start every URL with `->image($source)`. Chain as many option methods as you need and finish with `->url()` or `__toString()`:
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
 use Imsus\LaravelImgproxy\Enums\Format;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
 
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->quality(80)
     ->format(Format::Webp)
@@ -57,7 +57,7 @@ Notice how the source URL is encoded and the processing options are appended as 
 With a key and salt configured, the `unsafe` slot is automatically replaced by an HMAC-SHA256 signature:
 
 ```php
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->url();
 
@@ -74,14 +74,14 @@ Every imgproxy v4 processing option has one typed, validating method. Options ar
 
 Available methods, grouped by concern:
 
-- **Resize** — `resize()`, `size()`, `resizingType()`, `width()`, `height()`, `minWidth()`, `minHeight()`, `zoom()`
+- **Resize** — `resize()`, `resizeWithGravity()`, `width()`, `height()`, `minWidth()`, `minHeight()`, `zoom()`
 - **Crop & gravity** — `crop()`, `trim()`, `padding()`, `gravity()`, `focusPoint()`
-- **Quality & format** — `quality()`, `format()`, `formatQuality()`, `skipProcessing()`, `rawResponse()`
+- **Quality & format** — `quality()`, `format()`, `formatQuality()`, `skipProcessing()`, `raw()`
 - **Effects** — `blur()`, `sharpen()`, `pixelate()`, `dpr()`
 - **Transform** — `rotate()`, `autoRotate()`, `flip()`, `enlarge()`, `extend()`, `extendAspectRatio()`
 - **Background & watermark** — `background()`, `watermark()`
-- **Output** — `stripMetadata()`, `keepCopyright()`, `stripColorProfile()`, `preserveHdr()`, `enforceThumbnail()`, `returnAttachment()`, `cacheBuster()`, `expires()`, `filename()`, `imgproxyPreset()`
-- **Security** — `maxSrcResolution()`, `maxSrcFileSize()`, `maxAnimationFrames()`, `maxAnimationFrameResolution()`, `maxResultDimension()`
+- **Output** — `stripMetadata()`, `keepCopyright()`, `stripColorProfile()`, `preserveHDR()`, `enforceThumbnail()`, `returnAttachment()`, `cacheBuster()`, `expires()`, `filename()`, `preset()`
+- **Security** — `maxSourceResolution()`, `maxSourceFileSize()`, `maxAnimationFrames()`, `maxAnimationFrameResolution()`, `maxResultDimension()`
 
 For the full method signatures, see the [API Reference](/reference/api).
 
@@ -92,8 +92,8 @@ Typed arguments accept the enum or its string value interchangeably — `Gravity
 ```php
 use Imsus\LaravelImgproxy\Enums\Gravity;
 
-Imgproxy::url($source)->gravity(Gravity::Smart)->url();
-Imgproxy::url($source)->gravity('sm')->url(); // equivalent
+Imgproxy::image($source)->gravity(Gravity::Smart)->url();
+Imgproxy::image($source)->gravity('sm')->url(); // equivalent
 ```
 
 The package provides four enums:
@@ -107,20 +107,20 @@ See the [Enums Reference](/reference/enums) for the full list of values.
 
 ### The Raw Escape Hatch
 
-imgproxy moves quickly, and occasionally a new option appears before this package has a typed method for it. When that happens, `raw()` lets you append any segment verbatim:
+imgproxy moves quickly, and occasionally a new option appears before this package has a typed method for it. When that happens, `withOption()` lets you append any segment verbatim:
 
 ```php
-Imgproxy::url($source)->raw('some:new:option')->url();
+Imgproxy::image($source)->withOption('some:new:option')->url();
 ```
 
-Prefer typed methods when they are available — they validate your input and catch errors early — but `raw()` guarantees you are never blocked by the package.
+Prefer typed methods when they are available — they validate your input and catch errors early — but `withOption()` guarantees you are never blocked by the package.
 
 ## Immutability
 
 Every mutation returns a **new** builder. This means a base builder can be reused for several variants without accidental mutation:
 
 ```php
-$base = Imgproxy::url('https://example.com/image.jpg')->quality(80);
+$base = Imgproxy::image('https://example.com/image.jpg')->quality(80);
 
 $small = $base->width(320)->url();
 $large = $base->width(1280)->url(); // quality:80 still applies; no width leak from $small
@@ -130,23 +130,23 @@ This is a small design decision that pays off constantly in real applications �
 
 ## Presets
 
-Named option sets defined in your config file can be applied with `preset()`:
+Named option sets defined in your config file can be applied with `applyPreset()`:
 
 ```php
-Imgproxy::url($source)->preset('thumb')->url();
+Imgproxy::image($source)->applyPreset('thumb')->url();
 ```
 
 A preset composes onto the builder before any options chained after it, so per-URL overrides win:
 
 ```php
-Imgproxy::url($source)->preset('thumb')->width(640)->url();
+Imgproxy::image($source)->applyPreset('thumb')->width(640)->url();
 // rs:fill:300:300/w:640/...
 ```
 
 Preset keys match the fluent method names, and only single-value options are supported. Unknown presets and invalid values throw.
 
 ::: tip Client-side vs. server-side presets
-These presets are **client-side** — the package composes the options into the URL, so no imgproxy server configuration is required. imgproxy's own server-side presets are a separate mechanism, referenced with `imgproxyPreset()` (the `pr:` option).
+These presets are **client-side** — the package composes the options into the URL, so no imgproxy server configuration is required. imgproxy's own server-side presets are a separate mechanism, referenced with `preset()` (the `pr:` option).
 :::
 
 ## LQIP Placeholders
@@ -154,7 +154,7 @@ These presets are **client-side** — the package composes the options into the 
 For blur-up previews, `placeholder()` returns a tiny blurred webp of the same source — `w:16`, `bl:8`, `f:webp`:
 
 ```php
-$placeholder = Imgproxy::url('https://example.com/image.jpg')
+$placeholder = Imgproxy::image('https://example.com/image.jpg')
     ->placeholder()
     ->url();
 
@@ -185,7 +185,7 @@ Storage::disk('s3')->imgproxy('products/image.jpg', 3600)
 The builder has an equivalent `->disk($disk, $path)` method, with an optional expiration in seconds or as an absolute `DateTimeInterface`:
 
 ```php
-imgproxy()->url('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
+imgproxy()->image('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
 ```
 
 See the [Storage Integration](/guide/storage-integration) documentation for the full macro and `->disk()` API.

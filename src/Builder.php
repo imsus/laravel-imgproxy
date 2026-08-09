@@ -81,7 +81,7 @@ final class Builder
      *
      * @throws InvalidArgumentException When the encoding is not supported.
      */
-    public function encoding(string $encoding): self
+    public function sourceEncoding(string $encoding): self
     {
         return new self(
             $this->baseUrl,
@@ -165,7 +165,7 @@ final class Builder
      *
      * @throws InvalidArgumentException When a size is negative or the gravity is unknown or smart.
      */
-    public function size(
+    public function resizeWithGravity(
         ?int $width = null,
         ?int $height = null,
         bool $enlarge = false,
@@ -203,18 +203,6 @@ final class Builder
         }
 
         return $this->withSegment('s:'.implode(':', $args));
-    }
-
-    /**
-     * Set the resizing type without a size.
-     *
-     * @throws InvalidArgumentException When the resizing type is unknown.
-     */
-    public function resizingType(ResizeType|string $type): self
-    {
-        $type = self::resolveEnum($type, ResizeType::class, 'resizing type');
-
-        return $this->withSegment('rt:'.$type->value);
     }
 
     /**
@@ -371,12 +359,19 @@ final class Builder
     /**
      * Respond with the raw unprocessed source image.
      *
-     * This is the imgproxy `raw` processing option; it is named `rawResponse`
-     * to avoid colliding with the `raw()` escape hatch.
+     * This is the imgproxy `raw` processing option.
      */
-    public function rawResponse(bool $enabled = true): self
+    public function raw(): self
     {
-        return $this->withSegment('raw:'.($enabled ? '1' : '0'));
+        return $this->withSegment('raw:1');
+    }
+
+    /**
+     * Respond with the processed image instead of the raw source.
+     */
+    public function withoutRaw(): self
+    {
+        return $this->withSegment('raw:0');
     }
 
     /**
@@ -411,21 +406,21 @@ final class Builder
      *
      * @throws InvalidArgumentException When the threshold is negative or the color is not a hex value.
      */
-    public function trim(float $threshold, ?string $color = null, bool $equalHor = false, bool $equalVer = false): self
+    public function trim(float $threshold, ?string $color = null, bool $equalHorizontal = false, bool $equalVertical = false): self
     {
         self::requireNonNegative('trim threshold', $threshold);
 
         $args = [(string) $threshold];
 
-        if ($color !== null || $equalHor || $equalVer) {
+        if ($color !== null || $equalHorizontal || $equalVertical) {
             $args[] = $color !== null ? self::hexColor($color, 'trim color') : '';
         }
 
-        if ($equalHor || $equalVer) {
-            $args[] = $equalHor ? '1' : '0';
+        if ($equalHorizontal || $equalVertical) {
+            $args[] = $equalHorizontal ? '1' : '0';
         }
 
-        if ($equalVer) {
+        if ($equalVertical) {
             $args[] = '1';
         }
 
@@ -591,9 +586,17 @@ final class Builder
     /**
      * Automatically rotate the image based on the EXIF orientation.
      */
-    public function autoRotate(bool $autoRotate): self
+    public function autoRotate(): self
     {
-        return $this->withSegment('ar:'.($autoRotate ? '1' : '0'));
+        return $this->withSegment('ar:1');
+    }
+
+    /**
+     * Do not automatically rotate the image.
+     */
+    public function withoutAutoRotate(): self
+    {
+        return $this->withSegment('ar:0');
     }
 
     /**
@@ -607,9 +610,17 @@ final class Builder
     /**
      * Enlarge the image when it is smaller than the given size.
      */
-    public function enlarge(bool $enlarge): self
+    public function enlarge(): self
     {
-        return $this->withSegment('el:'.($enlarge ? '1' : '0'));
+        return $this->withSegment('el:1');
+    }
+
+    /**
+     * Do not enlarge the image.
+     */
+    public function withoutEnlarge(): self
+    {
+        return $this->withSegment('el:0');
     }
 
     /**
@@ -619,9 +630,9 @@ final class Builder
      *
      * @throws InvalidArgumentException When the gravity is unknown or is the smart gravity.
      */
-    public function extend(bool $extend, Gravity|string|null $gravity = null): self
+    public function extend(Gravity|string|null $gravity = null): self
     {
-        $args = [$extend ? '1' : '0'];
+        $args = ['1'];
 
         if ($gravity !== null) {
             $args[] = self::requireNonSmartGravity($gravity, 'extend')->value;
@@ -631,21 +642,37 @@ final class Builder
     }
 
     /**
+     * Do not extend the image.
+     */
+    public function withoutExtend(): self
+    {
+        return $this->withSegment('ex:0');
+    }
+
+    /**
      * Extend the image to the requested aspect ratio.
      *
      * imgproxy does not support the smart gravity for extension.
      *
      * @throws InvalidArgumentException When the gravity is unknown or is the smart gravity.
      */
-    public function extendAspectRatio(bool $extend, Gravity|string|null $gravity = null): self
+    public function extendAspectRatio(Gravity|string|null $gravity = null): self
     {
-        $args = [$extend ? '1' : '0'];
+        $args = ['1'];
 
         if ($gravity !== null) {
             $args[] = self::requireNonSmartGravity($gravity, 'extend aspect ratio')->value;
         }
 
         return $this->withSegment('exar:'.implode(':', $args));
+    }
+
+    /**
+     * Do not extend the image to the requested aspect ratio.
+     */
+    public function withoutExtendAspectRatio(): self
+    {
+        return $this->withSegment('exar:0');
     }
 
     /**
@@ -714,49 +741,97 @@ final class Builder
     /**
      * Strip the output image metadata (EXIF, IPTC, etc.).
      */
-    public function stripMetadata(bool $strip): self
+    public function stripMetadata(): self
     {
-        return $this->withSegment('sm:'.($strip ? '1' : '0'));
+        return $this->withSegment('sm:1');
+    }
+
+    /**
+     * Keep the output image metadata.
+     */
+    public function withoutMetadata(): self
+    {
+        return $this->withSegment('sm:0');
     }
 
     /**
      * Keep the copyright info while stripping metadata.
      */
-    public function keepCopyright(bool $keep): self
+    public function keepCopyright(): self
     {
-        return $this->withSegment('kcr:'.($keep ? '1' : '0'));
+        return $this->withSegment('kcr:1');
+    }
+
+    /**
+     * Do not keep the copyright info while stripping metadata.
+     */
+    public function withoutCopyright(): self
+    {
+        return $this->withSegment('kcr:0');
     }
 
     /**
      * Transform the embedded color profile to sRGB and remove it from the image.
      */
-    public function stripColorProfile(bool $strip): self
+    public function stripColorProfile(): self
     {
-        return $this->withSegment('scp:'.($strip ? '1' : '0'));
+        return $this->withSegment('scp:1');
+    }
+
+    /**
+     * Keep the embedded color profile.
+     */
+    public function withoutColorProfile(): self
+    {
+        return $this->withSegment('scp:0');
     }
 
     /**
      * Keep high bit images high bit instead of downscaling them to 8 bit.
      */
-    public function preserveHdr(bool $enable): self
+    public function preserveHDR(): self
     {
-        return $this->withSegment('ph:'.($enable ? '1' : '0'));
+        return $this->withSegment('ph:1');
+    }
+
+    /**
+     * Downscale high bit images to 8 bit.
+     */
+    public function withoutHDR(): self
+    {
+        return $this->withSegment('ph:0');
     }
 
     /**
      * Always use the embedded thumbnail of the source image when available.
      */
-    public function enforceThumbnail(bool $enforce): self
+    public function enforceThumbnail(): self
     {
-        return $this->withSegment('eth:'.($enforce ? '1' : '0'));
+        return $this->withSegment('eth:1');
+    }
+
+    /**
+     * Do not force the embedded thumbnail.
+     */
+    public function withoutThumbnail(): self
+    {
+        return $this->withSegment('eth:0');
     }
 
     /**
      * Return the processed image as an attachment instead of inline.
      */
-    public function returnAttachment(bool $attachment): self
+    public function returnAttachment(): self
     {
-        return $this->withSegment('att:'.($attachment ? '1' : '0'));
+        return $this->withSegment('att:1');
+    }
+
+    /**
+     * Return the processed image inline instead of as an attachment.
+     */
+    public function withoutAttachment(): self
+    {
+        return $this->withSegment('att:0');
     }
 
     /**
@@ -781,8 +856,10 @@ final class Builder
      *
      * @throws InvalidArgumentException When the timestamp is negative.
      */
-    public function expires(int $timestamp): self
+    public function expires(int|DateTimeInterface $when): self
     {
+        $timestamp = $when instanceof DateTimeInterface ? $when->getTimestamp() : $when;
+
         if ($timestamp < 0) {
             throw new InvalidArgumentException(
                 "The imgproxy expires timestamp must not be negative, [{$timestamp}] given.",
@@ -813,12 +890,12 @@ final class Builder
      * Apply server-side presets configured on the imgproxy instance.
      *
      * This is the imgproxy `preset` processing option, which refers to
-     * presets defined on the server; it is named `imgproxyPreset` to avoid
-     * colliding with the config-defined preset composition.
+     * presets defined on the server. Client-side presets from config are
+     * composed with `applyPreset()`.
      *
      * @throws InvalidArgumentException When a preset name is empty.
      */
-    public function imgproxyPreset(string $name, string ...$more): self
+    public function preset(string $name, string ...$more): self
     {
         $names = [$name, ...$more];
 
@@ -840,7 +917,7 @@ final class Builder
      *
      * @throws InvalidArgumentException When the preset is not configured, or an option or value is invalid.
      */
-    public function preset(string $name): self
+    public function applyPreset(string $name): self
     {
         if (! array_key_exists($name, $this->presets)) {
             throw new InvalidArgumentException("The imgproxy preset [{$name}] is not configured.");
@@ -862,7 +939,7 @@ final class Builder
      *
      * @throws InvalidArgumentException When the resolution is negative.
      */
-    public function maxSrcResolution(int|float $megapixels): self
+    public function maxSourceResolution(int|float $megapixels): self
     {
         self::requireNonNegative('max source resolution', $megapixels);
 
@@ -876,7 +953,7 @@ final class Builder
      *
      * @throws InvalidArgumentException When the size is negative.
      */
-    public function maxSrcFileSize(int $bytes): self
+    public function maxSourceFileSize(int $bytes): self
     {
         self::requireNonNegative('max source file size', $bytes);
 
@@ -932,7 +1009,7 @@ final class Builder
      * order. Use it for imgproxy options that are not yet covered by a typed
      * method.
      */
-    public function raw(string $segment): self
+    public function withOption(string $segment): self
     {
         return $this->withSegment($segment);
     }
@@ -984,7 +1061,6 @@ final class Builder
     {
         return match ($option) {
             'resize' => $this->resize(self::expectEnumOrString($value, $option, ResizeType::class)),
-            'resizingType' => $this->resizingType(self::expectEnumOrString($value, $option, ResizeType::class)),
             'minWidth' => $this->minWidth(self::expectInt($value, $option)),
             'minHeight' => $this->minHeight(self::expectInt($value, $option)),
             'zoom' => $this->zoom(self::expectNumber($value, $option)),
@@ -992,26 +1068,26 @@ final class Builder
             'height' => $this->height(self::expectInt($value, $option)),
             'quality' => $this->quality(self::expectInt($value, $option)),
             'format' => $this->format(self::expectEnumOrString($value, $option, Format::class)),
-            'rawResponse' => $this->rawResponse(self::expectBool($value, $option)),
+            'raw' => self::expectBool($value, $option) ? $this->raw() : $this->withoutRaw(),
             'gravity' => $this->gravity(self::expectEnumOrString($value, $option, Gravity::class)),
             'dpr' => $this->dpr(self::expectNumber($value, $option)),
             'blur' => $this->blur(self::expectNumber($value, $option)),
             'sharpen' => $this->sharpen(self::expectNumber($value, $option)),
             'pixelate' => $this->pixelate(self::expectInt($value, $option)),
             'rotate' => $this->rotate(self::expectInt($value, $option)),
-            'autoRotate' => $this->autoRotate(self::expectBool($value, $option)),
-            'enlarge' => $this->enlarge(self::expectBool($value, $option)),
+            'autoRotate' => self::expectBool($value, $option) ? $this->autoRotate() : $this->withoutAutoRotate(),
+            'enlarge' => self::expectBool($value, $option) ? $this->enlarge() : $this->withoutEnlarge(),
             'background' => $this->background(self::expectString($value, $option)),
-            'stripMetadata' => $this->stripMetadata(self::expectBool($value, $option)),
-            'keepCopyright' => $this->keepCopyright(self::expectBool($value, $option)),
-            'stripColorProfile' => $this->stripColorProfile(self::expectBool($value, $option)),
-            'preserveHdr' => $this->preserveHdr(self::expectBool($value, $option)),
-            'enforceThumbnail' => $this->enforceThumbnail(self::expectBool($value, $option)),
-            'returnAttachment' => $this->returnAttachment(self::expectBool($value, $option)),
+            'stripMetadata' => self::expectBool($value, $option) ? $this->stripMetadata() : $this->withoutMetadata(),
+            'keepCopyright' => self::expectBool($value, $option) ? $this->keepCopyright() : $this->withoutCopyright(),
+            'stripColorProfile' => self::expectBool($value, $option) ? $this->stripColorProfile() : $this->withoutColorProfile(),
+            'preserveHDR' => self::expectBool($value, $option) ? $this->preserveHDR() : $this->withoutHDR(),
+            'enforceThumbnail' => self::expectBool($value, $option) ? $this->enforceThumbnail() : $this->withoutThumbnail(),
+            'returnAttachment' => self::expectBool($value, $option) ? $this->returnAttachment() : $this->withoutAttachment(),
             'cacheBuster' => $this->cacheBuster(self::expectString($value, $option)),
             'expires' => $this->expires(self::expectInt($value, $option)),
-            'maxSrcResolution' => $this->maxSrcResolution(self::expectNumber($value, $option)),
-            'maxSrcFileSize' => $this->maxSrcFileSize(self::expectInt($value, $option)),
+            'maxSourceResolution' => $this->maxSourceResolution(self::expectNumber($value, $option)),
+            'maxSourceFileSize' => $this->maxSourceFileSize(self::expectInt($value, $option)),
             'maxAnimationFrames' => $this->maxAnimationFrames(self::expectInt($value, $option)),
             'maxAnimationFrameResolution' => $this->maxAnimationFrameResolution(self::expectNumber($value, $option)),
             'maxResultDimension' => $this->maxResultDimension(self::expectInt($value, $option)),

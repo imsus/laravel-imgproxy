@@ -12,7 +12,7 @@ The developer needs one maintained Laravel package that: covers the full imgprox
 
 Release `imsus/laravel-imgproxy` 2.0.0, a ground-up rewrite (fresh scaffold, no v1 API compatibility). The package exposes:
 
-- An immutable fluent URL builder (`Imgproxy::url($source)`) with one typed method per imgproxy v4 option, a `raw()` escape hatch for future options, and terminal `url()` / `__toString()`.
+- An immutable fluent URL builder (`Imgproxy::image($source)`) with one typed method per imgproxy v4 option, a `withOption()` escape hatch, and terminal `url()` / `__toString()`.
 - Simple HMAC signing (key + salt, hex-encoded in config), URL-safe base64 output without padding, `signature_size` truncation support, and unsigned URLs when no key is configured.
 - URL-safe base64 source encoding by default with a `plain/` opt-out.
 - A multi-instance manager: a default instance plus named instances, each with its own URL, key, salt, signature size, and encoding.
@@ -28,7 +28,7 @@ Target platform: PHP ^8.4, Laravel 13 only.
 
 1. As a Laravel developer, I want to generate a processed image URL from a source URL with the `Imgproxy` facade, so that I can serve transformed images.
 2. As a Laravel developer, I want the builder to chain processing options as typed methods (resize, width, height, quality, format, crop, gravity, dpr, blur, sharpen, rotate, enlarge, extend, background, watermark, and all other free + pro v4 options), so that I get autocomplete and type safety.
-3. As a Laravel developer, I want a `raw()` method that appends option segments verbatim, so that new or niche imgproxy options work without waiting for a package release.
+3. As a Laravel developer, I want a `withOption()` method that appends option segments verbatim, so that new or niche imgproxy options work without waiting for a package release.
 4. As a Laravel developer, I want an immutable builder, so that I can safely reuse a base builder for several URL variants without accidental mutation.
 5. As a Laravel developer, I want signed URLs when key and salt are configured, so that my imgproxy endpoint is protected from unauthorized use.
 6. As a Laravel developer, I want unsigned URLs when no key is configured, so that local development works with zero setup.
@@ -56,11 +56,11 @@ Target platform: PHP ^8.4, Laravel 13 only.
 ## Implementation Decisions
 
 - **Package identity**: Composer name stays `imsus/laravel-imgproxy`. 2.0.0 supersedes v1.1.0 on Packagist. Namespace `Imsus\LaravelImgproxy`. Facade class `Imgproxy`; global helper `imgproxy()`. No v1 API compatibility shims; the upgrade note documents the changes. The scaffold's placeholder command, placeholder config value, and empty main class are removed.
-- **URL builder**: One immutable fluent builder class. One typed method per documented imgproxy v4 option (free and pro), grouped by concern. Typed enums for resize type, gravity, and output format. `raw(string)` appends v4 option segments verbatim, in order. Terminal `url()` and `__toString()` return the full URL. Every mutating method returns a new instance.
+- **URL builder**: One immutable fluent builder class. One typed method per documented imgproxy v4 option (free and pro), grouped by concern. Typed enums for resize type, gravity, and output format. `withOption(string)` appends v4 option segments verbatim, in order. Terminal `url()` and `__toString()` return the full URL. Every mutating method returns a new instance.
 - **Signing**: Config `key` and `salt` are hex strings, `hex2bin`-decoded. Signature = URL-safe base64 without padding of `HMAC-SHA256(key, salt + path)`. `signature_size` (nullable) truncates to the first N bytes to match `IMGPROXY_SIGNATURE_SIZE`. Empty key ⇒ unsigned URL (no signature segment). Signing must match imgproxy's official PHP example (`examples/signature.php`) byte for byte.
 - **Source encoding**: Default URL-safe base64 without padding. `plain/` form percent-encodes the source. The signature covers the exact path emitted, so encoding choice and signature must be computed together. Encoding is configurable per instance with a per-URL override.
 - **Multi-instance manager**: A manager resolves the default instance or a named instance (`Imgproxy::instance('staging')`). Each instance carries `url`, `key`, `salt`, `signature_size`, `encoding`. The facade proxies to the manager, defaulting to the default instance.
-- **Presets**: Top-level config section; named option sets shared across all instances. A preset composes onto a builder before per-URL overrides. Usable from the builder (`->preset('thumb')`) and from components (`preset="thumb"`).
+- **Presets**: Top-level config section; named option sets shared across all instances. A preset composes onto a builder before per-URL overrides. Usable from the builder (`->applyPreset('thumb')`) and from components (`preset="thumb"`).
 - **Config shape**: `default` (instance name), `instances` (map of name → `url`, `key`, `salt`, `signature_size`, `encoding`), `presets` (named option sets). Default instance reads `IMGPROXY_URL`, `IMGPROXY_KEY`, `IMGPROXY_SALT` env vars.
 - **Storage integration**: Macro on the Storage facade: `Storage::disk('s3')->imgproxy($path)`. Public disks (URL-visible) yield `url()`; private disks yield `temporaryUrl()`. Equivalent `->disk($disk, $path)` method on the builder. Components accept `disk` + `path` attributes.
 - **Blade components**: Two class-based components registered by the service provider. `<x-imgproxy-img>`: source (URL or disk+path), `widths` (srcset widths), `sizes`, `preset`, `placeholder` (LQIP), `loading` (lazy default), `alt`, class passthrough. `<x-imgproxy-picture>`: formats (AVIF/WebP fallback), widths, `sizes`, `preset`, `placeholder`, alt, class passthrough. Component views ship in the package and are published as override templates.

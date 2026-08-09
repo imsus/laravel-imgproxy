@@ -13,7 +13,7 @@
 
 ## Notes
 
-- Macro is registered on `Illuminate\Filesystem\FilesystemAdapter` (adapter-level, so `Storage::disk(...)->imgproxy(...)` works) in the provider's `boot()`; the bound `$this` is the disk adapter. Returns a `Builder`, consistent with the package currency.
+- Macro is registered on `Illuminate\Filesystem\FilesystemAdapter` (adapter-level, so `Storage::disk(...)->imgproxy(...)` works) in the provider's `boot()`; the bound `$this` is the disk adapter. Returns a `Builder`, consistent with the package currency. The macro cannot be named `image()` — Laravel 13's `FilesystemAdapter` defines a native `image()` (returns `Illuminate\Image\Image`), which would shadow the macro.
 - `src/DiskUrl` is the shared resolver used by both the macro and `Builder::disk()`. Public/private rule: `providesTemporaryUrls()` (Laravel's own capability flag) AND config `visibility !== 'public'` → pre-signed `temporaryUrl()`; otherwise the plain `url()`. A public disk that *can* produce temporary URLs still yields `url()` — visibility wins.
 - `->disk($disk, $path, $expiration)` accepts `int|DateTimeInterface|null` — int is seconds from now, `DateTimeInterface` an absolute time; default 5 minutes. This Laravel version's `FilesystemAdapter::temporaryUrl()` is typed `DateTimeInterface`, so ints convert via `now()->addSeconds()`.
 - This Laravel 13 has no `Storage::fake()`/`FilesystemFake`; tests fake disks the native way: Testbench's `public` disk (explicit `visibility => public`, `url` overridden to `https://cdn.example.com` for deterministic vectors) and a local disk with `buildTemporaryUrlsUsing()` for the private case. No cloud credentials anywhere.

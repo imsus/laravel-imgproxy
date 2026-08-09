@@ -18,7 +18,7 @@ it('composes a configured preset onto the builder', function () {
         ['thumb' => ['resize' => 'fill', 'width' => 300, 'height' => 300]],
     );
 
-    expect($builder->preset('thumb')->url())
+    expect($builder->applyPreset('thumb')->url())
         ->toBe('https://imgproxy.example.com/Q4o_jv7N4mdlFZOZ2RCk-c-5bmm40pVxE40qYzOwfiU/rs:fill/w:300/h:300/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
@@ -34,7 +34,7 @@ it('appends per-URL overrides after preset options so overrides win', function (
         ['thumb' => ['resize' => 'fill', 'width' => 300, 'height' => 300]],
     );
 
-    expect($builder->preset('thumb')->width(400)->url())
+    expect($builder->applyPreset('thumb')->width(400)->url())
         ->toBe('https://imgproxy.example.com/1U1YMf9yu3owDLfBcdMFsrs776PK4tJjgdsISPLsgCs/rs:fill/w:300/h:300/w:400/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
@@ -47,18 +47,18 @@ it('accepts enum instances as preset values', function () {
         ],
     );
 
-    expect($builder->preset('card')->url())
+    expect($builder->applyPreset('card')->url())
         ->toBe('http://imgproxy.example.com/unsafe/rs:fill/w:600/f:webp/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
-it('keeps presets when the encoding changes', function () {
+it('keeps presets when the source encoding changes', function () {
     $builder = new Builder(
         'http://imgproxy.example.com',
         'http://example.com/image.jpg',
         presets: ['thumb' => ['width' => 300]],
     );
 
-    expect($builder->encoding('plain')->preset('thumb')->url())
+    expect($builder->sourceEncoding('plain')->applyPreset('thumb')->url())
         ->toBe('http://imgproxy.example.com/unsafe/w:300/plain/http%3A%2F%2Fexample.com%2Fimage.jpg');
 });
 
@@ -67,32 +67,32 @@ it('returns a new instance when a preset is applied', function () {
         'thumb' => ['width' => 300],
     ]);
 
-    $thumb = $builder->preset('thumb');
+    $thumb = $builder->applyPreset('thumb');
 
     expect($thumb)->not->toBe($builder)
         ->and($builder->url())->toBe('http://imgproxy.example.com/unsafe/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
 it('throws when the preset is not configured', function () {
-    (new Builder('http://imgproxy.example.com', 'http://example.com/image.jpg'))->preset('missing');
+    (new Builder('http://imgproxy.example.com', 'http://example.com/image.jpg'))->applyPreset('missing');
 })->throws(InvalidArgumentException::class, 'preset [missing] is not configured');
 
 it('throws when the preset option is not supported', function () {
     (new Builder('http://imgproxy.example.com', 'http://example.com/image.jpg', presets: [
         'thumb' => ['nope' => 1],
-    ]))->preset('thumb');
+    ]))->applyPreset('thumb');
 })->throws(InvalidArgumentException::class, 'preset option [nope] is not supported');
 
 it('throws when the preset value has the wrong type', function () {
     (new Builder('http://imgproxy.example.com', 'http://example.com/image.jpg', presets: [
         'thumb' => ['width' => '300'],
-    ]))->preset('thumb');
+    ]))->applyPreset('thumb');
 })->throws(InvalidArgumentException::class, 'preset option [width] must be an integer');
 
 it('validates preset values through the typed methods', function () {
     (new Builder('http://imgproxy.example.com', 'http://example.com/image.jpg', presets: [
         'thumb' => ['quality' => 150],
-    ]))->preset('thumb');
+    ]))->applyPreset('thumb');
 })->throws(InvalidArgumentException::class);
 
 it('builds a signed placeholder URL for the same source', function () {

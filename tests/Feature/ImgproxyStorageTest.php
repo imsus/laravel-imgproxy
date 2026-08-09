@@ -45,7 +45,7 @@ it('builds a pre-signed URL from a private disk through the macro', function () 
 });
 
 it('builds a URL from a public disk through the builder disk method', function () {
-    expect(imgproxy()->url('http://unused.example.com/image.jpg')->disk('public', 'images/photo.jpg')->url())
+    expect(imgproxy()->image('http://unused.example.com/image.jpg')->disk('public', 'images/photo.jpg')->url())
         ->toBe(Storage::disk('public')->imgproxy('images/photo.jpg')->url());
 });
 
@@ -56,12 +56,12 @@ it('builds a pre-signed URL from a private disk through the builder disk method'
         fn (string $path, $expiration, array $options = []): string => 'https://signed.example.com/'.$path.'?expires='.$expiration->getTimestamp(),
     );
 
-    expect(imgproxy()->url('http://unused.example.com/image.jpg')->disk('local', 'images/photo.jpg', 3600)->url())
+    expect(imgproxy()->image('http://unused.example.com/image.jpg')->disk('local', 'images/photo.jpg', 3600)->url())
         ->toBe('https://imgproxy.example.com/unsafe/aHR0cHM6Ly9zaWduZWQuZXhhbXBsZS5jb20vaW1hZ2VzL3Bob3RvLmpwZz9leHBpcmVzPTE3NjcyMjkyMDA');
 });
 
 it('keeps processing options when the source comes from a disk', function () {
-    expect(imgproxy()->url('http://unused.example.com/image.jpg')->disk('public', 'images/photo.jpg')->width(300)->url())
+    expect(imgproxy()->image('http://unused.example.com/image.jpg')->disk('public', 'images/photo.jpg')->width(300)->url())
         ->toBe('https://imgproxy.example.com/unsafe/w:300/aHR0cHM6Ly9jZG4uZXhhbXBsZS5jb20vaW1hZ2VzL3Bob3RvLmpwZw');
 });
 

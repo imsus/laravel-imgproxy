@@ -89,7 +89,7 @@ it('keeps signing parameters when the encoding changes', function () {
         key: '736563726574',
         salt: '68656C6C6F',
     );
-    $plain = $builder->encoding('plain');
+    $plain = $builder->sourceEncoding('plain');
 
     expect($plain->url())
         ->toBe('http://imgproxy.example.com/_AEymtF7nplW8S8sP962f94boDnL1uUbln8QrmBiuPA/rs:fill:300:400:0/g:sm/plain/http%3A%2F%2Fexample.com%2Fimage%2Fcuriosity.jpg')

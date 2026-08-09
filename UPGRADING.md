@@ -25,9 +25,9 @@ The helper no longer takes a source URL; it returns the manager, and the facade 
 imgproxy('https://example.com/image.jpg')->setWidth(800)->build();
 
 // 2.0.0
-imgproxy()->url('https://example.com/image.jpg')->width(800)->url();
+imgproxy()->image('https://example.com/image.jpg')->width(800)->url();
 // or
-Imgproxy::url('https://example.com/image.jpg')->width(800)->url();
+Imgproxy::image('https://example.com/image.jpg')->width(800)->url();
 ```
 
 ## Builder methods
@@ -50,7 +50,7 @@ Imgproxy::url('https://example.com/image.jpg')->width(800)->url();
 // http://imgproxy.local/signature/width:800/height:600/plain/https://example.com/image.jpg@jpeg
 
 // 2.0.0 — short v4 segments, URL-safe base64 source by default
-Imgproxy::url('https://example.com/image.jpg')
+Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 800, 600)
     ->format(Format::Webp)
     ->quality(85)
@@ -60,7 +60,7 @@ Imgproxy::url('https://example.com/image.jpg')
 Two behaviors changed with the URL shape:
 
 - The generated URL uses the v4 short option segments (`w:`, `rs:`, `f:`, …) regardless of the old `use_short_options` config flag; the flag is gone.
-- The source is URL-safe base64 encoded by default instead of plain. Use `->encoding('plain')` or set `'encoding' => 'plain'` on an instance to restore readable URLs.
+- The source is URL-safe base64 encoded by default instead of plain. Use `->sourceEncoding('plain')` or set `'encoding' => 'plain'` on an instance to restore readable URLs.
 
 v1's `cover()`, `webp()`, and similar convenience aliases are gone; use `resize(ResizeType::Fill, …)` and `format(Format::Webp)`.
 
@@ -132,7 +132,7 @@ Public/private detection is unchanged in spirit — public disks yield `url()`, 
 - Named presets in config, usable from the builder and the components.
 - LQIP placeholders: `->placeholder()` on the builder and the `placeholder` component attribute.
 - `signature_size` truncation to match the server's `IMGPROXY_SIGNATURE_SIZE`.
-- `raw()` escape hatch for imgproxy options not yet covered by a typed method.
+- `withOption()` escape hatch for imgproxy options not yet covered by a typed method.
 - 100% Pest type coverage and golden-vector signing tests, plus live checks against a real imgproxy in Docker (gated behind env vars; see the README).
 
 See [CHANGELOG](CHANGELOG.md) for the full list.

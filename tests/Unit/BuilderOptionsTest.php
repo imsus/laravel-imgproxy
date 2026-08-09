@@ -33,7 +33,7 @@ it('pins the full signed URL of a typed fluent chain', function () {
         ->toBe('http://imgproxy.example.com/PWDkpEiZ0-N_4VTotbUNBZmZVTDd_qzk3wHKwTj9QFM/rs:fill:300:400/g:sm/q:80/f:webp/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlL2N1cmlvc2l0eS5qcGc');
 });
 
-it('pins the full signed URL of a chain mixing typed options and raw segments', function () {
+it('pins the full signed URL of a chain mixing typed options and verbatim segments', function () {
     $builder = new Builder(
         'http://imgproxy.example.com',
         'http://example.com/image/curiosity.jpg',
@@ -50,11 +50,11 @@ it('pins the full signed URL of a chain mixing typed options and raw segments', 
         ->blur(1.5)
         ->sharpen(0.7)
         ->rotate(90)
-        ->enlarge(true)
-        ->extend(true, Gravity::SouthEast)
+        ->enlarge()
+        ->extend(Gravity::SouthEast)
         ->background('#1d1d1d')
         ->watermark(0.5, WatermarkPosition::SouthEast, 10, 10, 0.2)
-        ->raw('cb:v2')
+        ->withOption('cb:v2')
         ->url();
 
     expect($url)
@@ -70,36 +70,36 @@ it('pins the full signed URL of a chain of the remaining free options', function
     );
 
     $url = $builder
-        ->size(300, 400, enlarge: true, extend: true, gravity: Gravity::SouthEast)
-        ->resizingType(ResizeType::Fit)
+        ->resizeWithGravity(300, 400, enlarge: true, extend: true, gravity: Gravity::SouthEast)
+        ->withOption('rt:fit')
         ->minWidth(100)
         ->minHeight(200)
         ->zoom(2, 1.5)
-        ->extendAspectRatio(true, Gravity::Center)
+        ->extendAspectRatio(Gravity::Center)
         ->focusPoint(0.5, 0.25)
         ->trim(20, '1d1d1d', true, true)
         ->padding(10, 20, 30, 40)
-        ->autoRotate(true)
+        ->autoRotate()
         ->flip(true, false)
         ->pixelate(5)
-        ->stripMetadata(true)
-        ->keepCopyright(true)
-        ->stripColorProfile(true)
-        ->preserveHdr(true)
-        ->enforceThumbnail(true)
+        ->stripMetadata()
+        ->keepCopyright()
+        ->stripColorProfile()
+        ->preserveHDR()
+        ->enforceThumbnail()
         ->formatQuality(['webp' => 75, 'jpg' => 80])
         ->skipProcessing(Format::Png, 'webp')
         ->cacheBuster('v2')
         ->expires(4102444800)
         ->filename('curiosity.jpg')
-        ->returnAttachment(true)
-        ->imgproxyPreset('sharp')
-        ->maxSrcResolution(25.5)
-        ->maxSrcFileSize(10485760)
+        ->returnAttachment()
+        ->preset('sharp')
+        ->maxSourceResolution(25.5)
+        ->maxSourceFileSize(10485760)
         ->maxAnimationFrames(10)
         ->maxAnimationFrameResolution(8.5)
         ->maxResultDimension(20000)
-        ->raw('fancy:1')
+        ->withOption('fancy:1')
         ->url();
 
     expect($url)
@@ -183,11 +183,11 @@ it('composes the rotate option', function () {
 it('composes the enlarge and extend options', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->enlarge(true)->url())->toContain('/unsafe/el:1/')
-        ->and($builder->enlarge(false)->url())->toContain('/unsafe/el:0/')
-        ->and($builder->extend(true)->url())->toContain('/unsafe/ex:1/')
-        ->and($builder->extend(false)->url())->toContain('/unsafe/ex:0/')
-        ->and($builder->extend(true, Gravity::SouthEast)->url())->toContain('/unsafe/ex:1:soea/');
+    expect($builder->enlarge()->url())->toContain('/unsafe/el:1/')
+        ->and($builder->withoutEnlarge()->url())->toContain('/unsafe/el:0/')
+        ->and($builder->extend()->url())->toContain('/unsafe/ex:1/')
+        ->and($builder->withoutExtend()->url())->toContain('/unsafe/ex:0/')
+        ->and($builder->extend(Gravity::SouthEast)->url())->toContain('/unsafe/ex:1:soea/');
 });
 
 it('composes the background option from a hex color', function () {
@@ -214,23 +214,22 @@ it('emits the default center position when watermark offsets are set without a p
     expect($builder->watermark(0.5, xOffset: 10)->url())->toContain('/unsafe/wm:0.5:ce:10/');
 });
 
-it('composes the size option from width, height, enlarge, extend, and gravity', function () {
+it('composes the resize-with-gravity option from width, height, enlarge, extend, and gravity', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->size(300, 400)->url())->toContain('/unsafe/s:300:400/')
-        ->and($builder->size(300, 400, enlarge: true)->url())->toContain('/unsafe/s:300:400:1/')
-        ->and($builder->size(300, 400, enlarge: true, extend: true)->url())->toContain('/unsafe/s:300:400:1:1/')
-        ->and($builder->size(300, 400, extend: true)->url())->toContain('/unsafe/s:300:400:0:1/')
-        ->and($builder->size(300, 400, enlarge: true, extend: true, gravity: Gravity::SouthEast)->url())->toContain('/unsafe/s:300:400:1:1:soea/');
+    expect($builder->resizeWithGravity(300, 400)->url())->toContain('/unsafe/s:300:400/')
+        ->and($builder->resizeWithGravity(300, 400, enlarge: true)->url())->toContain('/unsafe/s:300:400:1/')
+        ->and($builder->resizeWithGravity(300, 400, enlarge: true, extend: true)->url())->toContain('/unsafe/s:300:400:1:1/')
+        ->and($builder->resizeWithGravity(300, 400, extend: true)->url())->toContain('/unsafe/s:300:400:0:1/')
+        ->and($builder->resizeWithGravity(300, 400, enlarge: true, extend: true, gravity: Gravity::SouthEast)->url())->toContain('/unsafe/s:300:400:1:1:soea/');
 });
 
-it('composes the resizing type, min width, and min height options', function () {
+it('composes the min width and min height options', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->resizingType(ResizeType::Fit)->url())->toContain('/unsafe/rt:fit/')
-        ->and($builder->resizingType('auto')->url())->toContain('/unsafe/rt:auto/')
-        ->and($builder->minWidth(100)->url())->toContain('/unsafe/mw:100/')
-        ->and($builder->minHeight(200)->url())->toContain('/unsafe/mh:200/');
+    expect($builder->minWidth(100)->url())->toContain('/unsafe/mw:100/')
+        ->and($builder->minHeight(200)->url())->toContain('/unsafe/mh:200/')
+        ->and($builder->withOption('rt:fit')->url())->toContain('/unsafe/rt:fit/');
 });
 
 it('composes the zoom option with one or two factors', function () {
@@ -243,9 +242,9 @@ it('composes the zoom option with one or two factors', function () {
 it('composes the extend aspect ratio option with and without gravity', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->extendAspectRatio(true)->url())->toContain('/unsafe/exar:1/')
-        ->and($builder->extendAspectRatio(false)->url())->toContain('/unsafe/exar:0/')
-        ->and($builder->extendAspectRatio(true, Gravity::Center)->url())->toContain('/unsafe/exar:1:ce/');
+    expect($builder->extendAspectRatio()->url())->toContain('/unsafe/exar:1/')
+        ->and($builder->withoutExtendAspectRatio()->url())->toContain('/unsafe/exar:0/')
+        ->and($builder->extendAspectRatio(Gravity::Center)->url())->toContain('/unsafe/exar:1:ce/');
 });
 
 it('composes the focus point gravity option', function () {
@@ -261,8 +260,8 @@ it('composes the trim option from threshold, color, and equal flags', function (
         ->and($builder->trim(20, '1d1d1d')->url())->toContain('/unsafe/t:20:1d1d1d/')
         ->and($builder->trim(20, '1d1d1d', true)->url())->toContain('/unsafe/t:20:1d1d1d:1/')
         ->and($builder->trim(20, '1d1d1d', true, true)->url())->toContain('/unsafe/t:20:1d1d1d:1:1/')
-        ->and($builder->trim(20, equalHor: true)->url())->toContain('/unsafe/t:20::1/')
-        ->and($builder->trim(20, equalVer: true)->url())->toContain('/unsafe/t:20::0:1/');
+        ->and($builder->trim(20, equalHorizontal: true)->url())->toContain('/unsafe/t:20::1/')
+        ->and($builder->trim(20, equalVertical: true)->url())->toContain('/unsafe/t:20::0:1/');
 });
 
 it('composes the padding option from its sides', function () {
@@ -277,8 +276,8 @@ it('composes the padding option from its sides', function () {
 it('composes the auto rotate, flip, and pixelate options', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->autoRotate(true)->url())->toContain('/unsafe/ar:1/')
-        ->and($builder->autoRotate(false)->url())->toContain('/unsafe/ar:0/')
+    expect($builder->autoRotate()->url())->toContain('/unsafe/ar:1/')
+        ->and($builder->withoutAutoRotate()->url())->toContain('/unsafe/ar:0/')
         ->and($builder->flip(true, false)->url())->toContain('/unsafe/fl:1:0/')
         ->and($builder->flip(false, true)->url())->toContain('/unsafe/fl:0:1/')
         ->and($builder->flip(true, true)->url())->toContain('/unsafe/fl:1:1/')
@@ -288,11 +287,11 @@ it('composes the auto rotate, flip, and pixelate options', function () {
 it('composes the metadata and color profile options', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->stripMetadata(true)->url())->toContain('/unsafe/sm:1/')
-        ->and($builder->keepCopyright(true)->url())->toContain('/unsafe/kcr:1/')
-        ->and($builder->stripColorProfile(true)->url())->toContain('/unsafe/scp:1/')
-        ->and($builder->preserveHdr(true)->url())->toContain('/unsafe/ph:1/')
-        ->and($builder->enforceThumbnail(true)->url())->toContain('/unsafe/eth:1/');
+    expect($builder->stripMetadata()->url())->toContain('/unsafe/sm:1/')
+        ->and($builder->keepCopyright()->url())->toContain('/unsafe/kcr:1/')
+        ->and($builder->stripColorProfile()->url())->toContain('/unsafe/scp:1/')
+        ->and($builder->preserveHDR()->url())->toContain('/unsafe/ph:1/')
+        ->and($builder->enforceThumbnail()->url())->toContain('/unsafe/eth:1/');
 });
 
 it('composes the format quality option from format/quality pairs', function () {
@@ -310,8 +309,8 @@ it('composes the skip processing option from formats', function () {
 it('composes the raw response option', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->rawResponse()->url())->toContain('/unsafe/raw:1/')
-        ->and($builder->rawResponse(false)->url())->toContain('/unsafe/raw:0/');
+    expect($builder->raw()->url())->toContain('/unsafe/raw:1/')
+        ->and($builder->withoutRaw()->url())->toContain('/unsafe/raw:0/');
 });
 
 it('composes the cache buster, expires, filename, and return attachment options', function () {
@@ -322,39 +321,39 @@ it('composes the cache buster, expires, filename, and return attachment options'
         ->and($builder->expires(0)->url())->toContain('/unsafe/exp:0/')
         ->and($builder->filename('curiosity.jpg')->url())->toContain('/unsafe/fn:curiosity.jpg/')
         ->and($builder->filename('Y3VyaW9zaXR5LmpwZw', encoded: true)->url())->toContain('/unsafe/fn:Y3VyaW9zaXR5LmpwZw:1/')
-        ->and($builder->returnAttachment(true)->url())->toContain('/unsafe/att:1/');
+        ->and($builder->returnAttachment()->url())->toContain('/unsafe/att:1/');
 });
 
-it('composes the imgproxy preset option from preset names', function () {
+it('composes the server preset option from preset names', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->imgproxyPreset('sharp')->url())->toContain('/unsafe/pr:sharp/')
-        ->and($builder->imgproxyPreset('sharp', 'thumb')->url())->toContain('/unsafe/pr:sharp:thumb/');
+    expect($builder->preset('sharp')->url())->toContain('/unsafe/pr:sharp/')
+        ->and($builder->preset('sharp', 'thumb')->url())->toContain('/unsafe/pr:sharp:thumb/');
 });
 
 it('composes the security limit options', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->maxSrcResolution(25.5)->url())->toContain('/unsafe/msr:25.5/')
-        ->and($builder->maxSrcFileSize(10485760)->url())->toContain('/unsafe/msfs:10485760/')
+    expect($builder->maxSourceResolution(25.5)->url())->toContain('/unsafe/msr:25.5/')
+        ->and($builder->maxSourceFileSize(10485760)->url())->toContain('/unsafe/msfs:10485760/')
         ->and($builder->maxAnimationFrames(10)->url())->toContain('/unsafe/maf:10/')
         ->and($builder->maxAnimationFrameResolution(8.5)->url())->toContain('/unsafe/mafr:8.5/')
         ->and($builder->maxResultDimension(20000)->url())->toContain('/unsafe/mrd:20000/');
 });
 
-it('appends raw segments verbatim in call order', function () {
+it('appends option segments verbatim in call order', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->width(300)->raw('cb:abc')->quality(80)->url())
+    expect($builder->width(300)->withOption('cb:abc')->quality(80)->url())
         ->toBe('http://imgproxy.example.com/unsafe/w:300/cb:abc/q:80/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlL2N1cmlvc2l0eS5qcGc')
-        ->and($builder->size(300, 400)->raw('fancy:1')->zoom(2)->url())
+        ->and($builder->resizeWithGravity(300, 400)->withOption('fancy:1')->zoom(2)->url())
         ->toContain('/unsafe/s:300:400/fancy:1/z:2/');
 });
 
-it('appends raw segments without validation', function () {
+it('appends option segments without validation', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    expect($builder->raw('anything:goes:here')->url())->toContain('/unsafe/anything:goes:here/');
+    expect($builder->withOption('anything:goes:here')->url())->toContain('/unsafe/anything:goes:here/');
 });
 
 /*
@@ -481,7 +480,7 @@ it('throws when the rotate angle is not a non-negative multiple of 90', function
 it('throws when the extend gravity is the smart gravity', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->extend(true, Gravity::Smart);
+    $builder->extend(Gravity::Smart);
 })->throws(InvalidArgumentException::class);
 
 it('throws when the background color is not a hex value', function () {
@@ -508,22 +507,16 @@ it('throws when the watermark scale is negative', function () {
     $builder->watermark(0.5, scale: -1);
 })->throws(InvalidArgumentException::class);
 
-it('throws when a size dimension is negative', function () {
+it('throws when a resize-with-gravity dimension is negative', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->size(-1, 400);
+    $builder->resizeWithGravity(-1, 400);
 })->throws(InvalidArgumentException::class);
 
-it('throws when the size gravity is the smart gravity', function () {
+it('throws when the resize-with-gravity gravity is the smart gravity', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->size(300, 400, extend: true, gravity: Gravity::Smart);
-})->throws(InvalidArgumentException::class);
-
-it('throws when the resizing type is unknown', function () {
-    $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
-
-    $builder->resizingType('bogus');
+    $builder->resizeWithGravity(300, 400, extend: true, gravity: Gravity::Smart);
 })->throws(InvalidArgumentException::class);
 
 it('throws when the min width or min height is negative', function () {
@@ -541,7 +534,7 @@ it('throws when a zoom factor is not greater than zero', function () {
 it('throws when the extend aspect ratio gravity is the smart gravity', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->extendAspectRatio(true, Gravity::Smart);
+    $builder->extendAspectRatio(Gravity::Smart);
 })->throws(InvalidArgumentException::class);
 
 it('throws when a focus point offset is outside 0-1', function () {
@@ -592,16 +585,16 @@ it('throws when the expires timestamp is negative', function () {
     $builder->expires(-1);
 })->throws(InvalidArgumentException::class);
 
-it('throws when the imgproxy preset name is empty', function () {
+it('throws when the server preset name is empty', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->imgproxyPreset('');
+    $builder->preset('');
 })->throws(InvalidArgumentException::class);
 
 it('throws when a security limit is negative or zero', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://example.com/image/curiosity.jpg');
 
-    $builder->maxSrcResolution(-1);
+    $builder->maxSourceResolution(-1);
 })->throws(InvalidArgumentException::class);
 
 it('throws when the max animation frames is not greater than zero', function () {

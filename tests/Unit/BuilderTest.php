@@ -48,9 +48,9 @@ it('returns the same URL from __toString', function () {
     expect((string) $builder)->toBe($builder->url());
 });
 
-it('returns a new instance when the encoding changes', function () {
+it('returns a new instance when the source encoding changes', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://img.example.com/example.jpg');
-    $plain = $builder->encoding('plain');
+    $plain = $builder->sourceEncoding('plain');
 
     expect($plain)->not->toBe($builder)
         ->and($builder->url())->toContain('/unsafe/aHR0cDov')

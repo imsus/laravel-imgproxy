@@ -25,7 +25,7 @@ The signature covers the path **after** the signature slot, leading slash includ
 When `IMGPROXY_KEY` or `IMGPROXY_SALT` is absent, URLs are generated unsigned with the `unsafe` slot:
 
 ```php
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->url();
 
@@ -82,9 +82,9 @@ Copy the output into your `.env` file. The command does not write to `.env` auto
 Signing stops strangers from crafting URLs, but anyone who has a signed URL can still use it. imgproxy provides server-side limits that prevent abuse even in that case. These are configured on the imgproxy server itself (`IMGPROXY_*` environment variables), but the package's builder exposes typed methods for convenience:
 
 ```php
-Imgproxy::url($source)
-    ->maxSrcResolution(16.8)        // 16.8 megapixels
-    ->maxSrcFileSize(104857600)     // 100 MB
+Imgproxy::image($source)
+    ->maxSourceResolution(16.8)        // 16.8 megapixels
+    ->maxSourceFileSize(104857600)     // 100 MB
     ->maxAnimationFrames(200)
     ->maxAnimationFrameResolution(16.8)
     ->maxResultDimension(16800)
@@ -101,5 +101,5 @@ These methods append server-side option segments to the URL. The imgproxy server
 | Signature size | Set `signature_size` in config to match `IMGPROXY_SIGNATURE_SIZE` on the server |
 | Key generation | `php artisan imgproxy:key` |
 | Unsigned URLs | Fine locally; never in production |
-| Source protection | Use `maxSrcResolution`, `maxSrcFileSize`, etc. on the builder or the server |
+| Source protection | Use `maxSourceResolution`, `maxSourceFileSize`, etc. on the builder or the server |
 | Credential safety | Never commit to source control; rotate periodically |

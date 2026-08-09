@@ -31,19 +31,19 @@ beforeEach(function () {
 });
 
 it('builds a signed URL on the default instance through the facade', function () {
-    expect(Imgproxy::url('http://example.com/image.jpg'))->toBeInstanceOf(Builder::class)
-        ->and(Imgproxy::url('http://example.com/image.jpg')->url())
+    expect(Imgproxy::image('http://example.com/image.jpg'))->toBeInstanceOf(Builder::class)
+        ->and(Imgproxy::image('http://example.com/image.jpg')->url())
         ->toBe('https://imgproxy.example.com/-21kNUD97Cxp5oC7jAkCwnb4P6SgSaavMwg6PQVZzFU/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
 it('keeps the fluent builder API through the facade', function () {
-    expect(Imgproxy::url('http://example.com/image.jpg')->resize('fill', 300, 400)->format('webp')->url())
+    expect(Imgproxy::image('http://example.com/image.jpg')->resize('fill', 300, 400)->format('webp')->url())
         ->toBe('https://imgproxy.example.com/VcfNyvwk0rTx_o3V22fw3xPC1oJuzD6dZSZMWNkomGs/rs:fill:300:400/f:webp/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
 it('builds a URL on a named instance with its own settings through the facade', function () {
     expect(Imgproxy::instance('staging'))->toBeInstanceOf(Instance::class)
-        ->and(Imgproxy::instance('staging')->url('http://example.com/image.jpg')->url())
+        ->and(Imgproxy::instance('staging')->image('http://example.com/image.jpg')->url())
         ->toBe('https://imgproxy.staging.example.com/MpZcoK1O2EQ/plain/http%3A%2F%2Fexample.com%2Fimage.jpg');
 });
 
@@ -57,6 +57,6 @@ it('exposes the manager through the imgproxy helper', function () {
 });
 
 it('builds the same URL through the helper and the facade', function () {
-    expect(imgproxy()->url('http://example.com/image.jpg')->url())
-        ->toBe(Imgproxy::url('http://example.com/image.jpg')->url());
+    expect(imgproxy()->image('http://example.com/image.jpg')->url())
+        ->toBe(Imgproxy::image('http://example.com/image.jpg')->url());
 });

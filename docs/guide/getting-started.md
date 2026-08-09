@@ -14,7 +14,7 @@ use Imsus\LaravelImgproxy\Imgproxy;
 use Imsus\LaravelImgproxy\Enums\Format;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
 
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->quality(80)
     ->format(Format::Webp)
@@ -42,6 +42,16 @@ composer require imsus/laravel-imgproxy:^2.0
 Laravel will automatically discover the package's service provider, so nothing else is required to get started.
 
 ## Your First URL
+
+```php
+Imgproxy::image('https://example.com/image.jpg')
+    ->resize(ResizeType::Fill, 300, 300)
+    ->quality(80)
+    ->format(Format::Webp)
+    ->url();
+
+// https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
+```
 
 Let's break down what happened in the example above. Every imgproxy URL has the same shape:
 

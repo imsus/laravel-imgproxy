@@ -39,7 +39,7 @@ class LaravelImgproxyServiceProvider extends ServiceProvider
             /** @var FilesystemAdapter $disk */
             $disk = $this;
 
-            return imgproxy()->url(DiskUrl::resolve($disk, $path, $expiration));
+            return imgproxy()->image(DiskUrl::resolve($disk, $path, $expiration));
         });
 
         if (! $this->app->runningInConsole()) {

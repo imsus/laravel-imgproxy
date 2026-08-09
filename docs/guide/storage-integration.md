@@ -46,7 +46,7 @@ Pass an expiration in seconds as the second argument. The URL is valid for that 
 The builder exposes an equivalent `->disk()` method when you need to set the disk inline without the macro:
 
 ```php
-imgproxy()->url('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
+imgproxy()->image('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
 ```
 
 The third argument accepts:
@@ -58,7 +58,7 @@ The third argument accepts:
 use Carbon\Carbon;
 
 // Absolute expiration
-imgproxy()->url('unused')
+imgproxy()->image('unused')
     ->disk('s3', 'products/image.jpg', Carbon::now()->addHour())
     ->width(800)
     ->url();
@@ -111,7 +111,7 @@ $url = Storage::disk('s3')->imgproxy('products/image.jpg', 3600)
 ```php
 use Carbon\Carbon;
 
-$url = imgproxy()->url('unused')
+$url = imgproxy()->image('unused')
     ->disk('s3', 'products/image.jpg', Carbon::now()->addHours(2))
     ->width(800)
     ->url();

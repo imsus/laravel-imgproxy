@@ -9,7 +9,8 @@
 
 ### Enhancements
 
-- Immutable fluent URL builder with one typed method per imgproxy v4 processing option, `raw()` escape hatch, and terminal `url()` / `__toString()`.
+- Immutable fluent URL builder with one typed method per imgproxy v4 processing option, a `withOption()` escape hatch, flagless toggles with `without*` counterparts, and terminal `url()` / `__toString()`.
+- Entry points: `Imgproxy::image($source)`, `imgproxy()->image($source)`, and `$instance->image($source)` return the builder; only the terminal `->url()` yields the URL string.
 - Typed enums for resizing type, gravity, output format, and watermark position.
 - Simple HMAC signing (hex key + salt) with `signature_size` truncation; unsigned URLs when no key is configured.
 - URL-safe base64 source encoding by default with a `plain/` opt-out.

@@ -37,7 +37,6 @@ final class Img extends ImageComponent
 
     public function render(): View
     {
-        // Larastan cannot resolve package view namespaces at analysis time.
-        return view('imgproxy::img'); // @phpstan-ignore argument.type
+        return view('imgproxy::img');
     }
 }

@@ -74,7 +74,7 @@ final class Picture extends ImageComponent
     /**
      * The URL for the fallback <img> src.
      */
-    public function fallbackSrc(): string
+    public function fallbackSrcUrl(): string
     {
         return $this->placeholder ? $this->placeholderUrl() : $this->formatBuilder($this->fallbackFormat())->url();
     }
@@ -153,7 +153,6 @@ final class Picture extends ImageComponent
 
     public function render(): View
     {
-        // Larastan cannot resolve package view namespaces at analysis time.
-        return view('imgproxy::picture'); // @phpstan-ignore argument.type
+        return view('imgproxy::picture');
     }
 }

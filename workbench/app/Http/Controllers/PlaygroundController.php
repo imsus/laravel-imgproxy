@@ -93,7 +93,7 @@ final class PlaygroundController
             [
                 'label' => 'Resize, quality, format',
                 'description' => 'Fill 300×300, 80% quality, WebP output.',
-                'builder' => imgproxy()->url($this->source())
+                'builder' => imgproxy()->image($this->source())
                     ->resize(ResizeType::Fill, 300, 300)
                     ->quality(80)
                     ->format(Format::Webp),
@@ -102,7 +102,7 @@ final class PlaygroundController
             [
                 'label' => 'Crop with gravity',
                 'description' => 'Crop a relative 0.5×0.5 area anchored to the north edge, then fit 400×400.',
-                'builder' => imgproxy()->url($this->source())
+                'builder' => imgproxy()->image($this->source())
                     ->crop(0.5, 0.5, Gravity::North)
                     ->resize(ResizeType::Fit, 400, 400),
                 'note' => null,
@@ -110,37 +110,37 @@ final class PlaygroundController
             [
                 'label' => 'Effects',
                 'description' => 'Width 600, gaussian blur 1.5, sharpen 0.5.',
-                'builder' => imgproxy()->url($this->source())->width(600)->blur(1.5)->sharpen(0.5),
+                'builder' => imgproxy()->image($this->source())->width(600)->blur(1.5)->sharpen(0.5),
                 'note' => null,
             ],
             [
                 'label' => 'Zoom',
                 'description' => 'Width 400 zoomed ×2 — renders 800px wide.',
-                'builder' => imgproxy()->url($this->source())->width(400)->zoom(2),
+                'builder' => imgproxy()->image($this->source())->width(400)->zoom(2),
                 'note' => null,
             ],
             [
                 'label' => 'Rotate and flip',
                 'description' => 'Rotate 90° and flip vertically.',
-                'builder' => imgproxy()->url($this->source())->rotate(90)->flip(vertical: true),
+                'builder' => imgproxy()->image($this->source())->rotate(90)->flip(vertical: true),
                 'note' => null,
             ],
             [
                 'label' => 'Focus point',
                 'description' => 'Crop 0.5×0.5 and focus on (0.5, 0.2) — the vertical center, 20% from the top.',
-                'builder' => imgproxy()->url($this->source())->crop(0.5, 0.5)->focusPoint(0.5, 0.2),
+                'builder' => imgproxy()->image($this->source())->crop(0.5, 0.5)->focusPoint(0.5, 0.2),
                 'note' => null,
             ],
             [
                 'label' => 'LQIP placeholder',
                 'description' => 'A 16px blurred WebP of the same source — the blur-up preview used by the components.',
-                'builder' => imgproxy()->url($this->source())->placeholder(),
+                'builder' => imgproxy()->image($this->source())->placeholder(),
                 'note' => 'The placeholder goes in the src; the full image loads through the srcset (see the component demo).',
             ],
             [
                 'label' => 'Raw escape hatch',
-                'description' => 'A cache buster appended verbatim with raw(), unvalidated.',
-                'builder' => imgproxy()->url($this->source())->raw('cb:playground-v1'),
+                'description' => 'A cache buster appended verbatim with withOption(), unvalidated.',
+                'builder' => imgproxy()->image($this->source())->withOption('cb:playground-v1'),
                 'note' => null,
             ],
         ];
@@ -166,18 +166,18 @@ final class PlaygroundController
         $presets = [
             [
                 'label' => 'thumb',
-                'code' => "Imgproxy::url(\$source)->preset('thumb')->url()",
-                'builder' => imgproxy()->url($this->source())->preset('thumb'),
+                'code' => "Imgproxy::image(\$source)->applyPreset('thumb')->url()",
+                'builder' => imgproxy()->image($this->source())->applyPreset('thumb'),
             ],
             [
                 'label' => 'hero',
-                'code' => "Imgproxy::url(\$source)->preset('hero')->url()",
-                'builder' => imgproxy()->url($this->source())->preset('hero'),
+                'code' => "Imgproxy::image(\$source)->applyPreset('hero')->url()",
+                'builder' => imgproxy()->image($this->source())->applyPreset('hero'),
             ],
             [
                 'label' => 'hero overridden',
-                'code' => "Imgproxy::url(\$source)->preset('hero')->width(800)->url()",
-                'builder' => imgproxy()->url($this->source())->preset('hero')->width(800),
+                'code' => "Imgproxy::image(\$source)->applyPreset('hero')->width(800)->url()",
+                'builder' => imgproxy()->image($this->source())->applyPreset('hero')->width(800),
             ],
         ];
 
@@ -185,7 +185,7 @@ final class PlaygroundController
         // registered on the server via IMGPROXY_PRESETS / IMGPROXY_PRESETS_PATH.
         // The local demo server has none, so this request fails — the expected
         // behavior until the server defines the preset.
-        $serverBuilder = imgproxy()->url($this->source())->imgproxyPreset('sharp');
+        $serverBuilder = imgproxy()->image($this->source())->preset('sharp');
 
         return [
             'client' => array_map(
@@ -198,7 +198,7 @@ final class PlaygroundController
             ),
             'server' => [
                 'label' => 'imgproxy server preset',
-                'code' => "Imgproxy::url(\$source)->imgproxyPreset('sharp')->url()",
+                'code' => "Imgproxy::image(\$source)->preset('sharp')->url()",
                 'url' => $serverBuilder->url(),
                 'status' => $this->fetchStatus($serverBuilder->url()),
             ],

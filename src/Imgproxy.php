@@ -13,7 +13,7 @@ use InvalidArgumentException;
  * Not final so applications can mock it in tests with the standard facade
  * pattern (Imgproxy::shouldReceive(...)).
  *
- * @method static Builder url(string $source, ?string $instance = null) Build a URL for the given source on the default (or named) instance.
+ * @method static Builder image(string $source, ?string $instance = null) Build a URL for the given source on the default (or named) instance.
  * @method static Instance instance(?string $name = null) Resolve an imgproxy instance.
  * @method static string defaultInstance() The name of the default imgproxy instance.
  *

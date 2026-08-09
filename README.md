@@ -96,7 +96,7 @@ use Imsus\LaravelImgproxy\Enums\Gravity;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
 use Imsus\LaravelImgproxy\Enums\WatermarkPosition;
 
-$url = Imgproxy::url('https://example.com/image.jpg')
+$url = Imgproxy::image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 300, 300)
     ->quality(80)
     ->format(Format::Webp)
@@ -105,12 +105,12 @@ $url = Imgproxy::url('https://example.com/image.jpg')
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
-Every imgproxy v4 processing option has one typed, validating method — resize, crop, gravity, blur, watermark, format, and more — and enum arguments accept the enum or its string value interchangeably (`Gravity::Smart` and `'sm'` produce the same URL). For options not yet covered, `raw()` appends a segment verbatim. `url()` and `__toString()` return the full URL; either works as a terminal call.
+Every imgproxy v4 processing option has one typed, validating method — resize, crop, gravity, blur, watermark, format, and more — and enum arguments accept the enum or its string value interchangeably (`Gravity::Smart` and `'sm'` produce the same URL). For options not yet covered, `withOption()` appends a segment verbatim. `url()` and `__toString()` return the full URL; either works as a terminal call.
 
 Because builders are immutable, every mutation returns a new instance. A base builder can be reused for several variants without accidental mutation:
 
 ```php
-$base = Imgproxy::url('https://example.com/image.jpg')->quality(80);
+$base = Imgproxy::image('https://example.com/image.jpg')->quality(80);
 
 $small = $base->width(320)->url();
 $large = $base->width(1280)->url(); // quality:80 still applies; no width leak from $small

@@ -28,7 +28,7 @@ Invalid strings throw `InvalidArgumentException` with the list of supported valu
 | `Force` | `'force'` | Resize without keeping the aspect ratio. |
 | `Auto` | `'auto'` | Use `fill` when the source and result dimensions have the same orientation, otherwise `fit`. |
 
-Used by: [`resize()`](/reference/api#resize), [`resizingType()`](/reference/api#resize), and the `resize` / `resizingType` preset keys.
+Used by: [`resize()`](/reference/api#resize), and the `resize` preset key.
 
 ```php
 use Imsus\LaravelImgproxy\Enums\ResizeType;
@@ -54,7 +54,7 @@ $imgproxy->resize(ResizeType::Fill, 800, 600)->url();
 | `SouthEast` | `'soea'` | South-east (bottom-right corner). |
 | `Smart` | `'sm'` | Smart gravity: libvips detects the most interesting section. |
 
-Used by: [`gravity()`](/reference/api#crop--gravity), [`crop()`](/reference/api#crop--gravity), [`size()`](/reference/api#resize), [`extend()`](/reference/api#transform), [`extendAspectRatio()`](/reference/api#transform), and the `gravity` preset key.
+Used by: [`gravity()`](/reference/api#crop--gravity), [`crop()`](/reference/api#crop--gravity), [`resizeWithGravity()`](/reference/api#resize), [`extend()`](/reference/api#transform), [`extendAspectRatio()`](/reference/api#transform), and the `gravity` preset key.
 
 ::: warning Smart gravity
 `Smart` is not supported by `extend()` and `extendAspectRatio()`. Passing it throws `InvalidArgumentException`.

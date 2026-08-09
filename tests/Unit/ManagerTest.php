@@ -77,14 +77,14 @@ it('throws when the instance has no URL configured', function () {
 it('builds a signed URL for the default instance', function () {
     $manager = new Manager($this->config);
 
-    expect($manager->url('http://example.com/image.jpg'))->toBeInstanceOf(Builder::class)
-        ->and($manager->url('http://example.com/image.jpg')->url())
+    expect($manager->image('http://example.com/image.jpg'))->toBeInstanceOf(Builder::class)
+        ->and($manager->image('http://example.com/image.jpg')->url())
         ->toBe('https://imgproxy.example.com/-21kNUD97Cxp5oC7jAkCwnb4P6SgSaavMwg6PQVZzFU/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw');
 });
 
 it('builds a URL for a named instance with its own settings', function () {
     $manager = new Manager($this->config);
 
-    expect($manager->url('http://example.com/image.jpg', 'staging')->url())
+    expect($manager->image('http://example.com/image.jpg', 'staging')->url())
         ->toBe('https://imgproxy.staging.example.com/MpZcoK1O2EQ/plain/http%3A%2F%2Fexample.com%2Fimage.jpg');
 });

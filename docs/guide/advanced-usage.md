@@ -15,7 +15,7 @@ To target a non-default instance, call `Imgproxy::instance()`:
 
 ```php
 $url = Imgproxy::instance('staging')
-    ->url('https://example.com/image.jpg')
+    ->image('https://example.com/image.jpg')
     ->resize(ResizeType::Fill, 800, 600)
     ->url();
 ```
@@ -71,12 +71,12 @@ Define presets in `config/laravel-imgproxy.php` under the `presets` key. Each pr
 
 ### Applying Presets
 
-Call `preset()` with the key name. Options chained after the preset override it:
+Call `applyPreset()` with the key name. Options chained after the preset override it:
 
 ```php
 // Preset sets width:300; override sets width:640
-$url = Imgproxy::url($source)
-    ->preset('thumb')
+$url = Imgproxy::image($source)
+    ->applyPreset('thumb')
     ->width(640)
     ->url();
 // rs:fill:300:300/w:640/...
@@ -84,11 +84,11 @@ $url = Imgproxy::url($source)
 
 ### How Preset Composition Works
 
-Presets are expanded into their individual option segments and appended to the URL in order. Options chained after `preset()` land later in the segment chain, so they override earlier values — imgproxy processes options left to right, and the last one wins:
+Presets are expanded into their individual option segments and appended to the URL in order. Options chained after `applyPreset()` land later in the segment chain, so they override earlier values — imgproxy processes options left to right, and the last one wins:
 
 ```php
-$url = Imgproxy::url($source)
-    ->preset('hero')        // rs:fill:1200:600/q:85
+$url = Imgproxy::image($source)
+    ->applyPreset('hero')        // rs:fill:1200:600/q:85
     ->quality(90)           // overrides q:85 with q:90
     ->url();
 // .../rs:fill:1200:600/q:85/q:90/...
@@ -97,8 +97,8 @@ $url = Imgproxy::url($source)
 ### Rules and Constraints
 
 - **Preset keys must match fluent method names.** The key `resize` maps to `resize()`, `width` maps to `width()`, and so on.
-- **Only single-value options are supported.** A preset entry like `'width' => 300` works; variadic options like `raw()` cannot be expressed in a preset.
-- **Unknown presets throw.** Calling `->preset('nonexistent')` throws `InvalidArgumentException`.
+- **Only single-value options are supported.** A preset entry like `'width' => 300` works; variadic options like `withOption()` cannot be expressed in a preset.
+- **Unknown presets throw.** Calling `->applyPreset('nonexistent')` throws `InvalidArgumentException`.
 - **Invalid values throw.** A preset with an invalid resize type or out-of-range quality triggers the same validation as a direct method call.
 
 ## Cache Busting
@@ -106,7 +106,7 @@ $url = Imgproxy::url($source)
 Append a version string to invalidate CDN, proxy, and browser caches. The buster becomes part of the URL path, so changing it forces a fresh fetch:
 
 ```php
-Imgproxy::url($source)->cacheBuster('v2')->url();
+Imgproxy::image($source)->cacheBuster('v2')->url();
 // cb:v2
 ```
 
@@ -118,11 +118,11 @@ Set a Unix timestamp after which imgproxy returns 404. Pass `0` to disable expir
 
 ```php
 // Expires in 1 hour
-Imgproxy::url($source)->expires(time() + 3600)->url();
+Imgproxy::image($source)->expires(now()->addHour())->url();
 // exp:1723228800
 
 // No expiration
-Imgproxy::url($source)->expires(0)->url();
+Imgproxy::image($source)->expires(0)->url();
 // exp:0
 ```
 
@@ -131,14 +131,14 @@ Imgproxy::url($source)->expires(0)->url();
 Set the filename in the `Content-Disposition` header for downloads:
 
 ```php
-Imgproxy::url($source)->filename('photo.jpg')->url();
+Imgproxy::image($source)->filename('photo.jpg')->url();
 // fn:photo.jpg
 ```
 
 When the filename is already URL-safe base64 encoded, pass `encoded: true`:
 
 ```php
-Imgproxy::url($source)->filename($encodedName, encoded: true)->url();
+Imgproxy::image($source)->filename($encodedName, encoded: true)->url();
 // fn:<base64>:1
 ```
 
@@ -147,23 +147,23 @@ Imgproxy::url($source)->filename($encodedName, encoded: true)->url();
 Force the browser to download the image instead of displaying it inline:
 
 ```php
-Imgproxy::url($source)->returnAttachment(true)->url();
+Imgproxy::image($source)->returnAttachment()->url();
 // att:1
 ```
 
 ## Server-Side Presets
 
-imgproxy itself supports presets defined on the server (via `IMGPROXY_PRESETS` / `IMGPROXY_PRESETS_PATH`). Reference them with `imgproxyPreset()`, which emits the `pr:` segment:
+imgproxy itself supports presets defined on the server (via `IMGPROXY_PRESETS` / `IMGPROXY_PRESETS_PATH`). Reference them with `preset()`, which emits the `pr:` segment:
 
 ```php
-Imgproxy::url($source)->imgproxyPreset('blog-cover')->url();
+Imgproxy::image($source)->preset('blog-cover')->url();
 // pr:blog-cover
 ```
 
 Pass multiple server-side preset names to apply them in order:
 
 ```php
-Imgproxy::url($source)->imgproxyPreset('blog-cover', 'sharpen')->url();
+Imgproxy::image($source)->preset('blog-cover', 'sharpen')->url();
 // pr:blog-cover:sharpen
 ```
 
@@ -171,28 +171,28 @@ Imgproxy::url($source)->imgproxyPreset('blog-cover', 'sharpen')->url();
 Server-side presets are a separate mechanism from the client-side presets defined in `config/laravel-imgproxy.php`. If the server does not have the preset registered, imgproxy responds with `500`.
 :::
 
-## The `raw()` Escape Hatch
+## The `withOption()` Escape Hatch
 
 Append any imgproxy processing segment verbatim, without validation. Use this for options not yet covered by a typed method:
 
 ```php
-Imgproxy::url($source)->raw('some:new:option')->url();
+Imgproxy::image($source)->withOption('some:new:option')->url();
 // some:new:option
 ```
 
 The segment is appended in call order, just like any other method:
 
 ```php
-$url = Imgproxy::url($source)
+$url = Imgproxy::image($source)
     ->width(800)
-    ->raw('some:new:option')
+    ->withOption('some:new:option')
     ->quality(80)
     ->url();
 // w:800/some:new:option/q:80
 ```
 
 ::: tip
-Prefer typed methods when they are available — they validate inputs and catch errors early. `raw()` skips all validation.
+Prefer typed methods when they are available — they validate inputs and catch errors early. `withOption()` skips all validation.
 :::
 
 ## Security Caps
@@ -201,23 +201,23 @@ The imgproxy server enforces limits on source resolution, file size, and animati
 
 ```php
 // Max source resolution: 5 megapixels
-Imgproxy::url($source)->maxSrcResolution(5)->url();
+Imgproxy::image($source)->maxSourceResolution(5)->url();
 // msr:5
 
 // Max source file size: 10 MB
-Imgproxy::url($source)->maxSrcFileSize(10485760)->url();
+Imgproxy::image($source)->maxSourceFileSize(10485760)->url();
 // msfs:10485760
 
 // Max animation frames: 50
-Imgproxy::url($source)->maxAnimationFrames(50)->url();
+Imgproxy::image($source)->maxAnimationFrames(50)->url();
 // maf:50
 
 // Max animation frame resolution: 2 megapixels
-Imgproxy::url($source)->maxAnimationFrameResolution(2)->url();
+Imgproxy::image($source)->maxAnimationFrameResolution(2)->url();
 // mafr:2
 
 // Max result dimension: 4000px
-Imgproxy::url($source)->maxResultDimension(4000)->url();
+Imgproxy::image($source)->maxResultDimension(4000)->url();
 // mrd:4000
 ```
 

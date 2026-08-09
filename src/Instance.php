@@ -42,7 +42,7 @@ final class Instance
      * A URL builder for the given source, configured with this instance's
      * connection details and the shared preset option sets.
      */
-    public function url(string $source): Builder
+    public function image(string $source): Builder
     {
         return new Builder($this->url, $source, $this->encoding, [], $this->key, $this->salt, $this->signatureSize, $this->presets);
     }

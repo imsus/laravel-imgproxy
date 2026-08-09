@@ -46,13 +46,13 @@ These must be the same values configured on the imgproxy server as `IMGPROXY_KEY
 
 ## Server-Side Preset Returns 500
 
-**Symptom:** URLs using `imgproxyPreset()` return HTTP 500 from the imgproxy server.
+**Symptom:** URLs using `preset()` return HTTP 500 from the imgproxy server.
 
 ```php
-Imgproxy::url($source)->imgproxyPreset('my-preset')->url();
+Imgproxy::image($source)->preset('my-preset')->url();
 ```
 
-**Cause:** The preset is not registered on the imgproxy server. The `imgproxyPreset()` method emits the `pr:` option, which references a server-side preset defined via `IMGPROXY_PRESETS` or `IMGPROXY_PRESETS_PATH`. This is separate from the package's client-side presets defined in `config/laravel-imgproxy.php`.
+**Cause:** The preset is not registered on the imgproxy server. The `preset()` method emits the `pr:` option, which references a server-side preset defined via `IMGPROXY_PRESETS` or `IMGPROXY_PRESETS_PATH`. This is separate from the package's client-side presets defined in `config/laravel-imgproxy.php`.
 
 **Fix:** Register the preset on the imgproxy server, or use the package's [client-side presets](/guide/usage) instead:
 
@@ -67,7 +67,7 @@ Imgproxy::url($source)->imgproxyPreset('my-preset')->url();
 ],
 
 // Use client-side preset (composes options into the URL, no server config needed)
-Imgproxy::url($source)->preset('my-preset')->url();
+Imgproxy::image($source)->applyPreset('my-preset')->url();
 ```
 
 ## Base64 vs. Plain Encoding Mismatch
