@@ -4,9 +4,20 @@
 
 **Blocked by:** 03 — Simple HMAC signing
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] ~15 core typed methods exist with enums; invalid values throw `InvalidArgumentException`
-- [ ] `raw()` appends verbatim option segments in call order, no validation
-- [ ] Chained options appear as ordered signed URL segments; golden-vector tests assert exact composed URLs
-- [ ] Builder immutability holds with options applied (base builder reusable for variants)
+- [x] ~15 core typed methods exist with enums; invalid values throw `InvalidArgumentException`
+- [x] `raw()` appends verbatim option segments in call order, no validation
+- [x] Chained options appear as ordered signed URL segments; golden-vector tests assert exact composed URLs
+- [x] Builder immutability holds with options applied (base builder reusable for variants)
+
+## Findings (verified against real v4 imgproxy, do not re-derive)
+
+- Enum values, validation ranges, and segment formats are pinned to the v4 server source (`processing/resize_type.go`, `processing/gravity_type.go`, `imagetype/defs.go`, `options/parser/apply.go`):
+  - Resize types: `fit`, `fill`, `fill-down`, `force`, `auto` (no `any` in v4).
+  - Gravities: `ce`, `no`, `so`, `ea`, `we`, `nowe`, `noea`, `sowe`, `soea`, `sm`; the `extend` option rejects `sm` (server: `ExtendGravityTypes` excludes smart).
+  - Output formats: `jpg`, `png`, `webp`, `avif`, `gif`, `ico`, `svg`, `bmp`, `tiff`, `heic`, `jxl` (the registered v4 output types; `jp2`/`pdf` are not registered in v4 free).
+  - Background color: exactly 3 or 6 hex digits (server regex `^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$`); a leading `#` is accepted client-side and stripped.
+  - Watermark positions include `re` (repeat, free); `ch` is pro and out of scope.
+- Trailing defaults are trimmed: `resize(Fill, 300, 400)` emits `rs:fill:300:400` (enlarge omitted). Verified live: a real v4 imgproxy returns 200 `image/webp` for the signed fluent chain `rs:fill:300:400/g:sm/q:80/f:webp`.
+- Golden-vector signatures were computed independently with Python (HMAC-SHA256, base64url, no padding) and pinned in `tests/Unit/BuilderOptionsTest.php`; key `secret`/salt `hello` matches the issue-03 verified pair.
