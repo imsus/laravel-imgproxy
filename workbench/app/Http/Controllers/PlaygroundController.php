@@ -21,10 +21,11 @@ use Imsus\LaravelImgproxy\Enums\ResizeType;
 final class PlaygroundController
 {
     /**
-     * A stable source image the local imgproxy can fetch, the same one the
-     * live integration test uses.
+     * A stable, high-resolution source image the local imgproxy can fetch:
+     * the "Blue Marble" photograph (NASA / Apollo 17), public domain, hosted
+     * on Wikimedia Commons.
      */
-    private const string SOURCE = 'https://raw.githubusercontent.com/imgproxy/imgproxy/master/testdata/test1.png';
+    private const string SOURCE = 'https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg';
 
     /**
      * @return array{configured: bool, source: string, instance: array{name: string, url: string, signed: bool, signature_size: int|null, encoding: string}, demos: list<array{label: string, description: string, url: string, note: string|null}>, presets: array{client: list<array{label: string, code: string, url: string}>, server: array{label: string, code: string, url: string, status: int|null}}, storage: array{public: string, private: string}}
