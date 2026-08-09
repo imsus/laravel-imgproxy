@@ -397,11 +397,7 @@
         @endif
         <span class="chip">encoding: {{ $instance['encoding'] }}</span>
         @if ($configured)
-            @if ($instance['health'] !== null && $instance['health'] < 400)
-                <span class="chip ok">/health · HTTP {{ $instance['health'] }}</span>
-            @else
-                <span class="chip bad">/health · unreachable</span>
-            @endif
+            <button type="button" class="status" data-check-url="{{ rtrim($instance['url'], '/') }}/health" data-state="idle" aria-live="polite">probe /health</button>
         @endif
     </div>
 </div>
@@ -765,6 +761,7 @@ composer analyse       # phpstan">Copy</button>
                     } else if (status >= 200 && status < 300) {
                         chip.dataset.state = 'ok';
                         chip.textContent = 'HTTP ' + status;
+                        healCardImage(chip);
                     } else {
                         chip.dataset.state = 'bad';
                         chip.textContent = 'HTTP ' + status;
@@ -780,6 +777,34 @@ composer analyse       # phpstan">Copy</button>
         chips.forEach(function (chip) {
             chip.addEventListener('click', function () { checkOne(chip); });
         });
+
+        /* Self-healing images. The workbench serves the sample and proxies
+           status checks, so a busy single-threaded dev server can make an
+           image fail once while imgproxy recovers a moment later. Retry
+           failed prints a few times, and when a status seal comes back 2xx,
+           re-fire a broken print in the same card. */
+        function retryImage(img) {
+            var src = img.dataset.src || img.getAttribute('src');
+            img.src = '';
+            img.src = src;
+        }
+
+        $$('.stage img, .panel img, .print').forEach(function (img) {
+            img.dataset.src = img.getAttribute('src');
+            var attempts = 0;
+            img.addEventListener('error', function handler() {
+                attempts++;
+                if (attempts > 3) { img.removeEventListener('error', handler); return; }
+                setTimeout(function () { retryImage(img); }, attempts * 1200);
+            });
+        });
+
+        function healCardImage(chip) {
+            var card = chip.closest('.demo-card');
+            if (!card) { return; }
+            var img = card.querySelector('.stage img');
+            if (img && !(img.complete && img.naturalWidth > 0)) { retryImage(img); }
+        }
 
         var checkAll = $('#check-all');
         if (checkAll) {
