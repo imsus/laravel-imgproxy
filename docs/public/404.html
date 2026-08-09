@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Redirecting…</title>
+    <script>
+        (function () {
+            var base = '/laravel-imgproxy'
+            var path = location.pathname.replace(new RegExp('^' + base), '') || '/'
+
+            // v1 URLs moved under /1.x/ when v2 took over the root.
+            // Do not redirect paths that are already versioned.
+            if (path.indexOf('/1.x/') !== 0) {
+                var m = path.match(/^\/(guide|reference|contribute)\/(.+)$/)
+                if (m) {
+                    location.replace(base + '/1.x/' + m[1] + '/' + m[2])
+                    return
+                }
+            }
+
+            location.replace(base + '/')
+        })()
+    </script>
+</head>
+<body>
+    <p>Redirecting to <a href="/laravel-imgproxy/">Laravel imgproxy docs</a>…</p>
+</body>
+</html>

@@ -1,0 +1,132 @@
+# Laravel imgproxy - LLM Context (v2)
+
+## Project Overview
+
+**imsus/laravel-imgproxy** v2 is a ground-up rewrite of the Laravel package for [imgproxy](https://imgproxy.net/) integration. It generates signed, processed image URLs with an immutable fluent builder, renders responsive `<img>` and `<picture>` tags with LQIP placeholders, and builds sources from Storage disks.
+
+## Requirements
+
+- PHP ^8.4
+- Laravel 13
+- An imgproxy server (v4 recommended; option segments target the v4 processing docs)
+
+## Key Features
+
+- Immutable fluent URL builder with one typed method per imgproxy v4 processing option
+- HMAC-SHA256 URL signing with `signature_size` truncation
+- URL-safe base64 source encoding by default (plain encoding opt-out)
+- Multi-instance manager: default plus named instances, each with its own URL, credentials, signature size, and encoding
+- Named presets in config, composable from the builder and the Blade components
+- LQIP placeholder helper (`->placeholder()`) for blur-up previews
+- Typed PHP 8.4+ enums: `ResizeType`, `Gravity`, `Format`, `WatermarkPosition`
+- Responsive Blade components: `<x-imgproxy-img>` and `<x-imgproxy-picture>`
+- Storage integration: `Storage::disk(...)->imgproxy($path)` macro
+- Artisan commands: `imgproxy:key`, `imgproxy:health`
+- 100% Pest type coverage enforced; golden-vector signing tests
+
+## Core API Names
+
+- **`Imgproxy` facade** (`Imsus\LaravelImgproxy\Imgproxy`) — proxies to the Manager
+- **`imgproxy()` helper** — returns the Manager instance
+- **`Manager`** — resolves imgproxy instances from config
+- **`Builder`** — immutable fluent URL builder (53 public methods)
+- **`Enums`** — `ResizeType`, `Gravity`, `Format`, `WatermarkPosition`
+- **Blade components** — `<x-imgproxy-img>`, `<x-imgproxy-picture>`
+- **Storage macro** — `FilesystemAdapter::imgproxy(string $path, int|DateTimeInterface|null $expiration = null): Builder`
+- **Artisan commands** — `imgproxy:key`, `imgproxy:health --instance=`
+
+## Builder Method Groups
+
+| Group | Methods |
+| --- | ---|
+| Construction & terminal | `__construct`, `url`, `__toString`, `encoding`, `disk` |
+| Resize | `resize`, `size`, `resizingType`, `width`, `height`, `minWidth`, `minHeight`, `zoom` |
+| Crop & gravity | `crop`, `trim`, `padding`, `gravity`, `focusPoint` |
+| Quality & format | `quality`, `format`, `formatQuality`, `skipProcessing`, `rawResponse` |
+| Effects | `blur`, `sharpen`, `pixelate`, `dpr`, `placeholder` |
+| Transform | `rotate`, `autoRotate`, `flip`, `enlarge`, `extend`, `extendAspectRatio` |
+| Background & watermark | `background`, `watermark` |
+| Output | `stripMetadata`, `keepCopyright`, `stripColorProfile`, `preserveHdr`, `enforceThumbnail`, `returnAttachment`, `cacheBuster`, `expires`, `filename`, `imgproxyPreset` |
+| Security | `maxSrcResolution`, `maxSrcFileSize`, `maxAnimationFrames`, `maxAnimationFrameResolution`, `maxResultDimension` |
+| Escape hatch | `raw` |
+| Presets | `preset` |
+
+## Usage Pattern
+
+```php
+use Imsus\LaravelImgproxy\Imgproxy;
+use Imsus\LaravelImgproxy\Enums\ResizeType;
+use Imsus\LaravelImgproxy\Enums\Format;
+
+$url = Imgproxy::url('https://example.com/image.jpg')
+    ->resize(ResizeType::Fill, 300, 300)
+    ->quality(80)
+    ->format(Format::Webp)
+    ->url();
+
+// Helper is equivalent:
+$url = imgproxy()->url('https://example.com/image.jpg')->width(640)->url();
+```
+
+## Configuration
+
+```php
+config('laravel-imgproxy') = [
+    'default' => 'default',
+    'instances' => [
+        'default' => [
+            'url' => env('IMGPROXY_URL'),
+            'key' => env('IMGPROXY_KEY'),
+            'salt' => env('IMGPROXY_SALT'),
+            'signature_size' => null,
+            'encoding' => 'base64',
+        ],
+    ],
+    'presets' => [],
+];
+```
+
+## Documentation
+
+- [Getting Started](https://imsus.github.io/laravel-imgproxy/guide/getting-started)
+- [Installation](https://imsus.github.io/laravel-imgproxy/guide/installation)
+- [Usage](https://imsus.github.io/laravel-imgproxy/guide/usage)
+- [Resizing](https://imsus.github.io/laravel-imgproxy/guide/resizing)
+- [Quality](https://imsus.github.io/laravel-imgproxy/guide/quality)
+- [Effects](https://imsus.github.io/laravel-imgproxy/guide/effects)
+- [Blade Components](https://imsus.github.io/laravel-imgproxy/guide/blade-components)
+- [Storage Integration](https://imsus.github.io/laravel-imgproxy/guide/storage-integration)
+- [Advanced Usage](https://imsus.github.io/laravel-imgproxy/guide/advanced-usage)
+- [Security](https://imsus.github.io/laravel-imgproxy/guide/security)
+- [Troubleshooting](https://imsus.github.io/laravel-imgproxy/guide/troubleshooting)
+- [API Reference](https://imsus.github.io/laravel-imgproxy/reference/api)
+- [Enums Reference](https://imsus.github.io/laravel-imgproxy/reference/enums)
+- [Contributing](https://imsus.github.io/laravel-imgproxy/contribute/contributing)
+- [Testing](https://imsus.github.io/laravel-imgproxy/contribute/testing)
+- [v1 Documentation (frozen)](https://imsus.github.io/laravel-imgproxy/1.x/)
+
+## Development Commands
+
+| Command | Description |
+| --- | --- |
+| `composer install` | Install dependencies |
+| `composer test` | Full validation: analyse + lint:check + test:types + test:unit |
+| `composer lint:check` | Check code style (Pint dry-run) |
+| `composer lint` | Auto-fix code style (Pint) |
+| `composer analyse` | Static analysis (PHPStan + Larastan) |
+| `composer test:types` | Type coverage (100% enforced) |
+| `composer test:unit` | Unit tests (Pest 5) |
+| `composer build` | Build the workbench playground |
+| `composer serve` | Build and serve the workbench playground |
+
+## Code Conventions
+
+- PHP 8.4+ required, strict types declared
+- All classes use `Imsus\LaravelImgproxy` namespace
+- Builder is immutable: every option method returns a new instance
+- Enums accept instances or string backing values interchangeably
+- `InvalidArgumentException` for invalid inputs
+
+## License
+
+MIT

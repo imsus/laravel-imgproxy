@@ -1,0 +1,66 @@
+# Laravel imgproxy - LLM Context
+
+## Project Overview
+
+**imsus/laravel-imgproxy** is a Laravel package providing integration with [imgproxy](https://imgproxy.net/) - a fast and secure image processing server. It offers a fluent API for generating optimized, signed image URLs.
+
+## Key Features
+
+- Fluent API with chainable methods
+- HMAC-SHA256 signed URLs
+- Blade components (Img and Picture)
+- PHP 8.2+ enums for type safety
+- 156 tests with workbench integration
+
+## Main Entry Points
+
+- **src/ImgProxy.php** - Main class with fluent URL builder
+- **src/Enums/** - ResizeType, OutputExtension, SourceUrlMode, Gravity
+- **src/Facades/** - Laravel facade
+- **src/helpers.php** - `imgproxy()` helper function
+
+## Usage Pattern
+
+```php
+imgproxy($url)
+    ->setWidth(300)
+    ->setHeight(200)
+    ->setResizeType(ResizeType::FILL)
+    ->setExtension(OutputExtension::WEBP)
+    ->setQuality(85)
+    ->build();
+```
+
+## Configuration
+
+```php
+config('laravel-imgproxy') = [
+    'endpoint' => env('IMGPROXY_ENDPOINT', 'http://localhost:8080'),
+    'key' => env('IMGPROXY_KEY'),
+    'salt' => env('IMGPROXY_SALT'),
+    'default_source_url_mode' => env('IMGPROXY_DEFAULT_SOURCE_URL_MODE', 'encoded'),
+    'default_output_extension' => env('IMGPROXY_DEFAULT_OUTPUT_EXTENSION', 'jpeg'),
+];
+```
+
+## Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `composer install` | Install dependencies |
+| `composer test` | Run Pest tests |
+| `composer format` | Format code with Pint |
+| `composer start` | Build and start workbench |
+
+## Code Conventions
+
+- PHP 8.2+ required
+- **Files**: kebab-case
+- **Classes/Enums**: PascalCase
+- **Methods**: camelCase
+- **Variables**: snake_case
+- **Constants**: SCREAMING_SNAKE_CASE
+
+## Namespace
+
+All classes use `Imsus\ImgProxy` namespace.
