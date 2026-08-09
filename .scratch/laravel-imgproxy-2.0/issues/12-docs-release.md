@@ -19,3 +19,8 @@
 - CHANGELOG v2.0.0 entry lists the rewrite under Breaking changes / Enhancements.
 - Fixed two tests that were not hermetic against exported `IMGPROXY_*` env vars (the documented live-test workflow): `ServiceProviderTest`'s env test now overrides and restores all three sources `env()` reads (`$_ENV`, `$_SERVER`, `getenv`), and the published-views render test pins key/salt to null instead of relying on the environment. With the live vars exported, all 186 tests pass including the two real-imgproxy checks; without them, 184 pass with the same 2 live skips.
 - Aligned the CI matrix in `.github/workflows/tests.yml` with the platform (PHP 8.4/8.5 × Laravel 13, testbench 11.*); the previous 8.3/L12 entries could not install against composer.json's constraints.
+
+## Follow-up
+
+- Added a workbench playground for human review (`composer build && composer serve` → http://127.0.0.1:8000): live URL builder demos, presets, Blade components, storage, and command reference, all rendered through the real package and a local imgproxy. `testbench.yaml` now registers the package provider and discovers workbench views; `workbench/config/laravel-imgproxy.php` holds the demo presets, merged by `WorkbenchServiceProvider` outside the test suite.
+- The Presets section distinguishes client-side presets (`preset()`, composed into the URL, no server config) from imgproxy's server-side presets (`imgproxyPreset()` → `pr:`, must be registered on the server via `IMGPROXY_PRESETS` or the server answers 404/500). The playground demonstrates the failure mode against the local Docker imgproxy (no presets registered → HTTP 404). README carries the same distinction.

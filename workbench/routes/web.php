@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Workbench\App\Http\Controllers\PlaygroundController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', PlaygroundController::class);

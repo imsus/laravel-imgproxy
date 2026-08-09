@@ -193,6 +193,8 @@ Imgproxy::url($source)->preset('thumb')->width(640)->url();
 
 Preset keys match the fluent method names; only single-value options are supported. Unknown presets and invalid values throw.
 
+These are client-side presets: the package composes the options into the URL, so no imgproxy server configuration is required. imgproxy's own server-side presets (defined via `IMGPROXY_PRESETS` / `IMGPROXY_PRESETS_PATH` on the server) are a separate mechanism, referenced with `imgproxyPreset()` (the `pr:` option) — the server must have the preset registered or it responds `500`.
+
 ### LQIP placeholders
 
 `placeholder()` returns a tiny blurred webp of the same source — `w:16`, `bl:8`, `f:webp` — for blur-up previews:
