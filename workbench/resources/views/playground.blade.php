@@ -162,7 +162,15 @@
         .btn:hover { border-color: var(--accent); color: var(--accent); }
         .btn:disabled { opacity: .55; cursor: default; }
 
-        .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 12px; }
+        .lbl-short { display: none; }
+
+        .chips-row {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 10px 20px 12px;
+        }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 
         .chip {
             font: 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -354,8 +362,20 @@
         }
 
         @media (max-width: 640px) {
-            .masthead-inner { flex-direction: column; align-items: stretch; }
-            .controls { justify-content: space-between; }
+            /* The pinned header is precious screen space on phones: let it
+               scroll away and keep only a compact title row. */
+            .masthead { position: static; }
+            .masthead-inner { flex-direction: row; align-items: center; padding-top: 10px; padding-bottom: 8px; }
+            .masthead h1 { font-size: 17px; }
+            .masthead .sub { display: none; }
+            .lbl-full { display: none; }
+            .lbl-short { display: inline; }
+            .controls { justify-content: flex-end; }
+            /* Chips become a single scrollable strip instead of tall wrapping. */
+            .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+            .chips .chip, .chips .status { flex: 0 0 auto; white-space: nowrap; }
+            .chips::-webkit-scrollbar { display: none; }
+            .chips-row { padding-top: 8px; padding-bottom: 10px; }
             section { margin-top: 36px; }
         }
 
@@ -374,7 +394,9 @@
         </div>
         <div class="controls" role="group" aria-label="Playground controls">
             @if ($configured)
-                <button type="button" class="btn" id="check-all">Check all against imgproxy</button>
+                <button type="button" class="btn" id="check-all">
+                    <span class="lbl-full">Check all against imgproxy</span><span class="lbl-short">Check all</span>
+                </button>
             @endif
             <div class="seg" role="group" aria-label="Theme">
                 <button type="button" data-theme-btn="auto" aria-pressed="true">Auto</button>
@@ -383,18 +405,22 @@
             </div>
         </div>
     </div>
-    <div class="chips" style="max-width:1180px;margin:0 auto">
-        <span class="chip">instance: {{ $instance['name'] }}</span>
-        <span class="chip">{{ $instance['url'] }}</span>
-        @if ($instance['signed'])
-            <span class="chip ok">signed · signature_size: {{ $instance['signature_size'] ?? 'full' }}</span>
-        @else
-            <span class="chip warn">unsigned · unsafe slot</span>
-        @endif
-        <span class="chip">encoding: {{ $instance['encoding'] }}</span>
-        @if ($configured)
-            <button type="button" class="status" data-check-url="{{ rtrim($instance['url'], '/') }}/health" data-state="idle" aria-live="polite">probe /health</button>
-        @endif
+</div>
+
+<div class="chips-row">
+        <div class="chips">
+            <span class="chip">instance: {{ $instance['name'] }}</span>
+            <span class="chip">{{ $instance['url'] }}</span>
+            @if ($instance['signed'])
+                <span class="chip ok">signed · signature_size: {{ $instance['signature_size'] ?? 'full' }}</span>
+            @else
+                <span class="chip warn">unsigned · unsafe slot</span>
+            @endif
+            <span class="chip">encoding: {{ $instance['encoding'] }}</span>
+            @if ($configured)
+                <button type="button" class="status" data-check-url="{{ rtrim($instance['url'], '/') }}/health" data-state="idle" aria-live="polite">probe /health</button>
+            @endif
+        </div>
     </div>
 </div>
 
@@ -810,11 +836,15 @@
 
         var checkAll = $('#check-all');
         if (checkAll) {
+            function setCheckAllLabel(fullText, shortText) {
+                checkAll.querySelector('.lbl-full').textContent = fullText;
+                checkAll.querySelector('.lbl-short').textContent = shortText;
+            }
             checkAll.addEventListener('click', function () {
                 var pending = chips.filter(function (c) { return c.dataset.state !== 'ok'; });
                 if (pending.length === 0) { return; }
                 checkAll.disabled = true;
-                checkAll.textContent = 'Checking\u2026';
+                setCheckAllLabel('Checking\u2026', 'Checking\u2026');
                 var index = 0;
                 // The workbench dev server is multi-worker (PHP_CLI_SERVER_WORKERS);
                 // keep the concurrent proxied checks below the worker count, or
@@ -830,7 +860,7 @@
                 for (var i = 0; i < Math.min(concurrency, pending.length); i++) { workers.push(worker()); }
                 Promise.all(workers).then(function () {
                     checkAll.disabled = false;
-                    checkAll.textContent = 'Check all against imgproxy';
+                    setCheckAllLabel('Check all against imgproxy', 'Check all');
                 });
             });
         }
