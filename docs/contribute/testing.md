@@ -5,7 +5,9 @@ description: The v2 test stack, how to run tests, and how to run live integratio
 
 # Testing
 
-## Test Stack
+The test suite is deliberately strict: 100% type coverage, byte-exact golden-vector signing tests, and a healthy mix of unit and feature tests. This page explains the stack and how to run everything.
+
+## The Test Stack
 
 | Tool | Version | Purpose |
 | --- | --- | --- |
@@ -14,8 +16,6 @@ description: The v2 test stack, how to run tests, and how to run live integratio
 | [PHPStan](https://phpstan.org/) + [Larastan](https://github.com/nunomaduro/larastan) | 3.x / 3.9+ | Static analysis |
 | [Pint](https://github.com/laravel/pint) | 1.29+ | Code style |
 | [Orchestra Testbench](https://github.com/orchestral/testbench) | 11 | Laravel package testing |
-
-The test suite has **186 tests** and **347 assertions**.
 
 ## Running Tests
 
@@ -64,7 +64,7 @@ The key and salt must match the local server's `IMGPROXY_KEY` / `IMGPROXY_SALT`.
 
 ### Running Live Tests
 
-1. Start the local imgproxy server:
+1. Start a local imgproxy server:
 
 ```bash
 docker run -d -p 8081:8080 \
@@ -85,6 +85,6 @@ composer test
 
 With the variables exported, the live tests run as part of the normal `composer test` invocation.
 
-## Workbench Playground
+## The Workbench Playground
 
 The `workbench/` directory contains a live review app for interactive testing. See [Contributing](/contribute/contributing#workbench-playground) for setup instructions.

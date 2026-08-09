@@ -5,7 +5,7 @@ description: Resize, crop, trim, and pad images with the fluent builder.
 
 # Resizing
 
-The builder provides a full set of methods for controlling image dimensions, resize type, gravity, cropping, trimming, and padding. Every method returns a new builder instance, so options compose safely.
+Resizing is the most common thing you will do with an image service, so the builder has a full set of methods for controlling dimensions, resize type, gravity, cropping, trimming, and padding. Every method returns a new builder instance, so options compose safely.
 
 ## Resize Type
 
@@ -44,12 +44,12 @@ $url = Imgproxy::url($source)
 |-------|---------|----------|
 | `fit` | `rs:fit` | Fit within bounds, keep aspect ratio, no crop |
 | `fill` | `rs:fill` | Fill bounds, crop overflow, keep aspect ratio |
-| `fill-down` | `rs:fill-down` | Like `fill`, but crop to requested ratio when image is smaller |
-| `force` | `rs:force` | Stretch to exact dimensions (ignores aspect ratio) |
+| `fill-down` | `rs:fill-down` | Like `fill`, but crop to requested ratio when the image is smaller |
+| `force` | `rs:force` | Stretch to exact dimensions, ignoring the aspect ratio |
 | `auto` | `rs:auto` | Use `fill` when orientation matches, otherwise `fit` |
 
 ```php
-// Fit: image stays within 400x300
+// Fit: the image stays within 400x300
 Imgproxy::url($source)->resize(ResizeType::Fit, 400, 300)->url();
 
 // Force: stretch to 400x300 regardless of aspect ratio
@@ -72,7 +72,7 @@ $url = Imgproxy::url($source)
 
 ## Resizing Type
 
-`resizingType()` sets the resize type without providing dimensions — useful when you want to control only the type and set width/height separately:
+`resizingType()` sets the resize type without providing dimensions — useful when you want to control only the type and set width and height separately:
 
 ```php
 $url = Imgproxy::url($source)
@@ -103,10 +103,10 @@ Set minimum dimensions. The image will be resized to at least these values:
 
 ```php
 Imgproxy::url($source)->minWidth(200)->url();
-// mww:200
+// mw:200
 
 Imgproxy::url($source)->minHeight(150)->url();
-// mwh:150
+// mh:150
 ```
 
 ## Zoom
@@ -121,6 +121,8 @@ Imgproxy::url($source)->zoom(2)->url();
 Imgproxy::url($source)->zoom(2, 1.5)->url();
 // z:2:1.5
 ```
+
+Unlike `dpr()`, `zoom()` does not affect gravity offsets, watermark offsets, or paddings.
 
 ## Crop
 
@@ -147,7 +149,7 @@ Imgproxy::url($source)->trim(0.1)->url();
 
 // Trim to a specific color, equal horizontal cut
 Imgproxy::url($source)->trim(0.1, '#ffffff', equalHor: true)->url();
-// t:0.1:#ffffff:1
+// t:0.1:ffffff:1
 ```
 
 ## Padding
@@ -164,9 +166,11 @@ Imgproxy::url($source)->padding(10, 20, 10, 20)->url();
 // pd:10:20:10:20
 ```
 
+Omitted sides default as they do in CSS: `right` follows `top`, `bottom` follows `top`, and `left` follows `right`.
+
 ## Gravity
 
-Control which part of the image is kept when imgproxy cuts parts away. Accepts a `Gravity` enum or string value:
+Gravity controls which part of the image is kept when imgproxy cuts parts away. It accepts a `Gravity` enum or string value:
 
 ```php
 use Imsus\LaravelImgproxy\Enums\Gravity;
@@ -185,6 +189,8 @@ Imgproxy::url($source)
 // g:no:10:5
 ```
 
+Offsets are emitted only when they are non-zero.
+
 ### Available Gravity Values
 
 | Value | Segment | Description |
@@ -202,7 +208,7 @@ Imgproxy::url($source)
 
 ## Focus Point
 
-Set an exact focus point as normalized coordinates (0–1) where `0` is left/top and `1` is right/bottom:
+Set an exact focus point as normalized coordinates (0–1), where `0` is left/top and `1` is right/bottom:
 
 ```php
 Imgproxy::url($source)
@@ -263,7 +269,7 @@ Imgproxy::url($source)
 ```
 
 ::: tip
-Gravity for `extend()` and `extendAspectRatio()` does not accept `Smart` — it throws `InvalidArgumentException`.
+Gravity for `extend()` and `extendAspectRatio()` does not accept `Smart` — passing it throws `InvalidArgumentException`.
 :::
 
 See also: [Usage](/guide/usage), [API Reference](/reference/api)

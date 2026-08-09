@@ -5,7 +5,7 @@ description: Apply blur, sharpen, pixelate, rotation, watermark, and background 
 
 # Effects
 
-The builder provides methods for visual effects: blur, sharpen, pixelate, rotation, auto-rotation, flip, background color, and watermarks.
+Sometimes you want to do more than resize and compress. The builder provides methods for blur, sharpen, pixelate, rotation, background color, and watermarks — useful for everything from subtle product photography polish to privacy blurring and branded watermarks.
 
 ## Blur
 
@@ -28,7 +28,7 @@ Imgproxy::url($source)->blur(8)->url();
 
 ## Sharpen
 
-Apply a sharpening filter. The sigma parameter controls the mask size — use 0.5 for 4 px/mm, 1.0 for 12 px/mm, and 1.5 for 16 px/mm:
+Apply a sharpening filter. The sigma parameter controls the mask size — as an approximate guideline, use 0.5 for 4 px/mm, 1.0 for 12 px/mm, and 1.5 for 16 px/mm:
 
 ```php
 Imgproxy::url($source)->sharpen(0.5)->url();
@@ -107,7 +107,7 @@ Imgproxy::url($source)
 // wm:0.5:soea:10:10
 ```
 
-When you need only position and offsets without explicit scale:
+When you need only position and offsets without an explicit scale:
 
 ```php
 // Center (default), 5px horizontal offset, 10px vertical offset
@@ -127,6 +127,10 @@ Imgproxy::url($source)
 // wm:0.7:re:0:0:2
 ```
 
+::: tip
+When you pass offsets or scale without an explicit position, the position defaults to `Center`.
+:::
+
 ### Available Watermark Positions
 
 | Value | Segment | Description |
@@ -141,10 +145,6 @@ Imgproxy::url($source)
 | `sowe` | `wm:…:sowe` | South-west (bottom-left) |
 | `soea` | `wm:…:soea` | South-east (bottom-right) |
 | `re` | `wm:…:re` | Repeat and tile the watermark |
-
-::: tip
-When passing offsets or scale without an explicit position, the position defaults to `Center`.
-:::
 
 ## Combining Effects
 

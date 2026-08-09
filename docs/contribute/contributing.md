@@ -1,11 +1,11 @@
 ---
 title: Contributing
-description: Guidelines for contributing to Laravel imgproxy v2.
+description: Guidelines for contributing to Laravel imgproxy.
 ---
 
 # Contributing
 
-Thank you for considering contributing to Laravel imgproxy! For significant changes, please [open an issue](https://github.com/imsus/laravel-imgproxy/issues) first so the approach can be discussed.
+Thank you for considering contributing to Laravel imgproxy. For significant changes, please [open an issue](https://github.com/imsus/laravel-imgproxy/issues) first so the approach can be discussed before you invest time in a pull request.
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ composer install
 
 ### Package Validation Commands
 
-Run these before submitting a PR:
+Run these before submitting a pull request:
 
 | Command | What it does |
 | --- | --- |
@@ -37,13 +37,13 @@ Run these before submitting a PR:
 | `composer test:types` | Run Pest with [type-coverage](https://pestphp.com/docs/plugins/type-coverage) — 100% enforced |
 | `composer test:unit` | Run the Pest test suite |
 
-### Workbench Playground
+### The Workbench Playground
 
 The `workbench/` directory contains a live review app that renders real URLs and images through the package against a local imgproxy:
 
 1. Point `workbench/.env` at an imgproxy server. Copy `workbench/.env.example` if needed — the defaults match the local Docker imgproxy used by the live integration tests.
 
-2. Build and serve the workbench app on all interfaces with multiple PHP workers (the Docker imgproxy must reach the host, and the "Check all" status proxy blocks a worker while imgproxy fetches the sample — one worker deadlocks):
+2. Build and serve the workbench app on all interfaces with multiple PHP workers. The Docker imgproxy must be able to reach the host, and the "Check all" status proxy blocks a worker while imgproxy fetches the sample image — one worker deadlocks:
 
 ```bash
 composer build
@@ -56,7 +56,7 @@ PHP_CLI_SERVER_WORKERS=4 vendor/bin/testbench serve --host=0.0.0.0
 
 The playground lives in `workbench/` and is not shipped to package consumers.
 
-## PR Conventions
+## Pull Request Conventions
 
 ### Tests
 

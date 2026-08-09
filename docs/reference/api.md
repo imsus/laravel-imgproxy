@@ -5,7 +5,9 @@ description: Complete reference for the Imgproxy facade, imgproxy() helper, Buil
 
 # API Reference
 
-## `imgproxy()` Helper
+This page is the complete API surface of the package. If you are looking for guidance on how to use these methods, start with the [Basic Usage](/guide/usage) documentation instead.
+
+## The `imgproxy()` Helper
 
 ```php
 function imgproxy(): Manager
@@ -17,9 +19,9 @@ Returns the [Manager](#manager) instance, a terse alternative to the facade. Def
 imgproxy()->url('https://example.com/image.jpg')->width(800)->url();
 ```
 
-## `Imgproxy` Facade
+## The `Imgproxy` Facade
 
-`Imsus\LaravelImgproxy\Imgproxy` proxies to the `Manager` singleton. Not `final` so applications can mock it with `Imgproxy::shouldReceive(...)`.
+`Imsus\LaravelImgproxy\Imgproxy` proxies to the `Manager` singleton. It is deliberately not `final`, so applications can mock it with the standard `Imgproxy::shouldReceive(...)` pattern.
 
 | Method | Signature | Description |
 | --- | --- | --- |
@@ -164,7 +166,7 @@ public function __construct(
 
 ## Enums
 
-See [Enums Reference](/reference/enums) for the complete list of cases and their imgproxy segment mappings.
+See the [Enums Reference](/reference/enums) for the complete list of cases and their imgproxy segment mappings.
 
 | Enum | Namespace | Options |
 | --- | --- | --- |
@@ -184,7 +186,7 @@ $imgproxy->gravity('sm');            // string value — identical result
 
 ## Blade Components
 
-### `<x-imgproxy-img>`
+### The `<x-imgproxy-img>` Component
 
 Renders an `<img>` with a srcset built from width or DPR candidates, sizes, an LQIP placeholder, lazy loading, alt text, and class passthrough.
 
@@ -213,7 +215,7 @@ Renders an `<img>` with a srcset built from width or DPR candidates, sizes, an L
 />
 ```
 
-### `<x-imgproxy-picture>`
+### The `<x-imgproxy-picture>` Component
 
 Renders a `<picture>` with one `<source>` per format and a fallback `<img>`. Every format except the last becomes a `<source>`; the last is the fallback image.
 

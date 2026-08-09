@@ -1,31 +1,33 @@
 ---
 title: Installation
-description: Install Laravel imgproxy, publish config, and set environment variables.
+description: Install Laravel imgproxy, publish the configuration, and set your environment variables.
 ---
 
 # Installation
 
 ## Install the Package
 
+Install the package via Composer:
+
 ```bash
 composer require imsus/laravel-imgproxy:^2.0
 ```
 
-## Publish Configuration
+## Publish the Configuration
 
-Publish the config file (`config/laravel-imgproxy.php`):
+While the package works out of the box, you will probably want to publish its configuration file so you can register additional imgproxy instances and presets:
 
 ```bash
 php artisan vendor:publish --tag="laravel-imgproxy-config"
 ```
 
-Publish all package resources (config, views, translations, assets) at once:
+This will create a `config/laravel-imgproxy.php` file in your application. If you would like to publish all package resources at once — config, views, and translations — you may use the combined tag instead:
 
 ```bash
 php artisan vendor:publish --tag="laravel-imgproxy"
 ```
 
-Individual tags are also available — `laravel-imgproxy-views` publishes the Blade component templates to `resources/views/vendor/imgproxy`:
+Individual tags are also available. For example, `laravel-imgproxy-views` publishes the Blade component templates to `resources/views/vendor/imgproxy` so you can customize them:
 
 ```bash
 php artisan vendor:publish --tag="laravel-imgproxy-views"
@@ -33,7 +35,7 @@ php artisan vendor:publish --tag="laravel-imgproxy-views"
 
 ## Environment Variables
 
-The default instance reads its connection details from three env vars:
+The default instance reads its connection details from three environment variables:
 
 ```dotenv
 IMGPROXY_URL=https://imgproxy.example.com
@@ -41,17 +43,19 @@ IMGPROXY_KEY=943b421c9eb07c830af81030552c86009268de4e532ba2ee2eab8247c6da0881
 IMGPROXY_SALT=520f986b998545b4785e0defbc4f3c1203f22de2374a3d53cb7a7fe9fea309c5
 ```
 
-`IMGPROXY_KEY` and `IMGPROXY_SALT` are the hex-encoded values configured on the imgproxy server. When they are absent, URLs are generated unsigned with an `unsafe` signature slot — fine for local development, but configure them for anything exposed to the internet.
+`IMGPROXY_KEY` and `IMGPROXY_SALT` are the hex-encoded values configured on your imgproxy server. When they are absent, generated URLs are unsigned and use the `unsafe` signature slot — perfectly fine for local development, but you should configure them for anything exposed to the internet.
 
-Generate a fresh key/salt pair:
+To generate a fresh key and salt pair, use the `imgproxy:key` command:
 
 ```bash
 php artisan imgproxy:key
 ```
 
-## Configuration
+The command prints the pair as environment lines that you can copy straight into your `.env` file.
 
-The published `config/laravel-imgproxy.php` supports multiple named instances, each with its own server, credentials, signature size, and encoding:
+## Configuring Instances
+
+The published configuration file supports multiple named instances, each with its own server, credentials, signature size, and source encoding:
 
 ```php
 'instances' => [
@@ -73,18 +77,18 @@ The published `config/laravel-imgproxy.php` supports multiple named instances, e
 ],
 ```
 
-Per-instance options:
-
 | Option | Description | Default |
 | --- | --- | --- |
-| `url` | Base URL of the imgproxy server, no trailing slash | — |
+| `url` | Base URL of the imgproxy server, without a trailing slash | — |
 | `key` / `salt` | Hex-encoded HMAC credentials; `null` generates unsigned URLs | `null` |
 | `signature_size` | Signature bytes to keep (1–32), matching the server's `IMGPROXY_SIGNATURE_SIZE`; `null` keeps the full digest | `null` |
 | `encoding` | Source encoding: `base64` (URL-safe, no padding) or `plain` (percent-encoded source behind a `plain/` prefix) | `'base64'` |
 
-## Presets
+You may learn more about working with named instances in the [Advanced Usage](/guide/advanced-usage) documentation.
 
-Named option sets can be defined in config and shared across instances:
+## Defining Presets
+
+Presets are named sets of processing options that you can share across instances and reuse throughout your application:
 
 ```php
 'presets' => [
@@ -98,6 +102,6 @@ Named option sets can be defined in config and shared across instances:
 
 Preset keys match the fluent method names. See [Basic Usage](/guide/usage#presets) for how to apply them from the builder.
 
-## Next Step
+## Next Steps
 
-- [Basic Usage](/guide/usage) — building URLs, signing, options, and storage disks
+- [Basic Usage](/guide/usage) — building URLs, signing, options, presets, and Storage disks

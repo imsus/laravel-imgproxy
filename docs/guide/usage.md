@@ -1,11 +1,11 @@
 ---
 title: Basic Usage
-description: Build signed imgproxy URLs with the fluent builder, options, presets, and storage disks.
+description: Build signed imgproxy URLs with the fluent builder, options, presets, and Storage disks.
 ---
 
 # Basic Usage
 
-## Facade and Helper
+## The Facade and Helper
 
 The `Imgproxy` facade and the `imgproxy()` helper both resolve the default instance and return a manager that starts builders:
 
@@ -23,7 +23,7 @@ $url = imgproxy()->url('https://example.com/image.jpg')
     ->url();
 ```
 
-Named instances are accessed via the manager:
+If you have registered multiple instances, you can target a specific one:
 
 ```php
 $url = Imgproxy::instance('staging')
@@ -34,7 +34,7 @@ $url = Imgproxy::instance('staging')
 
 ## Building URLs
 
-Start with `->url($source)`, chain option methods, and terminate with `->url()` or `__toString()`:
+Every URL begins with `->url($source)`. You then chain as many option methods as you need and finish with `->url()` or `__toString()`:
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
@@ -50,9 +50,11 @@ $url = Imgproxy::url('https://example.com/image.jpg')
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
+Notice how the source URL is encoded and the processing options are appended as path segments. Because the builder is immutable, you can chain options in any order without worrying about mutating a shared instance — more on that in a moment.
+
 ## Signing
 
-With a key and salt configured, the `unsafe` slot is replaced by the HMAC-SHA256 signature:
+With a key and salt configured, the `unsafe` slot is automatically replaced by an HMAC-SHA256 signature:
 
 ```php
 $url = Imgproxy::url('https://example.com/image.jpg')
@@ -62,11 +64,9 @@ $url = Imgproxy::url('https://example.com/image.jpg')
 // https://imgproxy.example.com/7Fu-sZuoCXRc1LXWhM687mlhsd2SFxXBpiFjJk6vakw/rs:fill:300:300/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
-The signature covers the exact path emitted, so encoding choice and signing are computed together. `signature_size` truncates the signature to match the server's `IMGPROXY_SIGNATURE_SIZE`. An empty key or salt disables signing entirely.
+The signature covers the exact path that is emitted, so encoding choice and signing are always computed together — you never have to coordinate them by hand. The `signature_size` config value truncates the signature to match your server's `IMGPROXY_SIGNATURE_SIZE`, and an empty key or salt disables signing entirely.
 
-Generate a fresh key/salt pair with the [imgproxy:key](/guide/installation) command.
-
-See [Security](/guide/security) for details on signing behaviour and key management.
+To generate a fresh key and salt pair, use the [imgproxy:key](/guide/installation) command. If you want to understand the details of how signing works, see the [Security](/guide/security) documentation.
 
 ## Options
 
@@ -87,7 +87,7 @@ For the full method signatures, see the [API Reference](/reference/api).
 
 ### Enums
 
-Arguments accept the enum or its string value — `Gravity::Smart` and `'sm'` are interchangeable:
+Typed arguments accept the enum or its string value interchangeably — `Gravity::Smart` and `'sm'` produce identical results:
 
 ```php
 use Imsus\LaravelImgproxy\Enums\Gravity;
@@ -96,26 +96,28 @@ Imgproxy::url($source)->gravity(Gravity::Smart)->url();
 Imgproxy::url($source)->gravity('sm')->url(); // equivalent
 ```
 
-Available enums:
+The package provides four enums:
 
 - `ResizeType` — `Fit`, `Fill`, `FillDown`, `Force`, `Auto`
 - `Gravity` — compass points (`North`, `SouthEast`, …) plus `Smart`
 - `Format` — `Jpg`, `Png`, `Webp`, `Avif`, `Gif`, `Ico`, `Svg`, `Bmp`, `Tiff`, `Heic`, `Jxl`
 - `WatermarkPosition`
 
-See [Enums Reference](/reference/enums) for the full list of values.
+See the [Enums Reference](/reference/enums) for the full list of values.
 
-### Raw Escape Hatch
+### The Raw Escape Hatch
 
-For imgproxy options not yet covered by a typed method, `raw()` appends a segment verbatim:
+imgproxy moves quickly, and occasionally a new option appears before this package has a typed method for it. When that happens, `raw()` lets you append any segment verbatim:
 
 ```php
 Imgproxy::url($source)->raw('some:new:option')->url();
 ```
 
+Prefer typed methods when they are available — they validate your input and catch errors early — but `raw()` guarantees you are never blocked by the package.
+
 ## Immutability
 
-Every mutation returns a new builder. A base builder can be reused for several variants without accidental mutation:
+Every mutation returns a **new** builder. This means a base builder can be reused for several variants without accidental mutation:
 
 ```php
 $base = Imgproxy::url('https://example.com/image.jpg')->quality(80);
@@ -124,28 +126,32 @@ $small = $base->width(320)->url();
 $large = $base->width(1280)->url(); // quality:80 still applies; no width leak from $small
 ```
 
+This is a small design decision that pays off constantly in real applications — for example, when you want to render several image sizes from a single set of options.
+
 ## Presets
 
-Named option sets defined in config are applied from the builder:
+Named option sets defined in your config file can be applied with `preset()`:
 
 ```php
 Imgproxy::url($source)->preset('thumb')->url();
 ```
 
-A preset composes onto the builder before per-URL overrides, so options chained after it win:
+A preset composes onto the builder before any options chained after it, so per-URL overrides win:
 
 ```php
 Imgproxy::url($source)->preset('thumb')->width(640)->url();
 // rs:fill:300:300/w:640/...
 ```
 
-Preset keys match the fluent method names; only single-value options are supported. Unknown presets and invalid values throw.
+Preset keys match the fluent method names, and only single-value options are supported. Unknown presets and invalid values throw.
 
-These are client-side presets — the package composes the options into the URL, so no imgproxy server configuration is required. imgproxy's own server-side presets are a separate mechanism, referenced with `imgproxyPreset()` (the `pr:` option).
+::: tip Client-side vs. server-side presets
+These presets are **client-side** — the package composes the options into the URL, so no imgproxy server configuration is required. imgproxy's own server-side presets are a separate mechanism, referenced with `imgproxyPreset()` (the `pr:` option).
+:::
 
 ## LQIP Placeholders
 
-`placeholder()` returns a tiny blurred webp of the same source — `w:16`, `bl:8`, `f:webp` — for blur-up previews:
+For blur-up previews, `placeholder()` returns a tiny blurred webp of the same source — `w:16`, `bl:8`, `f:webp`:
 
 ```php
 $placeholder = Imgproxy::url('https://example.com/image.jpg')
@@ -155,11 +161,11 @@ $placeholder = Imgproxy::url('https://example.com/image.jpg')
 // https://imgproxy.example.com/unsafe/w:16/bl:8/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
-The Blade components pair the placeholder with the full-size image automatically. See [Blade Components](/guide/blade-components).
+The [Blade components](/guide/blade-components) pair this placeholder with the full-size image automatically.
 
 ## Storage Disks
 
-Sources can come from a Laravel Storage disk. Public disks yield the disk's `url()`; private disks yield a pre-signed `temporaryUrl()`:
+Sources can come from any Laravel Storage disk. Public disks yield the disk's `url()`; private disks yield a pre-signed `temporaryUrl()`:
 
 ```php
 use Illuminate\Support\Facades\Storage;
@@ -182,7 +188,7 @@ The builder has an equivalent `->disk($disk, $path)` method, with an optional ex
 imgproxy()->url('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
 ```
 
-See [Storage Integration](/guide/storage-integration) for the full macro and `->disk()` API.
+See the [Storage Integration](/guide/storage-integration) documentation for the full macro and `->disk()` API.
 
 ## Next Steps
 

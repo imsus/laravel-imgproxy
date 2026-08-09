@@ -5,7 +5,7 @@ description: Control output quality, format conversion, DPR, and metadata stripp
 
 # Quality & Format
 
-The builder provides methods for compression quality, output format conversion, per-format quality overrides, device pixel ratio, metadata stripping, and response behavior.
+Beyond resizing, the two decisions that matter most for image delivery are compression quality and output format. The builder provides methods for both, plus per-format quality overrides, device pixel ratio, metadata stripping, and response behavior.
 
 ## Quality
 
@@ -15,6 +15,8 @@ Set the compression quality (0–100). Lower values produce smaller files at the
 Imgproxy::url($source)->quality(80)->url();
 // q:80
 ```
+
+A quality of `0` makes imgproxy fall back to its own configured quality.
 
 ## Format
 
@@ -43,9 +45,9 @@ Imgproxy::url($source)->format(Format::Webp)->url();
 | `heic` | `f:heic` | Apple devices |
 | `jxl` | `f:jxl` | JPEG XL, next-gen compression |
 
-### Format Selection Strategy
+### Choosing a Format
 
-Use the `<x-imgproxy-picture>` Blade component for automatic format negotiation, or pick manually:
+If you are serving images to browsers, the `<x-imgproxy-picture>` Blade component will handle format negotiation for you automatically. When you need to pick a format yourself, here is a sensible starting point:
 
 ```php
 // Modern browsers
@@ -66,14 +68,14 @@ Override the quality for specific formats. The argument is an associative array 
 Imgproxy::url($source)
     ->formatQuality(['webp' => 80, 'avif' => 65])
     ->url();
-// fq:webp:80/avif:65
+// fq:webp:80:avif:65
 ```
 
 This lets you set different compression targets per format — AVIF tolerates lower quality than JPEG, for example.
 
 ## Skip Processing
 
-Skip processing for specific formats. The listed formats pass through unchanged:
+Skip processing for specific source formats. The listed formats pass through unchanged:
 
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;
@@ -81,7 +83,7 @@ use Imsus\LaravelImgproxy\Enums\Format;
 Imgproxy::url($source)
     ->skipProcessing(Format::Svg, Format::Gif)
     ->url();
-// sk:svg:gif
+// skp:svg:gif
 ```
 
 ## Raw Response
@@ -106,6 +108,8 @@ Imgproxy::url($source)->width(400)->dpr(2)->url();
 // w:400/dpr:2
 // Actual output: 800px wide
 ```
+
+Unlike `zoom()`, `dpr()` also scales gravity offsets and paddings.
 
 ## Strip Metadata
 
@@ -146,7 +150,7 @@ Imgproxy::url($source)->preserveHdr(true)->url();
 // ph:1
 ```
 
-### Complete Example
+### A Complete Example
 
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;

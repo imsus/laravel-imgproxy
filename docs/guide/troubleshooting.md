@@ -5,7 +5,7 @@ description: Common issues and fixes when working with Laravel imgproxy.
 
 # Troubleshooting
 
-## Unsigned URLs appear instead of signed URLs
+## Unsigned URLs Appear Instead of Signed URLs
 
 **Symptom:** Generated URLs contain `unsafe` in the signature slot.
 
@@ -25,9 +25,9 @@ IMGPROXY_KEY=...
 IMGPROXY_SALT=...
 ```
 
-## Signature mismatch
+## Signature Mismatch
 
-**Symptom:** imgproxy returns a signature verification error (e.g. `403 Forbidden` or `expensive security error`).
+**Symptom:** imgproxy returns a signature verification error (e.g. `403 Forbidden` or "expensive security error").
 
 **Cause:** The key, salt, or `signature_size` in your Laravel config does not match what the imgproxy server expects.
 
@@ -44,7 +44,7 @@ IMGPROXY_SALT=520f986b998545b4785e0defbc4f3c1203f22de2374a3d53cb7a7fe9fea309c5
 
 These must be the same values configured on the imgproxy server as `IMGPROXY_KEY` and `IMGPROXY_SALT`.
 
-## Server-side preset returns 500
+## Server-Side Preset Returns 500
 
 **Symptom:** URLs using `imgproxyPreset()` return HTTP 500 from the imgproxy server.
 
@@ -70,7 +70,7 @@ Imgproxy::url($source)->imgproxyPreset('my-preset')->url();
 Imgproxy::url($source)->preset('my-preset')->url();
 ```
 
-## Base64 vs plain encoding mismatch
+## Base64 vs. Plain Encoding Mismatch
 
 **Symptom:** imgproxy returns errors about an invalid source URL or decoding failure.
 
@@ -88,7 +88,7 @@ Imgproxy::url($source)->preset('my-preset')->url();
 
 The package default is `base64`. If your server expects plain-encoded sources (the `plain/` prefix), set `'encoding' => 'plain'`.
 
-## Private disk yields pre-signed URLs unexpectedly
+## Private Disk Yields Pre-signed URLs Unexpectedly
 
 **Symptom:** A disk that you expect to produce plain `url()` values is generating pre-signed `temporaryUrl()` values instead.
 
@@ -108,7 +108,7 @@ The package default is `base64`. If your server expects plain-encoded sources (t
 
 See [Storage Integration](/guide/storage-integration) for the full detection logic.
 
-## Health command exits non-zero
+## The Health Command Exits Non-Zero
 
 **Symptom:** `php artisan imgproxy:health` exits with a non-zero status.
 

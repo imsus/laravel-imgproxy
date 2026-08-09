@@ -5,9 +5,11 @@ description: Multi-instance manager, presets, cache busting, server-side presets
 
 # Advanced Usage
 
-## Multi-Instance Manager
+Once you are comfortable building URLs, there are a handful of features worth knowing about: named instances, presets, cache busting, server-side presets, per-URL security caps, and the raw escape hatch.
 
-The package supports multiple named imgproxy instances, each with its own server, credentials, and encoding. The default instance reads from `IMGPROXY_URL`, `IMGPROXY_KEY`, and `IMGPROXY_SALT`.
+## The Multi-Instance Manager
+
+Most applications need a single imgproxy server, but some need several — staging versus production, or separate servers with different credentials. The package supports any number of named instances, each with its own server, credentials, and encoding.
 
 To target a non-default instance, call `Imgproxy::instance()`:
 
@@ -82,7 +84,7 @@ $url = Imgproxy::url($source)
 
 ### How Preset Composition Works
 
-Presets are expanded into their individual option segments and appended to the URL in order. Options chained after `preset()` land later in the segment chain, so they override earlier values (imgproxy processes left to right, last wins):
+Presets are expanded into their individual option segments and appended to the URL in order. Options chained after `preset()` land later in the segment chain, so they override earlier values — imgproxy processes options left to right, and the last one wins:
 
 ```php
 $url = Imgproxy::url($source)
@@ -99,7 +101,7 @@ $url = Imgproxy::url($source)
 - **Unknown presets throw.** Calling `->preset('nonexistent')` throws `InvalidArgumentException`.
 - **Invalid values throw.** A preset with an invalid resize type or out-of-range quality triggers the same validation as a direct method call.
 
-## Cache Buster
+## Cache Busting
 
 Append a version string to invalidate CDN, proxy, and browser caches. The buster becomes part of the URL path, so changing it forces a fresh fetch:
 
@@ -108,9 +110,9 @@ Imgproxy::url($source)->cacheBuster('v2')->url();
 // cb:v2
 ```
 
-Commonly tied to a file's updated timestamp or a content hash.
+This is commonly tied to a file's updated timestamp or a content hash.
 
-## Expires
+## Expiration
 
 Set a Unix timestamp after which imgproxy returns 404. Pass `0` to disable expiration:
 
@@ -133,7 +135,7 @@ Imgproxy::url($source)->filename('photo.jpg')->url();
 // fn:photo.jpg
 ```
 
-When the filename is already URL-safe Base64 encoded, pass `encoded: true`:
+When the filename is already URL-safe base64 encoded, pass `encoded: true`:
 
 ```php
 Imgproxy::url($source)->filename($encodedName, encoded: true)->url();
@@ -149,9 +151,9 @@ Imgproxy::url($source)->returnAttachment(true)->url();
 // att:1
 ```
 
-## imgproxyPreset (Server-Side Presets)
+## Server-Side Presets
 
-Reference presets defined on the imgproxy server itself (via `IMGPROXY_PRESETS` / `IMGPROXY_PRESETS_PATH`). This emits the `pr:` segment:
+imgproxy itself supports presets defined on the server (via `IMGPROXY_PRESETS` / `IMGPROXY_PRESETS_PATH`). Reference them with `imgproxyPreset()`, which emits the `pr:` segment:
 
 ```php
 Imgproxy::url($source)->imgproxyPreset('blog-cover')->url();
@@ -169,7 +171,7 @@ Imgproxy::url($source)->imgproxyPreset('blog-cover', 'sharpen')->url();
 Server-side presets are a separate mechanism from the client-side presets defined in `config/laravel-imgproxy.php`. If the server does not have the preset registered, imgproxy responds with `500`.
 :::
 
-## raw() Escape Hatch
+## The `raw()` Escape Hatch
 
 Append any imgproxy processing segment verbatim, without validation. Use this for options not yet covered by a typed method:
 
@@ -190,12 +192,12 @@ $url = Imgproxy::url($source)
 ```
 
 ::: tip
-Prefer typed methods when available — they validate inputs and catch errors early. `raw()` skips all validation.
+Prefer typed methods when they are available — they validate inputs and catch errors early. `raw()` skips all validation.
 :::
 
 ## Security Caps
 
-The imgproxy server enforces limits on source resolution, file size, and animation complexity. You can override these per-URL when the server has `IMGPROXY_ALLOW_INSECURE` or security options enabled:
+The imgproxy server enforces limits on source resolution, file size, and animation complexity. You can tighten these per-URL when the server has security options enabled:
 
 ```php
 // Max source resolution: 5 megapixels
