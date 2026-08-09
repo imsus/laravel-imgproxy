@@ -4,9 +4,9 @@
 
 **Blocked by:** 01 — Scaffold baseline
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `url($source)` returns the imgproxy base URL + base64-encoded source (URL-safe alphabet, no padding); `plain/` variant percent-encodes the source
-- [ ] Builder is immutable: every mutating call returns a new instance; the original is unchanged
-- [ ] Option segments assemble in call order between signature slot and source (unsigned URLs for now)
-- [ ] Golden-vector tests assert exact URL strings from imgproxy's documented examples
+- [x] `url($source)` returns the imgproxy base URL + base64-encoded source (URL-safe alphabet, no padding); `plain/` variant percent-encodes the source
+- [x] Builder is immutable: every mutating call returns a new instance; the original is unchanged
+- [x] Option segments assemble in call order between signature slot and source (unsigned URLs for now)
+- [x] Golden-vector tests assert exact URL strings from imgproxy's documented examples

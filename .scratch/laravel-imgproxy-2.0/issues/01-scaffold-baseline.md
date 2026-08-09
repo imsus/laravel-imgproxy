@@ -4,9 +4,9 @@
 
 **Blocked by:** None — can start immediately
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Composer metadata targets PHP ^8.4 and Laravel 13 only; `composer test`, `composer lint:check`, and `composer analyse` all pass on the skeleton
-- [ ] Placeholder command, placeholder config value, and empty main class are removed
-- [ ] Published config contains: default instance name, `instances` map (each with `url`, `key`, `salt`, `signature_size`, `encoding`), and `presets` section; default instance reads `IMGPROXY_URL`, `IMGPROXY_KEY`, `IMGPROXY_SALT` env vars
-- [ ] Service provider merges the config and registers the manager as a singleton
+- [x] Composer metadata targets PHP ^8.4 and Laravel 13 only; `composer test`, `composer lint:check`, and `composer analyse` all pass on the skeleton
+- [x] Placeholder command, placeholder config value, and empty main class are removed
+- [x] Published config contains: default instance name, `instances` map (each with `url`, `key`, `salt`, `signature_size`, `encoding`), and `presets` section; default instance reads `IMGPROXY_URL`, `IMGPROXY_KEY`, `IMGPROXY_SALT` env vars
+- [x] Service provider merges the config and registers the manager as a singleton
