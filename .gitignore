@@ -23,5 +23,6 @@ composer.lock
 
 # Docs site
 /node_modules
+/package-lock.json
 /docs/.vitepress/cache
 /docs/.vitepress/dist

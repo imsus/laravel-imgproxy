@@ -1,6 +1,7 @@
 {
     "private": true,
     "type": "module",
+    "packageManager": "pnpm@11.18.0",
     "scripts": {
         "docs:dev": "vitepress dev docs",
         "docs:build": "vitepress build docs && cp docs/public/404.html docs/.vitepress/dist/404.html",
