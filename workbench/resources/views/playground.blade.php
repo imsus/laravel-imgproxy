@@ -232,6 +232,7 @@
             padding: 10px 46px 10px 12px;
             font-size: 12px;
             line-height: 1.55;
+            white-space: pre-wrap;
             overflow-wrap: anywhere;
         }
 
@@ -475,8 +476,17 @@
                 <p class="lead" style="margin-bottom:8px">Defined in <code>workbench/config/laravel-imgproxy.php</code>:</p>
                 <div class="recipe">
                     <code>'presets' =&gt; [
-    'thumb' =&gt; ['resize' =&gt; 'fill', 'width' =&gt; 300, 'height' =&gt; 300],
-    'hero'  =&gt; ['resize' =&gt; 'fill', 'width' =&gt; 1200, 'height' =&gt; 600, 'quality' =&gt; 85],
+    'thumb' =&gt; [
+        'resize' =&gt; 'fill',
+        'width' =&gt; 300,
+        'height' =&gt; 300,
+    ],
+    'hero' =&gt; [
+        'resize' =&gt; 'fill',
+        'width' =&gt; 1200,
+        'height' =&gt; 600,
+        'quality' =&gt; 85,
+    ],
 ],</code>
                 </div>
             </div>
