@@ -6,7 +6,10 @@ namespace LaravelImgproxy\LaravelImgproxy;
 
 use DateTimeInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use LaravelImgproxy\LaravelImgproxy\View\Components\Img;
+use LaravelImgproxy\LaravelImgproxy\View\Components\Picture;
 
 class LaravelImgproxyServiceProvider extends ServiceProvider
 {
@@ -25,6 +28,11 @@ class LaravelImgproxyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'imgproxy');
+
+        Blade::component('imgproxy-img', Img::class);
+        Blade::component('imgproxy-picture', Picture::class);
+
         FilesystemAdapter::macro('imgproxy', function (string $path, int|DateTimeInterface|null $expiration = null): Builder {
             /** @var FilesystemAdapter $disk */
             $disk = $this;
@@ -39,5 +47,9 @@ class LaravelImgproxyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/laravel-imgproxy.php' => config_path('laravel-imgproxy.php'),
         ], ['laravel-imgproxy', 'laravel-imgproxy-config']);
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/imgproxy'),
+        ], ['laravel-imgproxy', 'laravel-imgproxy-views']);
     }
 }

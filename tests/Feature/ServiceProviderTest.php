@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Blade;
 use LaravelImgproxy\LaravelImgproxy\Instance;
 use LaravelImgproxy\LaravelImgproxy\Manager;
 
@@ -65,4 +66,23 @@ it('reads the default instance connection from the environment', function () {
         putenv('IMGPROXY_KEY');
         putenv('IMGPROXY_SALT');
     }
+});
+
+it('publishes the component views with the views tag', function () {
+    $this->artisan('vendor:publish', ['--tag' => 'laravel-imgproxy-views'])
+        ->assertSuccessful();
+
+    expect(resource_path('views/vendor/imgproxy/img.blade.php'))->toBeFile()
+        ->and(resource_path('views/vendor/imgproxy/picture.blade.php'))->toBeFile();
+});
+
+it('renders components with the published views in place', function () {
+    config()->set('laravel-imgproxy.instances.default.url', 'https://imgproxy.example.com');
+
+    $this->artisan('vendor:publish', ['--tag' => 'laravel-imgproxy-views'])
+        ->assertSuccessful();
+
+    $html = Blade::render('<x-imgproxy-img src="http://example.com/image.jpg" />');
+
+    expect($html)->toContain('src="https://imgproxy.example.com/unsafe/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlLmpwZw"');
 });
