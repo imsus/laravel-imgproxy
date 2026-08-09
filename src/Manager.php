@@ -49,6 +49,7 @@ final class Manager
             $config['salt'] ?? null,
             $config['signature_size'] ?? null,
             $config['encoding'],
+            $this->config['presets'],
         );
     }
 

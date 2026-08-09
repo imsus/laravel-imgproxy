@@ -38,6 +38,7 @@ final class Builder
      * @param  string|null  $key  Hex-encoded signing key, or null for unsigned URLs.
      * @param  string|null  $salt  Hex-encoded signing salt, or null for unsigned URLs.
      * @param  int|null  $signatureSize  Signature bytes to keep (1-32), or null for the full 32.
+     * @param  array<string, array<string, mixed>>  $presets  Named preset option sets, shared across instances.
      */
     public function __construct(
         private readonly string $baseUrl,
@@ -47,6 +48,7 @@ final class Builder
         ?string $key = null,
         ?string $salt = null,
         ?int $signatureSize = null,
+        private readonly array $presets = [],
     ) {
         $this->validateEncoding($encoding);
         $this->signer = new UrlSigner($key, $salt, $signatureSize);
@@ -87,6 +89,7 @@ final class Builder
             $this->signer->key(),
             $this->signer->salt(),
             $this->signer->signatureSize(),
+            $this->presets,
         );
     }
 
@@ -512,6 +515,17 @@ final class Builder
     }
 
     /**
+     * A tiny blurred webp URL of the same source, for LQIP placeholders.
+     *
+     * The placeholder is the current builder with `w:16`, `bl:8`, and the
+     * webp format appended, so the same source and signing are reused.
+     */
+    public function placeholder(): self
+    {
+        return $this->width(16)->blur(8)->format(Format::Webp);
+    }
+
+    /**
      * Apply the sharpen filter with the given mask size.
      *
      * As an approximate guideline, use 0.5 sigma for 4 pixels/mm, 1.0 for
@@ -800,6 +814,30 @@ final class Builder
     }
 
     /**
+     * Compose a named preset from config onto the builder.
+     *
+     * Preset options are appended before any options chained after this
+     * call, so per-URL overrides win (imgproxy processes options left to
+     * right and later options overwrite earlier ones).
+     *
+     * @throws InvalidArgumentException When the preset is not configured, or an option or value is invalid.
+     */
+    public function preset(string $name): self
+    {
+        if (! array_key_exists($name, $this->presets)) {
+            throw new InvalidArgumentException("The imgproxy preset [{$name}] is not configured.");
+        }
+
+        $builder = $this;
+
+        foreach ($this->presets[$name] as $option => $value) {
+            $builder = $builder->applyPresetOption($option, $value);
+        }
+
+        return $builder;
+    }
+
+    /**
      * Redefine the maximum source image resolution, in megapixels.
      *
      * The server only accepts this option when security options are allowed.
@@ -894,7 +932,121 @@ final class Builder
             $this->signer->key(),
             $this->signer->salt(),
             $this->signer->signatureSize(),
+            $this->presets,
         );
+    }
+
+    /**
+     * Apply one preset option onto the builder.
+     *
+     * Only single-value options are supported; preset keys match the fluent
+     * method names. Values pass through an explicit type check before the
+     * typed method validates them, so a bad config throws early.
+     *
+     * @throws InvalidArgumentException When the option is not supported or the value has the wrong type.
+     */
+    private function applyPresetOption(string $option, mixed $value): self
+    {
+        return match ($option) {
+            'resize' => $this->resize(self::expectEnumOrString($value, $option, ResizeType::class)),
+            'resizingType' => $this->resizingType(self::expectEnumOrString($value, $option, ResizeType::class)),
+            'minWidth' => $this->minWidth(self::expectInt($value, $option)),
+            'minHeight' => $this->minHeight(self::expectInt($value, $option)),
+            'zoom' => $this->zoom(self::expectNumber($value, $option)),
+            'width' => $this->width(self::expectInt($value, $option)),
+            'height' => $this->height(self::expectInt($value, $option)),
+            'quality' => $this->quality(self::expectInt($value, $option)),
+            'format' => $this->format(self::expectEnumOrString($value, $option, Format::class)),
+            'rawResponse' => $this->rawResponse(self::expectBool($value, $option)),
+            'gravity' => $this->gravity(self::expectEnumOrString($value, $option, Gravity::class)),
+            'dpr' => $this->dpr(self::expectNumber($value, $option)),
+            'blur' => $this->blur(self::expectNumber($value, $option)),
+            'sharpen' => $this->sharpen(self::expectNumber($value, $option)),
+            'pixelate' => $this->pixelate(self::expectInt($value, $option)),
+            'rotate' => $this->rotate(self::expectInt($value, $option)),
+            'autoRotate' => $this->autoRotate(self::expectBool($value, $option)),
+            'enlarge' => $this->enlarge(self::expectBool($value, $option)),
+            'background' => $this->background(self::expectString($value, $option)),
+            'stripMetadata' => $this->stripMetadata(self::expectBool($value, $option)),
+            'keepCopyright' => $this->keepCopyright(self::expectBool($value, $option)),
+            'stripColorProfile' => $this->stripColorProfile(self::expectBool($value, $option)),
+            'preserveHdr' => $this->preserveHdr(self::expectBool($value, $option)),
+            'enforceThumbnail' => $this->enforceThumbnail(self::expectBool($value, $option)),
+            'returnAttachment' => $this->returnAttachment(self::expectBool($value, $option)),
+            'cacheBuster' => $this->cacheBuster(self::expectString($value, $option)),
+            'expires' => $this->expires(self::expectInt($value, $option)),
+            'maxSrcResolution' => $this->maxSrcResolution(self::expectNumber($value, $option)),
+            'maxSrcFileSize' => $this->maxSrcFileSize(self::expectInt($value, $option)),
+            'maxAnimationFrames' => $this->maxAnimationFrames(self::expectInt($value, $option)),
+            'maxAnimationFrameResolution' => $this->maxAnimationFrameResolution(self::expectNumber($value, $option)),
+            'maxResultDimension' => $this->maxResultDimension(self::expectInt($value, $option)),
+            default => throw new InvalidArgumentException("The imgproxy preset option [{$option}] is not supported."),
+        };
+    }
+
+    /**
+     * @template T of BackedEnum
+     *
+     * @param  class-string<T>  $enumClass
+     * @return T|string
+     *
+     * @throws InvalidArgumentException When the value is not an enum instance or a string.
+     */
+    private static function expectEnumOrString(mixed $value, string $option, string $enumClass): BackedEnum|string
+    {
+        if ($value instanceof $enumClass || is_string($value)) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException("The imgproxy preset option [{$option}] must be a string.");
+    }
+
+    /**
+     * @throws InvalidArgumentException When the value is not a string.
+     */
+    private static function expectString(mixed $value, string $option): string
+    {
+        if (! is_string($value)) {
+            throw new InvalidArgumentException("The imgproxy preset option [{$option}] must be a string.");
+        }
+
+        return $value;
+    }
+
+    /**
+     * @throws InvalidArgumentException When the value is not an integer.
+     */
+    private static function expectInt(mixed $value, string $option): int
+    {
+        if (! is_int($value)) {
+            throw new InvalidArgumentException("The imgproxy preset option [{$option}] must be an integer.");
+        }
+
+        return $value;
+    }
+
+    /**
+     * @throws InvalidArgumentException When the value is not a number.
+     */
+    private static function expectNumber(mixed $value, string $option): int|float
+    {
+        if (! is_int($value) && ! is_float($value)) {
+            throw new InvalidArgumentException("The imgproxy preset option [{$option}] must be a number.");
+        }
+
+        return $value;
+    }
+
+    /**
+     * @throws InvalidArgumentException When the value is not a boolean.
+     */
+    private static function expectBool(mixed $value, string $option): bool
+    {
+        if (! is_bool($value)) {
+            throw new InvalidArgumentException("The imgproxy preset option [{$option}] must be a boolean.");
+        }
+
+        return $value;
     }
 
     /**

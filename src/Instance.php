@@ -21,6 +21,7 @@ final class Instance
      * @param  string|null  $salt  Hex-encoded signing salt, or null for unsigned URLs.
      * @param  int|null  $signatureSize  Signature bytes to keep (1-32), or null for the full 32.
      * @param  string  $encoding  Source encoding: "base64" or "plain".
+     * @param  array<string, array<string, mixed>>  $presets  Named preset option sets, shared across instances.
      *
      * @throws InvalidArgumentException When the base URL is empty.
      */
@@ -30,6 +31,7 @@ final class Instance
         private readonly ?string $salt = null,
         private readonly ?int $signatureSize = null,
         private readonly string $encoding = 'base64',
+        private readonly array $presets = [],
     ) {
         if ($url === '') {
             throw new InvalidArgumentException('The imgproxy instance has no URL configured.');
@@ -38,11 +40,11 @@ final class Instance
 
     /**
      * A URL builder for the given source, configured with this instance's
-     * connection details.
+     * connection details and the shared preset option sets.
      */
     public function url(string $source): Builder
     {
-        return new Builder($this->url, $source, $this->encoding, [], $this->key, $this->salt, $this->signatureSize);
+        return new Builder($this->url, $source, $this->encoding, [], $this->key, $this->salt, $this->signatureSize, $this->presets);
     }
 
     /**
