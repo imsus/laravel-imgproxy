@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\View\Components;
+namespace Imsus\LaravelImgproxy\View\Components;
 
 use Illuminate\Contracts\View\View;
+use Imsus\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Enums\Format;
 use InvalidArgumentException;
-use LaravelImgproxy\LaravelImgproxy\Builder;
-use LaravelImgproxy\LaravelImgproxy\Enums\Format;
 
 /**
  * Renders a <picture> with one <source> per format and a fallback <img>.

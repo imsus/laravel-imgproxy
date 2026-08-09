@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Builder;
 
 it('replaces the unsafe slot with the signature', function () {
     // key "secret" (hex 736563726574), salt "hello" (hex 68656C6C6F).

@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Tests\TestCase;
+use Imsus\LaravelImgproxy\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Builder;
-use LaravelImgproxy\LaravelImgproxy\Enums\Format;
-use LaravelImgproxy\LaravelImgproxy\Enums\ResizeType;
+use Imsus\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Enums\Format;
+use Imsus\LaravelImgproxy\Enums\ResizeType;
 
 it('composes a configured preset onto the builder', function () {
     $builder = new Builder(

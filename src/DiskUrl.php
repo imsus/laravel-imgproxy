@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy;
+namespace Imsus\LaravelImgproxy;
 
 use DateTimeInterface;
 use Illuminate\Filesystem\FilesystemAdapter;

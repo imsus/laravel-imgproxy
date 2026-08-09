@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Manager;
+use Imsus\LaravelImgproxy\Manager;
 
 if (! function_exists('imgproxy')) {
     /**

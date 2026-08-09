@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\UrlSigner;
+use Imsus\LaravelImgproxy\UrlSigner;
 
 it('reproduces the official imgproxy PHP example byte for byte', function () {
     $signer = new UrlSigner(

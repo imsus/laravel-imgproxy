@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\Console\Commands;
+namespace Imsus\LaravelImgproxy\Console\Commands;
 
 use Illuminate\Console\Command;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Builder;
-use LaravelImgproxy\LaravelImgproxy\Imgproxy;
-use LaravelImgproxy\LaravelImgproxy\Instance;
-use LaravelImgproxy\LaravelImgproxy\Manager;
+use Imsus\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Imgproxy;
+use Imsus\LaravelImgproxy\Instance;
+use Imsus\LaravelImgproxy\Manager;
 
 beforeEach(function () {
     config()->set('laravel-imgproxy', [

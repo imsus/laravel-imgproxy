@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\Enums;
+namespace Imsus\LaravelImgproxy\Enums;
 
 /**
  * The imgproxy resizing type (`rs` option).

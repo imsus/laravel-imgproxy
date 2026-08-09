@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy;
+namespace Imsus\LaravelImgproxy;
 
 use BackedEnum;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Storage;
+use Imsus\LaravelImgproxy\Enums\Format;
+use Imsus\LaravelImgproxy\Enums\Gravity;
+use Imsus\LaravelImgproxy\Enums\ResizeType;
+use Imsus\LaravelImgproxy\Enums\WatermarkPosition;
 use InvalidArgumentException;
-use LaravelImgproxy\LaravelImgproxy\Enums\Format;
-use LaravelImgproxy\LaravelImgproxy\Enums\Gravity;
-use LaravelImgproxy\LaravelImgproxy\Enums\ResizeType;
-use LaravelImgproxy\LaravelImgproxy\Enums\WatermarkPosition;
 use ValueError;
 
 /**

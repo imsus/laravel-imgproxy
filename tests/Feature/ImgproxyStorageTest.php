@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Carbon;
-use LaravelImgproxy\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Builder;
 
 afterEach(function () {
     Carbon::setTestNow();

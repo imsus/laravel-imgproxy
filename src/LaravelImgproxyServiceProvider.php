@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy;
+namespace Imsus\LaravelImgproxy;
 
 use DateTimeInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use LaravelImgproxy\LaravelImgproxy\Console\Commands\ImgproxyHealthCommand;
-use LaravelImgproxy\LaravelImgproxy\Console\Commands\ImgproxyKeyCommand;
-use LaravelImgproxy\LaravelImgproxy\View\Components\Img;
-use LaravelImgproxy\LaravelImgproxy\View\Components\Picture;
+use Imsus\LaravelImgproxy\Console\Commands\ImgproxyHealthCommand;
+use Imsus\LaravelImgproxy\Console\Commands\ImgproxyKeyCommand;
+use Imsus\LaravelImgproxy\View\Components\Img;
+use Imsus\LaravelImgproxy\View\Components\Picture;
 
 class LaravelImgproxyServiceProvider extends ServiceProvider
 {

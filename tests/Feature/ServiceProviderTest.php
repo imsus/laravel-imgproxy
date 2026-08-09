@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
-use LaravelImgproxy\LaravelImgproxy\Instance;
-use LaravelImgproxy\LaravelImgproxy\Manager;
+use Imsus\LaravelImgproxy\Instance;
+use Imsus\LaravelImgproxy\Manager;
 
 it('registers the manager as a singleton', function () {
     expect(app(Manager::class))->toBeInstanceOf(Manager::class);
@@ -47,9 +47,28 @@ it('resolves the default instance through the manager', function () {
 });
 
 it('reads the default instance connection from the environment', function () {
-    putenv('IMGPROXY_URL=https://imgproxy.example.com');
-    putenv('IMGPROXY_KEY=a1b2c3d4');
-    putenv('IMGPROXY_SALT=e5f60718');
+    $values = [
+        'IMGPROXY_URL' => 'https://imgproxy.example.com',
+        'IMGPROXY_KEY' => 'a1b2c3d4',
+        'IMGPROXY_SALT' => 'e5f60718',
+    ];
+
+    // Override every source env() reads (in order: $_ENV, $_SERVER, getenv)
+    // and snapshot the previous state so the test works in a shell that
+    // already exports IMGPROXY_* (e.g. for the live Docker integration tests).
+    $snapshot = [];
+
+    foreach ($values as $key => $value) {
+        $snapshot[$key] = [
+            'env' => array_key_exists($key, $_ENV) ? $_ENV[$key] : null,
+            'server' => array_key_exists($key, $_SERVER) ? $_SERVER[$key] : null,
+            'getenv' => getenv($key) !== false ? getenv($key) : null,
+        ];
+
+        $_ENV[$key] = $value;
+        $_SERVER[$key] = $value;
+        putenv("{$key}={$value}");
+    }
 
     try {
         $config = require __DIR__.'/../../config/laravel-imgproxy.php';
@@ -62,9 +81,25 @@ it('reads the default instance connection from the environment', function () {
             'encoding' => 'base64',
         ]);
     } finally {
-        putenv('IMGPROXY_URL');
-        putenv('IMGPROXY_KEY');
-        putenv('IMGPROXY_SALT');
+        foreach ($snapshot as $key => $sources) {
+            if ($sources['env'] === null) {
+                unset($_ENV[$key]);
+            } else {
+                $_ENV[$key] = $sources['env'];
+            }
+
+            if ($sources['server'] === null) {
+                unset($_SERVER[$key]);
+            } else {
+                $_SERVER[$key] = $sources['server'];
+            }
+
+            if ($sources['getenv'] === null) {
+                putenv($key);
+            } else {
+                putenv("{$key}={$sources['getenv']}");
+            }
+        }
     }
 });
 
@@ -77,7 +112,13 @@ it('publishes the component views with the views tag', function () {
 });
 
 it('renders components with the published views in place', function () {
-    config()->set('laravel-imgproxy.instances.default.url', 'https://imgproxy.example.com');
+    config()->set('laravel-imgproxy.instances.default', [
+        'url' => 'https://imgproxy.example.com',
+        'key' => null,
+        'salt' => null,
+        'signature_size' => null,
+        'encoding' => 'base64',
+    ]);
 
     $this->artisan('vendor:publish', ['--tag' => 'laravel-imgproxy-views'])
         ->assertSuccessful();

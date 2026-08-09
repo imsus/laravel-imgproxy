@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use LaravelImgproxy\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\Builder;
 
 it('encodes the source with URL-safe base64 without padding', function () {
     $builder = new Builder('http://imgproxy.example.com', 'http://img.example.com/example.jpg');

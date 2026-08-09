@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\View\Components;
+namespace Imsus\LaravelImgproxy\View\Components;
 
 use Illuminate\Contracts\View\View;
 

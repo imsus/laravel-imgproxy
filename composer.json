@@ -33,7 +33,7 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelImgproxy\\LaravelImgproxy\\": "src/"
+            "Imsus\\LaravelImgproxy\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -41,7 +41,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelImgproxy\\LaravelImgproxy\\Tests\\": "tests/",
+            "Imsus\\LaravelImgproxy\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -91,7 +91,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelImgproxy\\LaravelImgproxy\\LaravelImgproxyServiceProvider"
+                "Imsus\\LaravelImgproxy\\LaravelImgproxyServiceProvider"
             ]
         }
     },

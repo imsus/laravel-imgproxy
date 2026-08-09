@@ -10,6 +10,10 @@ composer.lock
 .idea
 .vscode
 
+# Testbench runtime artifacts
+/bootstrap
+/storage
+
 # Agent harness scaffolding
 /.agents
 /.claude

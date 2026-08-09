@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\Console\Commands;
+namespace Imsus\LaravelImgproxy\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
+use Imsus\LaravelImgproxy\Manager;
 use InvalidArgumentException;
-use LaravelImgproxy\LaravelImgproxy\Manager;
 
 /**
  * Checks the health of an imgproxy instance by requesting its /health

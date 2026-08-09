@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\Tests;
+namespace Imsus\LaravelImgproxy\Tests;
 
-use LaravelImgproxy\LaravelImgproxy\LaravelImgproxyServiceProvider;
+use Imsus\LaravelImgproxy\LaravelImgproxyServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra

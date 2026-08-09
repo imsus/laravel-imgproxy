@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace LaravelImgproxy\LaravelImgproxy\View\Components;
+namespace Imsus\LaravelImgproxy\View\Components;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Component;
+use Imsus\LaravelImgproxy\Builder;
+use Imsus\LaravelImgproxy\DiskUrl;
+use Imsus\LaravelImgproxy\Enums\Format;
 use InvalidArgumentException;
-use LaravelImgproxy\LaravelImgproxy\Builder;
-use LaravelImgproxy\LaravelImgproxy\DiskUrl;
-use LaravelImgproxy\LaravelImgproxy\Enums\Format;
 
 /**
  * Shared behavior for the imgproxy Blade components.
