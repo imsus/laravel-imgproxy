@@ -4,17 +4,18 @@
 
 **Blocked by:** 02 — Builder core + encoding
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Signed URL with key+salt configured matches the official `examples/signature.php` output byte for byte (golden vector)
-- [ ] `signature_size` truncation is honored when configured
-- [ ] Empty key produces an unsigned URL with the `unsafe` placeholder signature slot (imgproxy v4 requires the slot; see ticket 02)
-- [ ] Local-only Docker integration test: generated signed URL fetched from a real imgproxy returns HTTP 200 with an image content type; test skips in CI when the env gate is absent
+- [x] Signed URL with key+salt configured matches the official `examples/signature.php` output byte for byte (golden vector)
+- [x] `signature_size` truncation is honored when configured
+- [x] Empty key produces an unsigned URL with the `unsafe` placeholder signature slot (imgproxy v4 requires the slot; see ticket 02)
+- [x] Local-only Docker integration test: generated signed URL fetched from a real imgproxy returns HTTP 200 with an image content type; test skips in CI when the env gate is absent
 
-## Findings from ticket 02 (verified, do not re-derive)
+## Findings (verified against real v4 imgproxy, do not re-derive)
 
 - The signature covers the path **after** the signature slot, leading `/` included: `/{options}/{source}`. The real signature **replaces** the `unsafe` placeholder. Signing the path including `/unsafe` returns 404 from a real v4 server; signing the path without it returns 200.
-- Verified docs golden vector: key `secret` (hex `736563726574`), salt `hello` (hex `68656C6C6F`), path `/rs:fill:300:400:0/g:sm/aHR0cDovL2V4YW1w/bGUuY29tL2ltYWdl/cy9jdXJpb3NpdHku/anBn.png` → signature `oKfUtW34Dvo2BGQehJFR4Nr0_rIjOtdtzJ3QFsUcXH8`. URL-safe base64 of the HMAC-SHA256 digest, no padding.
+- **Correction to the earlier docs golden vector:** the signature printed on docs.imgproxy.net for the docs path (`oKfUtW34Dvo2BGQehJFR4Nr0_rIjOtdtzJ3QFsUcXH8`) is **stale** — a real v4 container with key `secret`/salt `hello` rejects it (HTTP 403). The verified signature for the path `/rs:fill:300:400:0/g:sm/aHR0cDovL2V4YW1wbGUuY29tL2ltYWdlL2N1cmlvc2l0eS5qcGc` is `Jn6kyi5kKLc44Okrcpq9aNRTu6XHNExAr2L-K7lln1E` (accepted, HTTP 404 only because the source URL is dead). Algorithm confirmed against imgproxy's Go source (`security/signature.go`) and its Go test vectors (`test-key`/`test-salt`/`asd` → `oWaL7QoW5TsgbuiS9-5-DI8S3Ibbo1gdB2SteJh3a20`; truncated to 8 → `oWaL7QoW5Ts`).
+- `signature_size` truncates the digest to the first N bytes before base64; a real server with `IMGPROXY_SIGNATURE_SIZE=8` accepts the 8-byte signature and rejects the full one.
 - Signing docs: https://docs.imgproxy.net/usage/signing_url — official PHP example in the imgproxy repo's `examples/` folder.
 
 ## Local verification config (local-only, not committed or shipped)

@@ -18,16 +18,25 @@ final class Builder
     /** @var list<string> */
     private const array ENCODINGS = ['base64', 'plain'];
 
+    private readonly UrlSigner $signer;
+
     /**
      * @param  list<string>  $segments  Processing option segments, in call order.
+     * @param  string|null  $key  Hex-encoded signing key, or null for unsigned URLs.
+     * @param  string|null  $salt  Hex-encoded signing salt, or null for unsigned URLs.
+     * @param  int|null  $signatureSize  Signature bytes to keep (1-32), or null for the full 32.
      */
     public function __construct(
         private readonly string $baseUrl,
         private readonly string $source,
         private readonly string $encoding = 'base64',
         private readonly array $segments = [],
+        ?string $key = null,
+        ?string $salt = null,
+        ?int $signatureSize = null,
     ) {
         $this->validateEncoding($encoding);
+        $this->signer = new UrlSigner($key, $salt, $signatureSize);
     }
 
     /**
@@ -35,13 +44,11 @@ final class Builder
      */
     public function url(): string
     {
-        $path = '/unsafe';
+        $path = '/'.($this->segments === [] ? '' : implode('/', $this->segments).'/').$this->encodedSource();
 
-        if ($this->segments !== []) {
-            $path .= '/'.implode('/', $this->segments);
-        }
+        $signature = $this->signer->sign($path) ?: 'unsafe';
 
-        return rtrim($this->baseUrl, '/').$path.'/'.$this->encodedSource();
+        return rtrim($this->baseUrl, '/').'/'.$signature.$path;
     }
 
     /**
@@ -59,7 +66,15 @@ final class Builder
      */
     public function encoding(string $encoding): self
     {
-        return new self($this->baseUrl, $this->source, $encoding, $this->segments);
+        return new self(
+            $this->baseUrl,
+            $this->source,
+            $encoding,
+            $this->segments,
+            $this->signer->key(),
+            $this->signer->salt(),
+            $this->signer->signatureSize(),
+        );
     }
 
     private function encodedSource(): string
