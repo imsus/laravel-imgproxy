@@ -162,3 +162,66 @@ $image->adapter()->delete($image->path());
 - When the disk write fails, the original error is wrapped in the same exception type. This covers both throwing disks and disks configured with `'throw' => false`, which report failures by returning `false` instead.
 - The destination disk must exist; a missing disk throws Laravel's usual `InvalidArgumentException` before any HTTP request is made.
 - The fetch uses a 30-second timeout that covers the whole request, including the streamed body transfer; for very large renders or slow links, raise it via `Http::timeout()` configuration on the request or the HTTP client defaults.
+
+## Use Cases
+
+### Converting images between storages
+
+The storage-to-storage pipeline: the raw image stays on its origin disk, imgproxy converts it, and the result is written to a different disk:
+
+::: tip
+imgproxy is a conversion tool that *serves* the processed bytes — it has no feature to upload results to your storage. `toStorage()` is the bridge: it fetches the converted output and persists it, so imgproxy acts as a pure conversion service in the middle of your pipeline.
+:::
+
+```php
+use Imsus\LaravelImgproxy\Enums\Format;
+use Imsus\LaravelImgproxy\Enums\ResizeType;
+
+$image = Storage::disk('origin')->imgproxy('raw/photo.jpg')
+    ->resize(ResizeType::Fill, 800, 600)
+    ->format(Format::Webp)
+    ->toStorage('processed', 'converted/photo.webp');
+
+$image->url(); // serve from the processed disk
+```
+
+### Materializing variants at upload time
+
+Generate format and size variants once, when the original is uploaded, instead of converting on every request. The stored images are durable — they survive imgproxy instance changes and key rotation, and imgproxy never sits in the request path afterward:
+
+```php
+use Imsus\LaravelImgproxy\Enums\Format;
+
+foreach ([300, 600, 1200] as $width) {
+    Storage::disk('origin')->imgproxy('raw/photo.jpg')
+        ->width($width)
+        ->format(Format::Webp)
+        ->toStorage('cdn', "variants/photo-{$width}.webp", ['visibility' => 'public']);
+}
+```
+
+### Batch conversion with queued jobs
+
+`toStorage()` is synchronous — one conversion per call, blocking until the bytes are written. For large batches, run the conversions in queued jobs:
+
+::: warning
+Do **not** build the source URL before queueing a job. A private origin disk yields a pre-signed source URL that expires (5 minutes by default); a job that runs later fetches an expired source and fails. Resolve the disk inside the job instead, so the pre-signed URL is fresh at run time.
+:::
+
+```php
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Storage;
+use Imsus\LaravelImgproxy\Enums\Format;
+
+class ConvertImageJob implements ShouldQueue
+{
+    public function __construct(private readonly string $path) {}
+
+    public function handle(): void
+    {
+        Storage::disk('origin')->imgproxy($this->path)
+            ->format(Format::Webp)
+            ->toStorage('processed', 'converted/'.$this->path.'.webp');
+    }
+}
+```
