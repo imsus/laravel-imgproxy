@@ -162,7 +162,7 @@ $image->url(3600);   // private disk -> pre-signed temporaryUrl(), 1 hour
 $image->adapter();   // the destination disk adapter
 ```
 
-The response body is streamed to the disk, so large images never load fully into memory. An existing file at the path is overwritten. When imgproxy responds with a non-success status or the disk write fails, an `ImgproxyStorageException` is thrown. On private destination disks, `url()` yields a pre-signed `temporaryUrl()` (5 minutes by default).
+The response body is streamed to the disk, so large images never load fully into memory. An existing file at the path is overwritten. When imgproxy responds with a non-2xx status or the disk write fails, an `ImgproxyStorageException` is thrown. On private destination disks, `url()` yields a pre-signed `temporaryUrl()` (5 minutes by default).
 
 ## Blade Components
 

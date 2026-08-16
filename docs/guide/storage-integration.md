@@ -119,7 +119,7 @@ $url = imgproxy()->image('unused')
 
 ## Materializing Processed Images
 
-`toStorage()` is the terminal opposite of `url()`: it fetches the processed image from imgproxy and writes it to a destination disk, returning a `StoredImage` representation of the stored file.
+`toStorage()` is the terminal counterpart of `url()`: instead of returning a URL, it fetches the processed image from imgproxy and writes it to a destination disk, returning a `StoredImage` representation of the stored file.
 
 ```php
 use Imsus\LaravelImgproxy\Enums\Format;

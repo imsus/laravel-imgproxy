@@ -17,5 +17,5 @@ A processed image that has been fetched from imgproxy and written to a destinati
 _Avoid_: Cached image, saved url, stored url
 
 **Destination disk**:
-The Storage disk a stored image is written to, and the path on it the image occupies.
+The Storage disk a stored image is written to, and the path it occupies on that disk.
 _Avoid_: Storage, target, bucket

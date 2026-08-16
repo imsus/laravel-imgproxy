@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Storage;
  * A processed image that has been fetched from imgproxy and written to a
  * destination disk by Builder::toStorage().
  *
- * Immutable, and holds only the disk name and path so it can be serialized
- * and passed around; the disk adapter and URLs are resolved lazily.
+ * It is immutable and holds only the disk name and path, so it is
+ * serializable and cheap to pass around; the disk adapter and URLs
+ * resolve lazily.
  */
 final class StoredImage
 {

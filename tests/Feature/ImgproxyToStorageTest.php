@@ -86,7 +86,7 @@ it('overwrites an existing file at the destination path', function () {
     expect(Storage::disk('public')->get('processed/photo.webp'))->toBe('new-bytes');
 });
 
-it('throws without writing when imgproxy responds with a non-success status', function () {
+it('throws without writing when imgproxy responds with a non-2xx status', function () {
     Http::fake([
         'https://imgproxy.example.com/*' => Http::response('Not Found', 404),
     ]);
@@ -138,7 +138,7 @@ it('throws without writing when imgproxy responds with a redirect', function () 
         ->and(Storage::disk('public')->exists('processed/photo.webp'))->toBeFalse();
 });
 
-it('forwards extra write options to the disk write', function () {
+it('forwards extra write options to the disk', function () {
     Storage::extend('recording', function ($app, array $config) {
         $adapter = new LocalFilesystemAdapter($config['root']);
 
@@ -194,7 +194,7 @@ it('yields a pre-signed url with the given expiration on a private destination d
     expect($image->url(3600))->toBe('https://signed.example.com/processed/photo.webp?expires=1767229200');
 });
 
-it('defaults a private destination url to a five minute expiration', function () {
+it('uses a five-minute default expiration for a private destination url', function () {
     Carbon::setTestNow('2026-01-01 00:00:00+00:00');
 
     Storage::disk('local')->buildTemporaryUrlsUsing(
