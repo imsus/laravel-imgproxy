@@ -6,12 +6,15 @@ namespace Imsus\LaravelImgproxy;
 
 use BackedEnum;
 use DateTimeInterface;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Imsus\LaravelImgproxy\Enums\Format;
 use Imsus\LaravelImgproxy\Enums\Gravity;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
 use Imsus\LaravelImgproxy\Enums\WatermarkPosition;
+use Imsus\LaravelImgproxy\Exceptions\ImgproxyStorageException;
 use InvalidArgumentException;
+use Throwable;
 use ValueError;
 
 /**
@@ -32,6 +35,11 @@ final class Builder
 {
     /** @var list<string> */
     private const array ENCODINGS = ['base64', 'plain'];
+
+    /**
+     * The HTTP timeout, in seconds, for fetching the processed image in toStorage().
+     */
+    private const int TO_STORAGE_TIMEOUT_SECONDS = 30;
 
     private readonly UrlSigner $signer;
 
@@ -74,6 +82,46 @@ final class Builder
     public function __toString(): string
     {
         return $this->url();
+    }
+
+    /**
+     * Fetch the processed image from imgproxy and write it to a Storage disk.
+     *
+     * The imgproxy URL is built from the current source and processing
+     * options; the response body is streamed to the destination disk, so
+     * large images never load fully into memory. An existing file at the
+     * path is overwritten. Returns a representation of the stored image;
+     * public destination disks yield plain URLs, private ones pre-signed
+     * temporary URLs.
+     *
+     * @param  array<string, mixed>  $options  Extra options forwarded to the disk write, e.g. visibility or Content-Type.
+     *
+     * @throws InvalidArgumentException When the destination disk is not configured.
+     * @throws ImgproxyStorageException When imgproxy responds with a non-success status or the disk write fails.
+     */
+    public function toStorage(string $disk, string $path, array $options = []): StoredImage
+    {
+        $adapter = Storage::disk($disk);
+
+        $response = Http::timeout(self::TO_STORAGE_TIMEOUT_SECONDS)
+            ->withOptions(['stream' => true])
+            ->get($this->url());
+
+        if (! $response->successful()) {
+            throw ImgproxyStorageException::fromResponse($this->url(), $response);
+        }
+
+        try {
+            $written = $adapter->writeStream($path, $response->resource(), $options);
+        } catch (Throwable $exception) {
+            throw ImgproxyStorageException::fromWrite($disk, $path, $exception);
+        }
+
+        if (! $written) {
+            throw ImgproxyStorageException::fromWrite($disk, $path);
+        }
+
+        return new StoredImage($disk, $path);
     }
 
     /**

@@ -8,11 +8,12 @@ use DateTimeInterface;
 use Illuminate\Filesystem\FilesystemAdapter;
 
 /**
- * Resolves a Storage disk path to an imgproxy source URL.
+ * Resolves a Storage disk path to a URL: the plain url() on public disks, a
+ * pre-signed temporaryUrl() on private ones. Shared by imgproxy source
+ * resolution and stored-image URL resolution.
  *
  * A disk is treated as private when its driver can produce temporary URLs
- * and its config does not mark it public; private disks yield a pre-signed
- * temporary URL, public disks yield their plain URL.
+ * and its config does not mark it public.
  */
 final class DiskUrl
 {
@@ -22,6 +23,8 @@ final class DiskUrl
     private const int DEFAULT_EXPIRATION_SECONDS = 300;
 
     /**
+     * Resolve a disk path to a URL, pre-signing it on private disks.
+     *
      * @param  int|DateTimeInterface|null  $expiration  Temporary URL lifetime in seconds from now, an absolute time, or null for the default 5 minutes.
      */
     public static function resolve(FilesystemAdapter $disk, string $path, int|DateTimeInterface|null $expiration = null): string
