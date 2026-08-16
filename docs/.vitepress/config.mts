@@ -14,9 +14,9 @@ export default defineConfig({
             { text: 'Reference', link: '/reference/api' },
             { text: 'Contribute', link: '/contribute/contributing' },
             {
-                text: 'v2.0.0',
+                text: 'v2.1.0',
                 items: [
-                    { text: 'v2.0.0 (current)', link: '/' },
+                    { text: 'v2.1.0 (current)', link: '/' },
                     { text: 'v1.x (frozen)', link: '/1.x/' },
                 ],
             },
@@ -30,6 +30,7 @@ export default defineConfig({
                     items: [
                         { text: 'Introduction', link: '/guide/getting-started' },
                         { text: 'Installation', link: '/guide/installation' },
+                        { text: 'Upgrading from 1.x', link: '/guide/upgrading' },
                     ],
                 },
                 {

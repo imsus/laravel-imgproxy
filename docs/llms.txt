@@ -29,7 +29,8 @@
 - **`Imgproxy` facade** (`Imsus\LaravelImgproxy\Imgproxy`) — proxies to the Manager
 - **`imgproxy()` helper** — returns the Manager instance
 - **`Manager`** — resolves imgproxy instances from config
-- **`Builder`** — immutable fluent URL builder (53 public methods)
+- **`Builder`** — immutable fluent URL builder (54 public methods)
+- **`StoredImage`** — representation of a processed image materialized onto a Storage disk by `toStorage()`
 - **`Enums`** — `ResizeType`, `Gravity`, `Format`, `WatermarkPosition`
 - **Blade components** — `<x-imgproxy-img>`, `<x-imgproxy-picture>`
 - **Storage macro** — `FilesystemAdapter::imgproxy(string $path, int|DateTimeInterface|null $expiration = null): Builder`
@@ -39,7 +40,7 @@
 
 | Group | Methods |
 | --- | ---|
-| Construction & terminal | `__construct`, `url`, `__toString`, `sourceEncoding`, `disk` |
+| Construction & terminal | `__construct`, `url`, `__toString`, `sourceEncoding`, `disk`, `toStorage` |
 | Resize | `resize`, `resizeWithGravity`, `width`, `height`, `minWidth`, `minHeight`, `zoom` |
 | Crop & gravity | `crop`, `trim`, `padding`, `gravity`, `focusPoint` |
 | Quality & format | `quality`, `format`, `formatQuality`, `skipProcessing`, `raw`, `withoutRaw` |
@@ -90,6 +91,7 @@ config('laravel-imgproxy') = [
 
 - [Getting Started](https://imsus.github.io/laravel-imgproxy/guide/getting-started)
 - [Installation](https://imsus.github.io/laravel-imgproxy/guide/installation)
+- [Upgrading from 1.x](https://imsus.github.io/laravel-imgproxy/guide/upgrading)
 - [Usage](https://imsus.github.io/laravel-imgproxy/guide/usage)
 - [Resizing](https://imsus.github.io/laravel-imgproxy/guide/resizing)
 - [Quality](https://imsus.github.io/laravel-imgproxy/guide/quality)
