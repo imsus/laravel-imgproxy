@@ -117,7 +117,7 @@ $url = imgproxy()->image('unused')
     ->url();
 ```
 
-## Materializing Processed Images
+## Materializing Processed Images <Badge type="tip" text="New in v2.1.0" />
 
 `toStorage()` is the terminal counterpart of `url()`: instead of returning a URL, it fetches the processed image from imgproxy and writes it to a destination disk, returning a `StoredImage` representation of the stored file.
 
