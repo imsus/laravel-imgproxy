@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased]
+## [v2.1.0](https://github.com/imsus/laravel-imgproxy/compare/v2.0.0...v2.1.0)
 
 ### Enhancements
 
