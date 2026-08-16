@@ -42,6 +42,25 @@ Run all tests:
 composer test
 ```
 
+## Docs
+
+The documentation site is VitePress under `docs/`. Build it locally to verify changes:
+
+```bash
+pnpm run docs:build
+```
+
+- Keep the [API reference](docs/reference/api.md) in sync with the public surface — every class, method, and signature documented there must match the code.
+- **Version badges**: when a feature ships in a release, mark it in the docs with the VitePress Badge component so readers know when it was introduced. Put the badge on the feature's section heading and on its rows in API tables:
+
+```markdown
+## Materializing Processed Images <Badge type="tip" text="New in v2.1.0" />
+
+| `toStorage` <Badge type="tip" text="v2.1.0" /> | ... |
+```
+
+`text` is the first release that includes the feature (`New in vX.Y.Z` on headings, `vX.Y.Z` in table cells). New features land in a minor release; bug fixes and internal changes do not get badges.
+
 ## Playground
 
 The workbench app doubles as a live review playground. It renders real URLs and images through the package against a local imgproxy, so a human reviewer sees the actual output:
