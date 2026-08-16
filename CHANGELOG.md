@@ -1,5 +1,11 @@
 # Release Notes
 
+## [Unreleased]
+
+### Enhancements
+
+- New terminal `Builder::toStorage($disk, $path, $options)` fetches the processed image from imgproxy and streams it to a Storage disk, returning a `StoredImage` representation (disk, path, name, `url()` with public/private detection, adapter). Non-2xx responses and failed writes throw `ImgproxyStorageException`.
+
 ## [v2.0.0](https://github.com/imsus/laravel-imgproxy/compare/v1.1.0...v2.0.0) - 2026-08-09
 
 ### Breaking changes

@@ -145,6 +145,25 @@ Storage::disk('s3')->imgproxy('products/image.jpg', 3600)
     ->url();
 ```
 
+### Materializing Processed Images
+
+Instead of returning a URL, `toStorage()` fetches the processed image from imgproxy and writes it to any Storage disk, returning a `StoredImage` representation of the stored file:
+
+```php
+$image = imgproxy()->image('https://example.com/photo.jpg')
+    ->width(800)
+    ->format(Format::Webp)
+    ->toStorage('s3', 'processed/photo.webp', ['visibility' => 'public']);
+
+$image->disk();      // 's3'
+$image->path();      // 'processed/photo.webp'
+$image->url();       // public disk -> https://.../processed/photo.webp
+$image->url(3600);   // private disk -> pre-signed temporaryUrl(), 1 hour
+$image->adapter();   // the destination disk adapter
+```
+
+The response body is streamed to the disk, so large images never load fully into memory. An existing file at the path is overwritten. When imgproxy responds with a non-success status or the disk write fails, an `ImgproxyStorageException` is thrown. On private destination disks, `url()` yields a pre-signed `temporaryUrl()` (5 minutes by default).
+
 ## Blade Components
 
 The package ships two Blade components: `<x-imgproxy-img>` for a single `<img>` with responsive srcsets, and `<x-imgproxy-picture>` for format negotiation with a fallback image. Both support LQIP placeholders, width or DPR candidates, named presets, lazy loading by default, and Storage disk sources:

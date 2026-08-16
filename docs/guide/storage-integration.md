@@ -116,3 +116,49 @@ $url = imgproxy()->image('unused')
     ->width(800)
     ->url();
 ```
+
+## Materializing Processed Images
+
+`toStorage()` is the terminal opposite of `url()`: it fetches the processed image from imgproxy and writes it to a destination disk, returning a `StoredImage` representation of the stored file.
+
+```php
+use Imsus\LaravelImgproxy\Enums\Format;
+
+$image = imgproxy()->image('https://example.com/photo.jpg')
+    ->width(800)
+    ->format(Format::Webp)
+    ->toStorage('s3', 'processed/photo.webp');
+```
+
+The imgproxy URL is built from the current source and processing options; the response body is streamed to the disk, so large images never load fully into memory. An existing file at the destination path is overwritten. Extra write options (visibility, Content-Type, metadata) pass through to the disk write:
+
+```php
+$image = imgproxy()->image('https://example.com/photo.jpg')
+    ->toStorage('s3', 'processed/photo.webp', ['visibility' => 'public']);
+```
+
+The returned `StoredImage` carries the disk and path, and produces URLs with the same public/private rule as sources:
+
+```php
+$image->disk();    // 's3'
+$image->path();    // 'processed/photo.webp'
+$image->name();    // 'photo.webp'
+
+// Public destination disk -> plain object URL
+$image->url();
+
+// Private destination disk -> pre-signed temporaryUrl(), 5 minutes by default
+$image->url(3600);
+
+// The destination disk adapter, for advanced operations
+$image->adapter()->delete($image->path());
+```
+
+`(string) $image` is the same URL, so stored images work directly in Blade: `{{ $image }}`.
+
+### Failure behavior
+
+- When imgproxy responds with a non-success status (anything outside 2xx, including redirects), an `ImgproxyStorageException` is thrown **before** any disk write, with the HTTP status and a snippet of the response body in the message.
+- When the disk write fails, the original error is wrapped in the same exception type. This covers both throwing disks and disks configured with `'throw' => false`, which report failures by returning `false` instead.
+- The destination disk must exist; a missing disk throws Laravel's usual `InvalidArgumentException` before any HTTP request is made.
+- The fetch uses a 30-second timeout that covers the whole request, including the streamed body transfer; for very large renders or slow links, raise it via `Http::timeout()` configuration on the request or the HTTP client defaults.
