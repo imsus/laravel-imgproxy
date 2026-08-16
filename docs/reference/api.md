@@ -65,6 +65,7 @@ public function __construct(
 | `__toString` | `__toString(): string` | — | Alias for `url()`. Works in string contexts. |
 | `sourceEncoding` | `sourceEncoding(string $encoding): self` | — | Return a copy with a different source encoding (`base64` or `plain`). |
 | `disk` | `disk(string $disk, string $path, int\|DateTimeInterface\|null $expiration = null): self` | — | Set the source to a file on a Storage disk. Public disks use `url()`; private disks use a pre-signed `temporaryUrl()`. |
+| `toStorage` <Badge type="tip" text="v2.1.0" /> | `toStorage(string $disk, string $path, array $options = []): StoredImage` | — | Fetch the processed image from imgproxy and write it to a Storage disk, streaming the response body. Existing files are overwritten. Returns a [StoredImage](#storedimage). |
 
 ### Resize
 
@@ -170,6 +171,21 @@ public function __construct(
 | Method | Signature | imgproxy segment | Description |
 | --- | --- | --- | --- |
 | `withOption` | `withOption(string $segment): self` | *(verbatim)* | Append a processing option segment verbatim, without validation. Use for imgproxy options not yet covered by a typed method. |
+
+## StoredImage <Badge type="tip" text="New in v2.1.0" />
+
+`Imsus\LaravelImgproxy\StoredImage` is the representation of a processed image fetched from imgproxy and written to a Storage disk by `Builder::toStorage()`. It is immutable and holds only the disk name and path; the disk adapter and URLs resolve lazily.
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `disk` | `disk(): string` | The destination disk name. |
+| `path` | `path(): string` | The path of the stored image on the destination disk. |
+| `name` | `name(): string` | The file name of the stored image. |
+| `url` | `url(int\|DateTimeInterface\|null $expiration = null): string` | A URL for the stored image: the plain object URL on public disks, a pre-signed `temporaryUrl()` on private ones (5 minutes by default). |
+| `adapter` | `adapter(): FilesystemAdapter` | The destination disk adapter, for advanced operations. |
+| `__toString` | `__toString(): string` | Alias for `url()`. Works in string contexts. |
+
+See [Storage Integration](/guide/storage-integration#materializing-processed-images) for usage.
 
 ## Enums
 
