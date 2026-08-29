@@ -1,56 +1,72 @@
 # Contribution Guide
 
-Thank you for considering contributing to Laravel imgproxy! Please review the following guidelines before submitting a pull request.
+Thank you for considering contributing to Laravel imgproxy! This project is
+MIT-licensed, and contributions are welcome from anyone.
 
-For significant changes, please open an issue first so we can discuss the approach.
+Before you start, please read our [Code of Conduct](../CODE_OF_CONDUCT.md).
+
+## Reporting Bugs & Requesting Features
+
+- **Bugs** — use the [Bug Report](ISSUE_TEMPLATE/bug.yml) template. Include the package, Laravel, and PHP versions, plus a minimal reproduction.
+- **Features** — use the [Feature Request](ISSUE_TEMPLATE/feature_request.yml) template.
+- For larger changes, open an issue first to discuss the approach before writing code.
 
 ## Process
 
-1. Fork the project
-2. Create a new branch
-3. Code, test, commit, and push
-4. Open a pull request detailing your changes
+1. Fork the project.
+2. Create a feature branch.
+3. Code, test, commit, and push.
+4. Open a pull request describing your change.
 
-## Guidelines
+## Development Setup
 
-- Ensure the coding style passes by running `composer lint`.
-- Send a coherent commit history, making sure each commit in your pull request is meaningful.
-- You may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) to avoid merge conflicts.
-- Please remember that we follow [SemVer](http://semver.org/).
-
-## Setup
-
-Clone your fork, then install the dev dependencies:
+Clone your fork and install the dev dependencies:
 
 ```bash
 composer install
 ```
 
-## Lint
+## Validating Changes
 
-Lint your code:
-
-```bash
-composer lint
-```
-
-## Tests
-
-Run all tests:
+Run the full validation suite before opening a pull request. It runs static
+analysis, the formatting check, type coverage, and the unit tests:
 
 ```bash
 composer test
 ```
 
-## Docs
+You can run individual steps:
 
-The documentation site is VitePress under `docs/`. Build it locally to verify changes:
+```bash
+composer analyse      # PHPStan static analysis
+composer lint:check   # check Pint formatting
+composer lint         # auto-fix formatting with Pint
+composer test:unit    # Pest unit tests (parallel)
+composer test:types   # Pest type coverage (100% required)
+```
+
+The live imgproxy tests (against a real imgproxy in Docker) are gated behind
+`IMGPROXY_URL`, `IMGPROXY_KEY`, and `IMGPROXY_SALT` and skip when they are unset.
+CI never sets them.
+
+## Guidelines
+
+- Follow the existing code style (Pint). `composer lint` will format your changes.
+- Keep each commit meaningful; write a coherent history.
+- Rebase your branch to avoid merge conflicts.
+- We follow [SemVer](https://semver.org/). Breaking changes require a major version bump and an upgrade note in `UPGRADING.md`.
+- Keep type coverage at 100% (`composer test:types`).
+- Add tests for any new observable behavior.
+
+## Documentation
+
+The documentation site is a VitePress app in `docs/`. Build it locally to verify changes:
 
 ```bash
 pnpm run docs:build
 ```
 
-- Keep the [API reference](docs/reference/api.md) in sync with the public surface — every class, method, and signature documented there must match the code.
+- Keep the [API reference](../docs/reference/api.md) in sync with the public surface — every class, method, and signature documented there must match the code.
 - **Version badges**: when a feature ships in a release, mark it in the docs with the VitePress Badge component so readers know when it was introduced. Put the badge on the feature's section heading and on its rows in API tables:
 
 ```markdown
