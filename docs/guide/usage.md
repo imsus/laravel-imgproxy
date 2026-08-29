@@ -32,25 +32,105 @@ $url = Imgproxy::instance('staging')
     ->url();
 ```
 
+To express the source kind at the entry point, the manager also exposes `fromStorage()`, `fromPath()`, and `fromUrl()`:
+
+```php
+Imgproxy::fromStorage('images/photo.jpg', 'public')->width(640)->url(); // disk source
+Imgproxy::fromPath('https://example.com/image.jpg')->width(640)->url(); // path source
+Imgproxy::fromUrl('https://example.com/image.jpg')->width(640)->url();  // URL source
+```
+
+`fromStorage()` mirrors the Storage macro (source-subject-first: path, then disk) and resolves public disks to their `url()` and private disks to a pre-signed `temporaryUrl()`. `fromPath()` and `fromUrl()` are explicit forms of the default `image()` entry.
+
 ## Building URLs
 
-Start every URL with `->image($source)`. Chain as many option methods as you need and finish with `->url()` or `__toString()`:
+Start every URL with `->image($source)`. Chain as many methods as you need and finish with `->url()` or `__toString()`:
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
-use Imsus\LaravelImgproxy\Enums\Format;
-use Imsus\LaravelImgproxy\Enums\ResizeType;
 
 $url = Imgproxy::image('https://example.com/image.jpg')
-    ->resize(ResizeType::Fill, 300, 300)
+    ->cover(300, 300)
     ->quality(80)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
-Notice how the source URL is encoded and the processing options are appended as path segments. Because the builder is immutable, you can chain options in any order without worrying about mutating a shared instance — more on that in a moment.
+Notice how the source URL is encoded and the processing options are appended as path segments. The builder has **two API layers**: high-level *intent methods* (`cover`, `fit`, `orient`, `toWebp`, `storePublicly`, …) that say what you want in domain terms and compile to option segments, and the typed *processing-option* layer (`resize()`, `crop()`, `gravity()`, `format()`, …) that maps one-to-one to imgproxy's options. Because the builder is immutable, you can chain options in any order without worrying about mutating a shared instance — more on that in a moment.
+
+## Intent Methods <Badge type="tip" text="New in v2.2.0" />
+
+The intent methods express the desired outcome in domain terms and compile down to the existing processing-option segments. They are the documented headline; drop down to the processing-option methods when you need precise wire-level control.
+
+### Cover & Fit
+
+```php
+use Imsus\LaravelImgproxy\Imgproxy;
+use Imsus\LaravelImgproxy\Enums\Gravity;
+
+// Crop to fill a 800×600 box, anchoring the crop at the top edge
+$url = Imgproxy::image($source)->cover(800, 600, Gravity::North)->url();
+// rs:fill:800:600/g:no
+
+// Fit within a 800×600 box (keeps the aspect ratio, never upscales)
+$url = Imgproxy::image($source)->fit(800, 600)->url();
+// rs:fit:800:600
+```
+
+Like imgproxy's default, neither method enlarges the source; chain `enlarge()` when you want to allow upscaling.
+
+### Orientation & Flips
+
+```php
+Imgproxy::image($source)->orient()->url();          // ar:1 (EXIF auto-rotate)
+Imgproxy::image($source)->flipVertically()->url();  // fl:0:1
+Imgproxy::image($source)->flipHorizontally()->url(); // fl:1:0
+```
+
+### Format Shortcuts
+
+```php
+Imgproxy::image($source)->toWebp()->url(); // f:webp
+Imgproxy::image($source)->toJpg()->url();  // f:jpg
+Imgproxy::image($source)->toPng()->url();  // f:png
+Imgproxy::image($source)->toAvif()->url(); // f:avif
+```
+
+### Optimize
+
+A single call that defaults to WebP at quality 70 — the same convention as Laravel's `Image::optimize()`:
+
+```php
+Imgproxy::image($source)->optimize()->url();                 // f:webp/q:70
+Imgproxy::image($source)->optimize('avif', 80)->url();       // f:avif/q:80
+Imgproxy::image($source)->optimize(quality: 85)->url();      // f:webp/q:85
+```
+
+### Conditional Application
+
+The builder is `Conditionable`, so `when()` and `unless()` let you build variants from one base — useful for keeping a placeholder and a full-size image consistent:
+
+```php
+$base = Imgproxy::image($source)->cover(400, 400);
+
+$placeholder = $base->when($isPlaceholder, fn ($builder) => $builder->width(16)->blur(8)->toWebp());
+$full = $base->when(! $isPlaceholder, fn ($builder) => $builder->quality(85));
+```
+
+### Store Publicly
+
+`storePublicly()` is `toStorage()` with `['visibility' => 'public']` already applied, so you don't have to remember the options array:
+
+```php
+$image = Imgproxy::image($source)
+    ->width(800)
+    ->toWebp()
+    ->storePublicly('s3', 'processed/photo.webp');
+```
+
+See [Materializing Processed Images](/guide/storage-integration) for the full `toStorage()` API.
 
 ## Signing
 
@@ -68,9 +148,9 @@ The signature covers the exact path that is emitted, so encoding choice and sign
 
 To generate a fresh key and salt pair, use the [imgproxy:key](/guide/installation) command. If you want to understand the details of how signing works, see the [Security](/guide/security) documentation.
 
-## Options
+## Processing Options
 
-Every imgproxy v4 processing option has one typed, validating method. Options are appended in call order, and invalid values throw `InvalidArgumentException`.
+Every imgproxy v4 processing option has one typed, validating method. This is the precise wire-level layer — the escape hatch beneath the intent methods above. Options are appended in call order, and invalid values throw `InvalidArgumentException`.
 
 Available methods, grouped by concern:
 
@@ -173,13 +253,20 @@ use Illuminate\Support\Facades\Storage;
 // Public disk -> url()
 Storage::disk('public')->imgproxy('images/photo.jpg')
     ->width(800)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // Private disk (S3) -> pre-signed temporaryUrl(), 5 minutes by default
 Storage::disk('s3')->imgproxy('products/image.jpg', 3600)
-    ->resize(ResizeType::Fill, 800, 600)
+    ->fit(800, 600)
     ->url();
+```
+
+At the facade entry, `fromStorage()` mirrors the macro (source-subject-first: path, then disk) and hands you the same builder:
+
+```php
+Imgproxy::fromStorage('images/photo.jpg', 'public')->width(800)->url();
+Imgproxy::fromStorage('products/image.jpg', 's3')->fit(800, 600)->url(); // pre-signed, 5 minutes by default
 ```
 
 The builder has an equivalent `->disk($disk, $path)` method, with an optional expiration in seconds or as an absolute `DateTimeInterface`:

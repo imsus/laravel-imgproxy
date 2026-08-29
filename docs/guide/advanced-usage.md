@@ -195,6 +195,34 @@ $url = Imgproxy::image($source)
 Prefer typed methods when they are available — they validate inputs and catch errors early. `withOption()` skips all validation.
 :::
 
+## Contain (fit + extend + background)
+
+Laravel's `Image` API exposes a `contain()` method that fits an image inside a box and fills any leftover space. imgproxy has no single option for this — it is a composition of `fit` (keep the aspect ratio, no crop), `extend_aspect_ratio` (grow the canvas to the target aspect ratio), and `background` (fill the leftover canvas). That composition is documented here rather than hidden behind a `contain()` intent method, because a single method name cannot faithfully honor the two independent parts (the fit box and the background color):
+
+```php
+use Imsus\LaravelImgproxy\Enums\Gravity;
+
+$url = Imgproxy::image($source)
+    ->fit(800, 600)               // keep the aspect ratio, no crop
+    ->extendAspectRatio(Gravity::Center) // grow the canvas to 4:3
+    ->background('#ffffff')       // fill the leftover with white
+    ->url();
+// rs:fit:800:600/exar:1:ce/bg:ffffff
+```
+
+If you want the excess to stay transparent instead, omit `background()` when the output format supports alpha (e.g. PNG or WebP):
+
+```php
+$url = Imgproxy::image($source)
+    ->fit(800, 600)
+    ->extendAspectRatio(Gravity::Center)
+    ->toPng()
+    ->url();
+// rs:fit:800:600/exar:1:ce/f:png
+```
+
+The same reasoning keeps `scale()` and a coordinate-shaped `crop()` out of the intent layer: `fit` already never upscales (so `scale` would be redundant), and imgproxy's `crop` is gravity-anchored only, so a pixel-coordinate crop would mislead a Laravel reader. See [ADR 0002](/adr/0002-intent-method-layer) for the policy.
+
 ## Security Caps
 
 The imgproxy server enforces limits on source resolution, file size, and animation complexity. You can tighten these per-URL when the server has security options enabled:

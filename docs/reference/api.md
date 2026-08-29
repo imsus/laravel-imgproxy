@@ -26,6 +26,9 @@ imgproxy()->image('https://example.com/image.jpg')->width(800)->url();
 | Method | Signature | Description |
 | --- | --- | --- |
 | `image` | `image(string $source, ?string $instance = null): Builder` | Build a URL for the given source on the default (or named) instance. |
+| `fromStorage` <Badge type="tip" text="v2.2.0" /> | `fromStorage(string $path, string $disk, ?string $instance = null): Builder` | Build a URL for a Storage disk-path source, resolving public disks to `url()` and private disks to a pre-signed `temporaryUrl()`. |
+| `fromPath` <Badge type="tip" text="v2.2.0" /> | `fromPath(string $path, ?string $instance = null): Builder` | Build a URL for a path source on the default (or named) instance. |
+| `fromUrl` <Badge type="tip" text="v2.2.0" /> | `fromUrl(string $url, ?string $instance = null): Builder` | Build a URL for a URL source on the default (or named) instance. |
 | `instance` | `instance(?string $name = null): Instance` | Resolve a named imgproxy instance. |
 | `defaultInstance` | `defaultInstance(): string` | The name of the default imgproxy instance. |
 
@@ -34,9 +37,12 @@ imgproxy()->image('https://example.com/image.jpg')->width(800)->url();
 `Imsus\LaravelImgproxy\Manager` resolves imgproxy instances from the published config file.
 
 ```php
-Imgproxy::instance('staging');           // resolve a named instance
-Imgproxy::image('https://...');            // build on the default instance
-Imgproxy::image('https://...', 'staging'); // build on a named instance
+Imgproxy::instance('staging');                    // resolve a named instance
+Imgproxy::image('https://...');                   // build on the default instance
+Imgproxy::image('https://...', 'staging');        // build on a named instance
+Imgproxy::fromStorage('images/photo.jpg', 'public'); // build from a Storage disk
+Imgproxy::fromPath('https://...');                // build from a path
+Imgproxy::fromUrl('https://...');                 // build from a URL
 ```
 
 ## Builder
@@ -67,11 +73,36 @@ public function __construct(
 | `disk` | `disk(string $disk, string $path, int\|DateTimeInterface\|null $expiration = null): self` | — | Set the source to a file on a Storage disk. Public disks use `url()`; private disks use a pre-signed `temporaryUrl()`. |
 | `toStorage` <Badge type="tip" text="v2.1.0" /> | `toStorage(string $disk, string $path, array $options = []): StoredImage` | — | Fetch the processed image from imgproxy and write it to a Storage disk, streaming the response body. Existing files are overwritten. Returns a [StoredImage](#storedimage). |
 
+### Intent Methods <Badge type="tip" text="New in v2.2.0" />
+
+The intent layer expresses the desired outcome in domain terms and compiles down to the processing-option segments below. They are the documented headline; the processing-option methods are the precise escape hatch.
+
+| Method | Signature | imgproxy segment | Description |
+| --- | --- | --- | --- |
+| `fit` <Badge type="tip" text="v2.2.0" /> | `fit(int $width, int $height): self` | `rs:fit:` | Fit the image within a box, keeping the aspect ratio and never upscaling. Chain `enlarge()` to allow growth. |
+| `cover` <Badge type="tip" text="v2.2.0" /> | `cover(int $width, int $height, Gravity\|string\|null $gravity = null): self` | `rs:fill:` (+ `g:`) | Crop to fill a box, keeping the aspect ratio and cropping overflow. Optional gravity anchors the crop. |
+| `orient` <Badge type="tip" text="v2.2.0" /> | `orient(): self` | `ar:` | Automatically orient from the EXIF rotation (alias of `autoRotate()`). |
+| `flipVertically` <Badge type="tip" text="v2.2.0" /> | `flipVertically(): self` | `fl:0:1` | Flip top-to-bottom (alias of `flip(vertical: true)`). |
+| `flipHorizontally` <Badge type="tip" text="v2.2.0" /> | `flipHorizontally(): self` | `fl:1:0` | Flip left-to-right (alias of `flip(horizontal: true)`). |
+| `toWebp` <Badge type="tip" text="v2.2.0" /> | `toWebp(): self` | `f:webp` | Output WebP (alias of `format(Format::Webp)`). |
+| `toJpg` <Badge type="tip" text="v2.2.0" /> | `toJpg(): self` | `f:jpg` | Output JPEG (alias of `format(Format::Jpg)`). |
+| `toPng` <Badge type="tip" text="v2.2.0" /> | `toPng(): self` | `f:png` | Output PNG (alias of `format(Format::Png)`). |
+| `toAvif` <Badge type="tip" text="v2.2.0" /> | `toAvif(): self` | `f:avif` | Output AVIF (alias of `format(Format::Avif)`). |
+| `optimize` <Badge type="tip" text="v2.2.0" /> | `optimize(Format\|string\|null $format = null, int $quality = 70): self` | `f:` + `q:` | Default-optimized output: WebP at quality 70. Pass a format or quality to override; `0` falls back to the server default. |
+| `storePublicly` <Badge type="tip" text="v2.2.0" /> | `storePublicly(string $disk, string $path, array $options = []): StoredImage` | — | Fetch the processed image and store it with `visibility => public` applied. |
+
+The builder also uses Laravel's `Conditionable` trait, so `when()` and `unless()` apply a callback to a copy of the builder when the given value is (or resolves to) truthy/falsy:
+
+```php
+$base = Imgproxy::image($source)->cover(400, 400);
+$placeholder = $base->when($isPlaceholder, fn ($builder) => $builder->width(16)->blur(8)->toWebp());
+```
+
 ### Resize
 
 | Method | Signature | imgproxy segment | Description |
 | --- | --- | --- | --- |
-| `resize` | `resize(ResizeType\|string $type, ?int $width = null, ?int $height = null, bool $enlarge = false, bool $extend = false): self` | `rs:` | Resize the image with a type, dimensions, and optional enlarge/extend flags. |
+| `resize` <Badge type="warning" text="deprecated" /> | `resize(ResizeType\|string $type, ?int $width = null, ?int $height = null, bool $enlarge = false, bool $extend = false): self` | `rs:` | Resize the image with a type, dimensions, and optional enlarge/extend flags. Prefer the intent methods `cover()`/`fit()` for the common `fill`/`fit` cases; `resize()` is retained for precise wire-level control. |
 | `resizeWithGravity` | `resizeWithGravity(?int $width = null, ?int $height = null, bool $enlarge = false, bool $extend = false, Gravity\|string\|null $gravity = null): self` | `s:` | Set width, height, enlarge, extend, and gravity in one option. |
 | `width` | `width(int $width): self` | `w:` | Set the width of the resulting image. `0` auto-calculates from height and aspect ratio. |
 | `height` | `height(int $height): self` | `h:` | Set the height of the resulting image. `0` auto-calculates from width and aspect ratio. |
