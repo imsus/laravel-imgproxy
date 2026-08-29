@@ -1,6 +1,9 @@
-<div align="center">
-    <h1>Laravel imgproxy</h1>
-</div>
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="art/banner-dark.svg" />
+        <img alt="Laravel imgproxy" src="art/banner-light.svg" />
+    </picture>
+</p>
 
 <p align="center">
     <a href="https://packagist.org/packages/imsus/laravel-imgproxy"><img src="https://img.shields.io/packagist/v/imsus/laravel-imgproxy.svg?style=flat-square" alt="Packagist"></a>
@@ -227,7 +230,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Thank you for considering contributing to Laravel imgproxy! Please review our [contributing guide](.github/CONTRIBUTING.md) to get started.
+Thank you for considering contributing to Laravel imgproxy! Please review our [contributing guide](.github/CONTRIBUTING.md) to get started, and our [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Security Vulnerabilities
 
