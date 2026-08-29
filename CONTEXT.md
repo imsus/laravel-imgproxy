@@ -19,3 +19,17 @@ _Avoid_: Cached image, saved url, stored url
 **Destination disk**:
 The Storage disk a stored image is written to, and the path it occupies on that disk.
 _Avoid_: Storage, target, bucket
+
+## Public API
+
+**Intent method**:
+A high-level fluent method that expresses the desired image outcome in domain terms (`cover`, `fit`, `toWebp`, `storePublicly`), hiding imgproxy's wire format. It is the headline API.
+_Avoid_: transformation, convenience method, sugar, helper
+
+**Processing option**:
+A single imgproxy image-processing setting (resize, width, quality, format, gravity), exposed one-to-one by a typed method and verbatim by `withOption()`.
+_Avoid_: transformation, operation
+
+**Option segment**:
+The URL path piece that encodes a processing option, e.g. `rs:fill:300:300`, `q:80`, `bg:ffffff`.
+_Avoid_: part, token

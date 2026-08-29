@@ -94,23 +94,19 @@ The `Imgproxy` facade and the `imgproxy()` helper both resolve the default insta
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
-use Imsus\LaravelImgproxy\Enums\Format;
-use Imsus\LaravelImgproxy\Enums\Gravity;
-use Imsus\LaravelImgproxy\Enums\ResizeType;
-use Imsus\LaravelImgproxy\Enums\WatermarkPosition;
 
 $url = Imgproxy::image('https://example.com/image.jpg')
-    ->resize(ResizeType::Fill, 300, 300)
+    ->cover(300, 300)
     ->quality(80)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
 ```
 
-Every imgproxy v4 processing option has one typed, validating method — resize, crop, gravity, blur, watermark, format, and more — and enum arguments accept the enum or its string value interchangeably (`Gravity::Smart` and `'sm'` produce the same URL). For options not yet covered, `withOption()` appends a segment verbatim. `url()` and `__toString()` return the full URL; either works as a terminal call.
+The builder exposes **two API layers**. The headline is the *intent* layer: high-level methods that express the desired outcome in domain terms (`cover`, `fit`, `orient`, `toWebp`, `storePublicly`, …) and compile down to imgproxy option segments. When an intent method isn't wired up — or you know exactly which wire option you want — drop down to the typed *processing-option* layer, where every imgproxy v4 option has one validating method (resize, crop, gravity, blur, watermark, format, and more). Enum arguments accept the enum or its string value interchangeably (`Gravity::Smart` and `'sm'` produce the same URL). For options not yet covered, `withOption()` appends a segment verbatim. `url()` and `__toString()` return the full URL; either works as a terminal call.
 
-Because builders are immutable, every mutation returns a new instance. A base builder can be reused for several variants without accidental mutation:
+Both layers are immutable, so every mutation returns a new instance. A base builder can be reused for several variants without accidental mutation:
 
 ```php
 $base = Imgproxy::image('https://example.com/image.jpg')->quality(80);
@@ -131,7 +127,7 @@ The signature covers the exact path emitted, so encoding choice and signing are 
 
 ### Storage Disks
 
-Sources can come from any Laravel Storage disk. Public disks yield the disk's `url()`; private disks yield a pre-signed `temporaryUrl()`:
+Sources can come from any Laravel Storage disk. Public disks yield the disk's `url()`; private disks yield a pre-signed `temporaryUrl()`. The Storage macro is the most direct form:
 
 ```php
 use Illuminate\Support\Facades\Storage;
@@ -139,24 +135,39 @@ use Illuminate\Support\Facades\Storage;
 // Public disk -> url()
 Storage::disk('public')->imgproxy('images/photo.jpg')
     ->width(800)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // Private disk (S3) -> pre-signed temporaryUrl(), 5 minutes by default
 Storage::disk('s3')->imgproxy('products/image.jpg', 3600)
-    ->resize(ResizeType::Fill, 800, 600)
+    ->fit(800, 600)
     ->url();
 ```
 
+At the facade entry, `fromStorage()` mirrors the macro (source-subject-first, path then disk) and hands you the same builder:
+
+```php
+Imgproxy::fromStorage('images/photo.jpg', 'public')->width(800)->url();
+Imgproxy::fromStorage('products/image.jpg', 's3')->fit(800, 600)->url(); // pre-signed, 5 minutes by default
+```
+
+For an explicit source kind, `fromPath()` and `fromUrl()` build straight from a path or a URL. The builder also has an equivalent `->disk($disk, $path)` method, with an optional expiration in seconds or as an absolute `DateTimeInterface`:
+
+```php
+imgproxy()->image('unused')->disk('s3', 'products/image.jpg', 3600)->width(800)->url();
+```
+
+See the [Storage Integration](/guide/storage-integration) documentation for the full macro and `->disk()` API.
+
 ### Materializing Processed Images
 
-Instead of returning a URL, `toStorage()` fetches the processed image from imgproxy and writes it to any Storage disk, returning a `StoredImage` representation of the stored file:
+Instead of returning a URL, `toStorage()` fetches the processed image from imgproxy and writes it to any Storage disk, returning a `StoredImage` representation of the stored file. `storePublicly()` is the same with `['visibility' => 'public']` already applied:
 
 ```php
 $image = imgproxy()->image('https://example.com/photo.jpg')
     ->width(800)
-    ->format(Format::Webp)
-    ->toStorage('s3', 'processed/photo.webp', ['visibility' => 'public']);
+    ->toWebp()
+    ->storePublicly('s3', 'processed/photo.webp');
 
 $image->disk();      // 's3'
 $image->path();      // 'processed/photo.webp'

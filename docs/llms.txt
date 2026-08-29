@@ -29,7 +29,7 @@
 - **`Imgproxy` facade** (`Imsus\LaravelImgproxy\Imgproxy`) — proxies to the Manager
 - **`imgproxy()` helper** — returns the Manager instance
 - **`Manager`** — resolves imgproxy instances from config
-- **`Builder`** — immutable fluent URL builder (54 public methods)
+- **`Builder`** — immutable fluent URL builder: an intent-method layer (`cover`, `fit`, `toWebp`, `storePublicly`, …) over one typed method per imgproxy processing option
 - **`StoredImage`** — representation of a processed image materialized onto a Storage disk by `toStorage()`
 - **`Enums`** — `ResizeType`, `Gravity`, `Format`, `WatermarkPosition`
 - **Blade components** — `<x-imgproxy-img>`, `<x-imgproxy-picture>`
@@ -40,7 +40,8 @@
 
 | Group | Methods |
 | --- | ---|
-| Construction & terminal | `__construct`, `url`, `__toString`, `sourceEncoding`, `disk`, `toStorage` |
+| Construction & terminal | `__construct`, `url`, `__toString`, `sourceEncoding`, `disk`, `toStorage`, `storePublicly` |
+| Intent methods | `cover`, `fit`, `orient`, `flipVertically`, `flipHorizontally`, `toWebp`, `toJpg`, `toPng`, `toAvif`, `optimize` |
 | Resize | `resize`, `resizeWithGravity`, `width`, `height`, `minWidth`, `minHeight`, `zoom` |
 | Crop & gravity | `crop`, `trim`, `padding`, `gravity`, `focusPoint` |
 | Quality & format | `quality`, `format`, `formatQuality`, `skipProcessing`, `raw`, `withoutRaw` |
@@ -56,14 +57,17 @@
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
-use Imsus\LaravelImgproxy\Enums\ResizeType;
-use Imsus\LaravelImgproxy\Enums\Format;
 
 $url = Imgproxy::image('https://example.com/image.jpg')
-    ->resize(ResizeType::Fill, 300, 300)
+    ->cover(300, 300)   // intent method: crop to fill a 300×300 box
     ->quality(80)
-    ->format(Format::Webp)
+    ->toWebp()          // intent method: f:webp
     ->url();
+
+// Entry points:
+Imgproxy::fromStorage('images/photo.jpg', 'public')->url(); // Storage disk source
+Imgproxy::fromPath('https://example.com/image.jpg')->url(); // path source
+Imgproxy::fromUrl('https://example.com/image.jpg')->url();  // URL source
 
 // Helper is equivalent:
 $url = imgproxy()->image('https://example.com/image.jpg')->width(640)->url();

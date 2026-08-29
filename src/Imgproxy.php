@@ -14,6 +14,9 @@ use InvalidArgumentException;
  * pattern (Imgproxy::shouldReceive(...)).
  *
  * @method static Builder image(string $source, ?string $instance = null) Build a URL for the given source on the default (or named) instance.
+ * @method static Builder fromStorage(string $path, string $disk, ?string $instance = null) Build a URL for a Storage disk-path source on the default (or named) instance.
+ * @method static Builder fromPath(string $path, ?string $instance = null) Build a URL for a path source on the default (or named) instance.
+ * @method static Builder fromUrl(string $url, ?string $instance = null) Build a URL for a URL source on the default (or named) instance.
  * @method static Instance instance(?string $name = null) Resolve an imgproxy instance.
  * @method static string defaultInstance() The name of the default imgproxy instance.
  *

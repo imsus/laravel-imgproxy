@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Imsus\LaravelImgproxy;
 
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
 /**
@@ -61,5 +62,39 @@ final class Manager
     public function image(string $source, ?string $instance = null): Builder
     {
         return $this->instance($instance)->image($source);
+    }
+
+    /**
+     * Build a URL for a source on a Storage disk.
+     *
+     * Mirrors the Storage macro: public disks use the disk's url(), private
+     * disks (those providing temporary URLs without explicit public
+     * visibility) use a pre-signed temporaryUrl() with the default lifetime.
+     *
+     * @throws InvalidArgumentException When the disk is not configured.
+     */
+    public function fromStorage(string $path, string $disk, ?string $instance = null): Builder
+    {
+        return $this->image(DiskUrl::resolve(Storage::disk($disk), $path), $instance);
+    }
+
+    /**
+     * Build a URL for a source given as a raw path.
+     *
+     * @throws InvalidArgumentException When the instance is not configured or has no base URL.
+     */
+    public function fromPath(string $path, ?string $instance = null): Builder
+    {
+        return $this->image($path, $instance);
+    }
+
+    /**
+     * Build a URL for a source given as a URL.
+     *
+     * @throws InvalidArgumentException When the instance is not configured or has no base URL.
+     */
+    public function fromUrl(string $url, ?string $instance = null): Builder
+    {
+        return $this->image($url, $instance);
     }
 }

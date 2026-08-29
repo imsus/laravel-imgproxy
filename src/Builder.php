@@ -8,6 +8,7 @@ use BackedEnum;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Traits\Conditionable;
 use Imsus\LaravelImgproxy\Enums\Format;
 use Imsus\LaravelImgproxy\Enums\Gravity;
 use Imsus\LaravelImgproxy\Enums\ResizeType;
@@ -33,6 +34,8 @@ use ValueError;
  */
 final class Builder
 {
+    use Conditionable;
+
     /** @var list<string> */
     private const array ENCODINGS = ['base64', 'plain'];
 
@@ -164,6 +167,10 @@ final class Builder
      *
      * The `enlarge` and `extend` flags are only emitted when they differ
      * from imgproxy's default `false`.
+     *
+     * @deprecated Prefer the intent methods cover()/fit() for the common
+     *             Fill/Fit cases; resize() remains for precise wire-level
+     *             control and is not removed. Runtime behavior is unchanged.
      *
      * @throws InvalidArgumentException When the resize type is unknown or a size is negative.
      */
@@ -1060,6 +1067,149 @@ final class Builder
     public function withOption(string $segment): self
     {
         return $this->withSegment($segment);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Intent methods
+    |--------------------------------------------------------------------------
+    |
+    | High-level fluent methods that express the desired image outcome in
+    | domain terms (cover, fit, toWebp, storePublicly). They compile down to
+    | the processing-option segments above, which remain available as the
+    | precise wire-level escape hatch. Names are borrowed from Laravel's
+    | Image API only where the imgproxy semantics genuinely align (see docs/adr/0002-intent-method-layer.md).
+    */
+
+    /**
+     * Crop-to-cover the source to the given box.
+     *
+     * The image is resized to fill the given width and height while keeping
+     * the aspect ratio, cropping any overflow. The optional gravity anchors
+     * the crop instead of the default center. Like imgproxy's default, the
+     * source is never enlarged; chain `enlarge()` to allow upscaling.
+     *
+     * @throws InvalidArgumentException When a size is negative or the gravity is unknown.
+     */
+    public function cover(int $width, int $height, Gravity|string|null $gravity = null): self
+    {
+        $resize = $this->resize(ResizeType::Fill, $width, $height);
+
+        return $gravity !== null ? $resize->gravity($gravity) : $resize;
+    }
+
+    /**
+     * Fit the source within the given box.
+     *
+     * The image is resized to fit within the given width and height while
+     * keeping the aspect ratio and never upscaling. Use `enlarge()` to allow
+     * the image to grow beyond its source size.
+     *
+     * @throws InvalidArgumentException When a size is negative.
+     */
+    public function fit(int $width, int $height): self
+    {
+        return $this->resize(ResizeType::Fit, $width, $height);
+    }
+
+    /**
+     * Automatically orient the image from the EXIF orientation.
+     *
+     * A readability alias for `autoRotate()`.
+     */
+    public function orient(): self
+    {
+        return $this->autoRotate();
+    }
+
+    /**
+     * Flip the image vertically (top to bottom).
+     *
+     * A readability alias for `flip(vertical: true)`.
+     */
+    public function flipVertically(): self
+    {
+        return $this->flip(vertical: true);
+    }
+
+    /**
+     * Flip the image horizontally (left to right).
+     *
+     * A readability alias for `flip(horizontal: true)`.
+     */
+    public function flipHorizontally(): self
+    {
+        return $this->flip(horizontal: true);
+    }
+
+    /**
+     * Convert the processed image to WebP.
+     *
+     * A readability alias for `format(Format::Webp)`.
+     */
+    public function toWebp(): self
+    {
+        return $this->format(Format::Webp);
+    }
+
+    /**
+     * Convert the processed image to JPEG.
+     *
+     * A readability alias for `format(Format::Jpg)`.
+     */
+    public function toJpg(): self
+    {
+        return $this->format(Format::Jpg);
+    }
+
+    /**
+     * Convert the processed image to PNG.
+     *
+     * A readability alias for `format(Format::Png)`.
+     */
+    public function toPng(): self
+    {
+        return $this->format(Format::Png);
+    }
+
+    /**
+     * Convert the processed image to AVIF.
+     *
+     * A readability alias for `format(Format::Avif)`.
+     */
+    public function toAvif(): self
+    {
+        return $this->format(Format::Avif);
+    }
+
+    /**
+     * Optimize the image with a single read.
+     *
+     * Defaults to WebP at quality 70, matching Laravel's `optimize()`
+     * convention. Pass a format or a quality to override the defaults.
+     *
+     * @throws InvalidArgumentException When the format is unknown or the quality is outside 0-100.
+     */
+    public function optimize(Format|string|null $format = null, int $quality = 70): self
+    {
+        return $this->format($format ?? Format::Webp)->quality($quality);
+    }
+
+    /**
+     * Fetch the processed image and store it on a disk with public visibility.
+     *
+     * A convenience over `toStorage()` that forwards `['visibility' => 'public']`
+     * as the write options, so a publicly served image needs no manual options
+     * array.
+     *
+     * @param  array<string, mixed>  $options  Extra options forwarded to the disk write.
+     *
+     * @throws InvalidArgumentException When the destination disk is not configured.
+     * @throws ImgproxyStorageException When imgproxy responds with a non-success status or the disk write fails.
+     */
+    public function storePublicly(string $disk, string $path, array $options = []): StoredImage
+    {
+        return $this->toStorage($disk, $path, [...$options, 'visibility' => 'public']);
     }
 
     /**

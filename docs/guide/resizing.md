@@ -7,6 +7,22 @@ description: Resize, crop, trim, and pad images with the fluent builder.
 
 Resizing is the most common thing you will do with an image service, so the builder has a full set of methods for controlling dimensions, resize type, gravity, cropping, trimming, and padding. Every method returns a new builder instance, so options compose safely.
 
+For the two most common cases, use the intent methods `cover()` and `fit()` — they express the outcome in domain terms and compile to the resize option under the hood:
+
+```php
+use Imsus\LaravelImgproxy\Enums\Gravity;
+
+// Crop to fill a 800×600 box, anchoring the crop at the top edge
+Imgproxy::image($source)->cover(800, 600, Gravity::North)->url();
+// rs:fill:800:600/g:no
+
+// Fit within a 800×600 box (keeps the aspect ratio, never upscales)
+Imgproxy::image($source)->fit(800, 600)->url();
+// rs:fit:800:600
+```
+
+Like imgproxy's default, neither method enlarges the source; chain `enlarge()` to allow upscaling. `cover()` crops overflow to fill the box — pass a gravity to anchor the crop — while `fit()` never crops. The processing-option layer below is the precise wire-level counterpart — `resize()` supports every resize type (`fill`, `fill-down`, `force`, `auto`) while `cover`/`fit` cover the common `fill`/`fit` cases.
+
 ## Resize Type
 
 The `resize()` method sets the resize type, dimensions, and optional enlarge/extend flags in one call. Pass a `ResizeType` enum or its string value:

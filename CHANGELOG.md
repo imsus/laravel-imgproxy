@@ -1,5 +1,15 @@
 # Release Notes
 
+## [v2.2.0](https://github.com/imsus/laravel-imgproxy/compare/v2.1.0...v2.2.0)
+
+### Enhancements
+
+- New **intent-method layer** on the immutable builder: `cover()`, `fit()`, `orient()`, `flipVertically()`, `flipHorizontally()`, `toWebp()`, `toJpg()`, `toPng()`, `toAvif()`, `optimize()`, and `storePublicly()`. The intent methods express the desired image outcome in domain terms and compile down to the existing processing-option segments; the typed processing-option methods remain as the precise wire-level escape hatch.
+- The builder now uses Laravel's `Conditionable` trait, so `when()` and `unless()` apply transformations to a copy of the builder conditionally.
+- New facade/manager entry points: `fromStorage($path, $disk)`, `fromPath($path)`, and `fromUrl($url)`. `fromStorage()` resolves a Storage disk-path source exactly like the `imgproxy()` macro (public disks to `url()`, private disks to a pre-signed `temporaryUrl()`).
+- `resize()` is now `@deprecated` (docblock-only; runtime unchanged) in favor of `cover()`/`fit()` for the common cases. No other processing-option method is deprecated, and no behavior changes.
+- Docs lead with intent methods; `advanced-usage` documents the `contain` composition (`fit` + `extendAspectRatio` + `background`) that is deliberately not exposed as a single method.
+
 ## [v2.1.0](https://github.com/imsus/laravel-imgproxy/compare/v2.0.0...v2.1.0)
 
 ### Enhancements

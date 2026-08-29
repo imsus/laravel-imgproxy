@@ -11,13 +11,11 @@ Laravel imgproxy is a Laravel package that wraps imgproxy's URL API in a fluent,
 
 ```php
 use Imsus\LaravelImgproxy\Imgproxy;
-use Imsus\LaravelImgproxy\Enums\Format;
-use Imsus\LaravelImgproxy\Enums\ResizeType;
 
 $url = Imgproxy::image('https://example.com/image.jpg')
-    ->resize(ResizeType::Fill, 300, 300)
+    ->cover(300, 300)
     ->quality(80)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
@@ -45,9 +43,9 @@ Laravel will automatically discover the package's service provider, so nothing e
 
 ```php
 Imgproxy::image('https://example.com/image.jpg')
-    ->resize(ResizeType::Fill, 300, 300)
+    ->cover(300, 300)
     ->quality(80)
-    ->format(Format::Webp)
+    ->toWebp()
     ->url();
 
 // https://imgproxy.example.com/unsafe/rs:fill:300:300/q:80/f:webp/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc
@@ -60,10 +58,12 @@ Let's break down what happened in the example above. Every imgproxy URL has the 
 ```
 
 - **`unsafe`** — the signature slot. With a key and salt configured, this slot carries an HMAC-SHA256 signature of the path. Without them, it contains the literal string `unsafe`, which is fine for local development but should never be used in production.
-- **`rs:fill:300:300`** — processing options, one segment per option. This one resizes the image to fill a 300×300 box.
+- **`rs:fill:300:300`** — the option segment for `cover(300, 300)`. `cover` is an *intent method*: it says "crop to fill a 300×300 box" in domain terms and compiles down to the resize `fill` segment, cropping any overflow. `fit()` is its sibling, saying "fit within the box" and compiling to `rs:fit`.
 - **`q:80`** — compression quality.
-- **`f:webp`** — output format.
+- **`f:webp`** — output format, published by `toWebp()`.
 - **`aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWFnZS5qcGc`** — the source URL, URL-safe base64 encoded without padding.
+
+These high-level *intent methods* are the headline. When an intent method isn't wired up — or you know exactly which wire option you want — the builder also exposes one typed method per imgproxy processing option (`resize()`, `crop()`, `gravity()`, `format()`, …) as a precise escape hatch. Every input is validated, and `withOption()` appends a raw segment verbatim for anything newer.
 
 Because the signature covers the exact path that follows it, you never have to think about signature or encoding details — the builder handles all of that.
 
